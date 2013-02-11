@@ -30,9 +30,10 @@ In this example, the userID object in the parameters dictionary passed to the bl
 
 ```objc
 [JLRoutes addRoute:@"/:object/:action/:primaryKey" handler:^BOOL(NSDictionary *parameters) {
-  NSString *object = parameters[kJLRouteParametersKey][@"object"];
-  NSString *action = parameters[kJLRouteParametersKey][@"action"];
-  NSString *primaryKey = parameters[kJLRouteParametersKey][@"primaryKey"];
+  NSDictionary *parsedParameters = parameters[kJLRouteParametersKey];
+  NSString *object = parsedParameters[@"object"];
+  NSString *action = parsedParameters[@"action"];
+  NSString *primaryKey = parsedParameters[@"primaryKey"];
   // stuff
   return YES;
 }];
