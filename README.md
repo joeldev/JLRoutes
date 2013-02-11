@@ -24,7 +24,6 @@ In this example, the userID object in the parameters dictionary passed to the bl
 ### More Complex Example ###
 
 ```objc
-// would match things like /user/view/joeldev or /post/edit/123
 [JLRoutes addRoute:@"/:object/:action/:primaryKey" handler:^BOOL(NSDictionary *parameters) {
   NSString *object = parameters[@"object"];
   NSString *action = parameters[@"action"];
@@ -32,6 +31,24 @@ In this example, the userID object in the parameters dictionary passed to the bl
   // stuff
   return YES;
 }];
+```
+
+This route would match things like /user/view/joeldev or /post/edit/123. Let's say you did /post/edit/123 with some URL params as well:
+
+```objc
+NSURL *editPost = [NSURL URLWithString:@"myapp://post/edit/123?debug=true&foo=bar"];
+[[UIApplication sharedApplication] openURL:editPost];
+```
+
+The parameters dictionary that the handler block receives would contain the following key/value pairs:
+```json
+{
+  "object": "post",
+  "action": "edit",
+  "primaryKey": "123",
+  "debug": "true",
+  "foo": "bar"
+}
 ```
 
 ### Features ###
