@@ -36,6 +36,13 @@ The parameters dictionary always contains at least the following two keys:
 }
 ```
 
+These are defined as constants in JLRoutes.h for easy use.
+
+```objc
+static NSString *const kJLRoutePatternKey = @"JLRoutePattern";
+static NSString *const kJLRouteURLKey = @"JLRouteURL";
+```
+
 ### More Complex Example ###
 
 ```objc
