@@ -62,7 +62,7 @@ The parameters dictionary that the handler block receives would contain the foll
 JLRoutes is available for installation via CocoaPods. The Releases folder in the repo has binary builds as well, if you'd rather just drop something in.
 
 ### Requirements ###
-ARC. Only tested on iOS 6, but I don't think there's any reason why it wouldn't work on previous versions.
+ARC. Only tested on iOS 6, but I don't think there's any reason why it wouldn't work on previous versions. No dependencies other than Foundation.
 
 ### License ###
 BSD
