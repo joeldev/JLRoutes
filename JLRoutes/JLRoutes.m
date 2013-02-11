@@ -27,34 +27,31 @@
 @property (strong) NSString *pattern;
 @property (strong) BOOL (^block)(NSDictionary *parameters);
 @property (assign) NSUInteger priority;
+@property (strong) NSArray *patternPathComponents;
 
-- (NSDictionary *)parametersForURL:(NSURL *)URL;
+- (NSDictionary *)parametersForURL:(NSURL *)URL components:(NSArray *)URLComponents;
 
 @end
 
 
 @implementation _JLRoute
 
-- (NSDictionary *)parametersForURL:(NSURL *)URL {
-	NSString *URLPathString = [[URL absoluteString] substringFromIndex:[[URL scheme] length] + 2]; // scheme + ':/'
-	NSRange URLStringParamRange = [URLPathString rangeOfString:@"?"];
-	if (URLStringParamRange.location != NSNotFound) {
-		// URL params are handled elsewhere, this method just ignores them
-		URLPathString = [URLPathString substringToIndex:URLStringParamRange.location];
-	}
-	NSArray *components = [URLPathString pathComponents];
+- (NSDictionary *)parametersForURL:(NSURL *)URL components:(NSArray *)URLComponents {
 	NSMutableDictionary *routeParameters = nil;
 	
-	NSArray *patternComponents = [self.pattern pathComponents];
+	if (!self.patternPathComponents) {
+		self.patternPathComponents = [self.pattern pathComponents];
+	}
+	
 	// do a quick component count check to quickly eliminate incorrect patterns
-	if (patternComponents.count == components.count) {
+	if (self.patternPathComponents.count == URLComponents.count) {
 		// now that we've identified a possible match, move component by component to check if it's a match
 		NSUInteger componentIndex = 0;
 		NSMutableDictionary *variables = [NSMutableDictionary dictionary];
 		BOOL isMatch = YES;
 		
-		for (NSString *patternComponent in patternComponents) {
-			NSString *URLComponent = components[componentIndex];
+		for (NSString *patternComponent in self.patternPathComponents) {
+			NSString *URLComponent = URLComponents[componentIndex];
 			if ([patternComponent hasPrefix:@":"]) {
 				// this component is a variable
 				NSString *variableName = [patternComponent substringFromIndex:1];
@@ -159,11 +156,18 @@
 			}
 			URLParameters[pair[0]] = paramValue;
 		}
+		// strip the URL params out
+		URLString = [URLString substringToIndex:URLParamsRange.location];
 	}
 	
+	// break the URL down into path components
+	URLString = [URLString substringFromIndex:[[URL scheme] length] + 2]; // scheme + ':/'
+	NSArray *URLComponents = [URLString pathComponents];
+	
 	for (_JLRoute *route in routes) {
-		NSDictionary *matchParameters = [route parametersForURL:URL];
+		NSDictionary *matchParameters = [route parametersForURL:URL components:URLComponents];
 		if (matchParameters) {
+			// add the URL parameters
 			NSMutableDictionary *mutableParameters = matchParameters[kJLRouteParametersKey]; // this is mutable because we created it as mutable in _JLRoute
 			[mutableParameters addEntriesFromDictionary:URLParameters];
 			didRoute = route.block(matchParameters);
