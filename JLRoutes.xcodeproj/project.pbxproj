@@ -44,7 +44,6 @@
 /* Begin PBXFileReference section */
 		5D33681216C6DC9300F983AA /* libJLRoutes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libJLRoutes.a; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D33681516C6DC9300F983AA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		5D33681916C6DC9300F983AA /* JLRoutes-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "JLRoutes-Prefix.pch"; sourceTree = "<group>"; };
 		5D33681A16C6DC9300F983AA /* JLRoutes.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = JLRoutes.h; sourceTree = "<group>"; };
 		5D33681C16C6DC9300F983AA /* JLRoutes.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLRoutes.m; sourceTree = "<group>"; };
 		5D33682316C6DC9300F983AA /* JLRoutesTests.octest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JLRoutesTests.octest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -115,17 +114,8 @@
 			children = (
 				5D33681A16C6DC9300F983AA /* JLRoutes.h */,
 				5D33681C16C6DC9300F983AA /* JLRoutes.m */,
-				5D33681816C6DC9300F983AA /* Supporting Files */,
 			);
 			path = JLRoutes;
-			sourceTree = "<group>";
-		};
-		5D33681816C6DC9300F983AA /* Supporting Files */ = {
-			isa = PBXGroup;
-			children = (
-				5D33681916C6DC9300F983AA /* JLRoutes-Prefix.pch */,
-			);
-			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
 		5D33682C16C6DC9300F983AA /* JLRoutesTests */ = {
@@ -336,8 +326,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/JLRoutes.dst;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "JLRoutes/JLRoutes-Prefix.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -348,8 +338,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				DSTROOT = /tmp/JLRoutes.dst;
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "JLRoutes/JLRoutes-Prefix.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
@@ -363,8 +353,8 @@
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "JLRoutes/JLRoutes-Prefix.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "JLRoutesTests/JLRoutesTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
@@ -378,8 +368,8 @@
 					"\"$(SDKROOT)/Developer/Library/Frameworks\"",
 					"\"$(DEVELOPER_LIBRARY_DIR)/Frameworks\"",
 				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "JLRoutes/JLRoutes-Prefix.pch";
+				GCC_PRECOMPILE_PREFIX_HEADER = NO;
+				GCC_PREFIX_HEADER = "";
 				INFOPLIST_FILE = "JLRoutesTests/JLRoutesTests-Info.plist";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = octest;
