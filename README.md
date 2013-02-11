@@ -26,6 +26,10 @@ NSURL *viewUserURL = [NSURL URLWithString:@"myapp://user/view/joeldev"];
 
 In this example, the userID object in the parameters dictionary passed to the block would have "userID" : "joeldev", which could then be used to present a UI or do whatever else is needed.
 
+### The Parameters Dictionary ###
+
+The handler block is passed a dictionary containing the URL being routed, the route pattern string, and another dictionary of parsed parameters.
+
 ### More Complex Example ###
 
 ```objc
