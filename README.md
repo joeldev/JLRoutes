@@ -28,7 +28,13 @@ In this example, the userID object in the parameters dictionary passed to the bl
 
 ### The Parameters Dictionary ###
 
-The handler block is passed a dictionary containing the URL being routed, the route pattern string, and another dictionary of parsed parameters.
+The parameters dictionary always contains at least the following two keys:
+```json
+{
+  "JLRouteURL" : "(the NSURL that caused this block to be fired)",
+  "JLRoutePattern" : "(the actual route pattern string)"
+}
+```
 
 ### More Complex Example ###
 
