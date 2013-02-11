@@ -22,6 +22,23 @@
 @end
 
 
+@interface NSString (JLRoutes)
+
+- (NSString *)JLRoutes_URLDecodedString;
+
+@end
+
+
+@implementation NSString (JLRoutes)
+
+- (NSString *)JLRoutes_URLDecodedString {
+	CFStringRef decodedString = CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL, (CFStringRef)self, CFSTR(""), kCFStringEncodingUTF8);
+	return (__bridge_transfer NSString *)decodedString;
+}
+
+@end
+
+
 @interface _JLRoute : NSObject
 
 @property (strong) NSString *pattern;
@@ -56,7 +73,7 @@
 				// this component is a variable
 				NSString *variableName = [patternComponent substringFromIndex:1];
 				NSString *variableValue = URLComponent;
-				variables[variableName] = variableValue;
+				variables[variableName] = [variableValue JLRoutes_URLDecodedString];
 			} else if (![patternComponent isEqualToString:URLComponent]) {
 				// a non-variable component did not match, so this route doesn't match up - on to the next one
 				isMatch = NO;
@@ -142,7 +159,7 @@
 	NSString *URLString = [URL absoluteString];
 	NSRange URLParamsRange = [URLString rangeOfString:@"?"];
 	// if there are any URL params, parse and hold on to them
-	if (URLParamsRange.location != NSNotFound) {
+	if (URL && URLParamsRange.location != NSNotFound) {
 		if (![URLString hasSuffix:@"?"]) {
 			NSString *keyValueParams = [URLString substringFromIndex:URLParamsRange.location + 1];
 			NSArray *keyValuePairs = [keyValueParams componentsSeparatedByString:@"&"];
@@ -154,7 +171,7 @@
 					// we got two params, so we can now use the second param as the value
 					paramValue = pair[1];
 				}
-				URLParameters[pair[0]] = paramValue;
+				URLParameters[pair[0]] = [paramValue JLRoutes_URLDecodedString];
 			}
 		}
 		// strip the URL params out

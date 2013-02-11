@@ -38,6 +38,7 @@ static NSString *const kJLRouteURLKey = @"JLRouteURL";
 
 /* Version History
 
+2/11/13 - 1.0.2 - simpler to use + bug fixes
 2/10/13 - Initial release.
 
 */

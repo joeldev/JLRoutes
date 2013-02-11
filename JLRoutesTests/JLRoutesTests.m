@@ -91,6 +91,10 @@ static JLRoutesTests *testsInstance = nil;
 	[self validateParameterCount:1];
 	[self validateParameter:@{@"userID": @"joeldev"}];
 	
+	[self route:@"tests://user/view/joel%20levin"];
+	[self validateParameterCount:1];
+	[self validateParameter:@{@"userID": @"joel levin"}];
+	
 	[self route:@"tests://user/view/joeldev?foo=bar&thing=stuff"];
 	[self validateParameterCount:3];
 	[self validateParameter:@{@"userID": @"joeldev"}];
