@@ -43,6 +43,10 @@ static NSString *const kJLRoutePatternKey = @"JLRoutePattern";
 static NSString *const kJLRouteURLKey = @"JLRouteURL";
 ```
 
+### Handler Block Return Value ###
+
+As you may have noticed, the handler block is expected to return a BOOL for if it has handled the route or not. If the block returns NO, JLRoutes will behave as if that route is not a match and it will continue looking for a match. A route is considered to be a match if the pattern string matches AND the block returns YES.
+
 ### More Complex Example ###
 
 ```objc
