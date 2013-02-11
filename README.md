@@ -7,7 +7,7 @@ JLRoutes is advanced URL parsing with a block-based callback API. It is designed
 ### Simple Example ###
 ```objc
 [JLRoutes addRoute:@"/user/view/:userID" handler:^BOOL(NSDictionary *parameters) {
-  NSString *userID = parameters[kJLRouteParametersKey][@"userID"]; // defined in the route by specifying ":userID"
+  NSString *userID = parameters[@"userID"]; // defined in the route by specifying ":userID"
   // present UI for viewing user with ID 'userID'
   return YES; // return YES to say we have handled the route
 }];
@@ -30,10 +30,9 @@ In this example, the userID object in the parameters dictionary passed to the bl
 
 ```objc
 [JLRoutes addRoute:@"/:object/:action/:primaryKey" handler:^BOOL(NSDictionary *parameters) {
-  NSDictionary *parsedParameters = parameters[kJLRouteParametersKey];
-  NSString *object = parsedParameters[@"object"];
-  NSString *action = parsedParameters[@"action"];
-  NSString *primaryKey = parsedParameters[@"primaryKey"];
+  NSString *object = parameters[@"object"];
+  NSString *action = parameters[@"action"];
+  NSString *primaryKey = parameters[@"primaryKey"];
   // stuff
   return YES;
 }];
@@ -46,14 +45,16 @@ NSURL *editPost = [NSURL URLWithString:@"myapp://post/edit/123?debug=true&foo=ba
 [[UIApplication sharedApplication] openURL:editPost];
 ```
 
-The parameters dictionary (via kJLRouteParametersKey) that the handler block receives would contain the following key/value pairs:
+The parameters dictionary that the handler block receives would contain the following key/value pairs:
 ```json
 {
   "object": "post",
   "action": "edit",
   "primaryKey": "123",
   "debug": "true",
-  "foo": "bar"
+  "foo": "bar",
+  "JLRouteURL" : "myapp://post/edit/123?debug=true&foo=bar",
+  "JLRoutePattern" : "/:object/:action/:primaryKey"
 }
 ```
 
@@ -68,7 +69,7 @@ The parameters dictionary (via kJLRouteParametersKey) that the handler block rec
 JLRoutes is available for installation via CocoaPods. The Releases folder in the repo has binary builds as well, if you'd rather just drop something in.
 
 ### Requirements ###
-ARC. Only tested on iOS 6, but I don't think there's any reason why it wouldn't work on previous versions. No dependencies other than Foundation.
+ARC. Only tested on iOS 6, but I don't think there's any reason why it wouldn't work on previous versions. No dependencies other than Foundation. It should also work seamlessly on OS X.
 
 ### License ###
 BSD

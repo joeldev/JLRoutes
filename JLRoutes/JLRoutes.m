@@ -67,10 +67,9 @@
 		
 		if (isMatch) {
 			// we found a match, start loading up the route parameters
-			routeParameters = [NSMutableDictionary dictionary];
+			routeParameters = [NSMutableDictionary dictionaryWithDictionary:variables];
 			routeParameters[kJLRoutePatternKey] = self.pattern;
 			routeParameters[kJLRouteURLKey] = URL;
-			routeParameters[kJLRouteParametersKey] = variables;
 		}
 	}
 	
@@ -170,8 +169,8 @@
 		NSDictionary *matchParameters = [route parametersForURL:URL components:URLComponents];
 		if (matchParameters) {
 			// add the URL parameters
-			NSMutableDictionary *mutableParameters = matchParameters[kJLRouteParametersKey]; // this is mutable because we created it as mutable in _JLRoute
-			[mutableParameters addEntriesFromDictionary:URLParameters];
+			NSMutableDictionary *finalParameters = (NSMutableDictionary *)matchParameters; // this is mutable because we created it as mutable in _JLRoute
+			[finalParameters addEntriesFromDictionary:URLParameters];
 			didRoute = route.block(matchParameters);
 			if (didRoute) {
 				break;

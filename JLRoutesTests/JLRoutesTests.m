@@ -52,7 +52,7 @@ static JLRoutesTests *testsInstance = nil;
 	[JLRoutes addRoute:@"/return/:value" handler:^BOOL(NSDictionary *parameters) {
 		NSLog(@"%@", parameters);
 		testsInstance.lastMatch = parameters;
-		NSString *value = parameters[kJLRouteParametersKey][@"value"];
+		NSString *value = parameters[@"value"];
 		return [value isEqualToString:@"yes"];
 	}];
 	
@@ -145,15 +145,14 @@ static JLRoutesTests *testsInstance = nil;
 - (void)validateParameterCount:(NSUInteger)count {
 	STAssertTrue(self.didRoute, @"didRoute should be YES");
 	STAssertNotNil(self.lastMatch, @"Last match was nil");
-	STAssertTrue([self.lastMatch[kJLRouteParametersKey] count] == count, @"Incorrect parameter count: %@", self.lastMatch);
+	STAssertTrue([self.lastMatch count] - 2 == count, @"Incorrect parameter count: %@", self.lastMatch);
 }
 
 
 - (void)validateParameter:(NSDictionary *)parameter {
 	NSString *key = [[parameter allKeys] lastObject];
 	NSString *value = [[parameter allValues] lastObject];
-	NSDictionary *parsedParameters = self.lastMatch[kJLRouteParametersKey];
-	STAssertTrue([parsedParameters[key] isEqualToString:value], @"Exact parameter pair not found: %@ in %@", parameter, self.lastMatch);
+	STAssertTrue([self.lastMatch[key] isEqualToString:value], @"Exact parameter pair not found: %@ in %@", parameter, self.lastMatch);
 }
 
 
