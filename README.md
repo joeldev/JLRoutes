@@ -14,7 +14,7 @@ JLRoutes is advanced URL parsing with a block-based callback API. It is designed
 
 // in your app delegate:
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
-  [JLRoutes routeURL:url];
+  return [JLRoutes routeURL:url];
 }
 ```
 
