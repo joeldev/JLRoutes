@@ -7,7 +7,7 @@ JLRoutes is advanced URL parsing with a block-based callback API. It is designed
 ### Simple Example ###
 ```objc
 [JLRoutes addRoute:@"/user/view/:userID" handler:^BOOL(NSDictionary *parameters) {
-  NSString *userID = parameters[@"userID"]; // defined in the route by specifying ":userID"
+  NSString *userID = parameters[kJLRouteParametersKey][@"userID"]; // defined in the route by specifying ":userID"
   // present UI for viewing user with ID 'userID'
   return YES; // return YES to say we have handled the route
 }];
@@ -30,9 +30,9 @@ In this example, the userID object in the parameters dictionary passed to the bl
 
 ```objc
 [JLRoutes addRoute:@"/:object/:action/:primaryKey" handler:^BOOL(NSDictionary *parameters) {
-  NSString *object = parameters[@"object"];
-  NSString *action = parameters[@"action"];
-  NSString *primaryKey = parameters[@"primaryKey"];
+  NSString *object = parameters[kJLRouteParametersKey][@"object"];
+  NSString *action = parameters[kJLRouteParametersKey][@"action"];
+  NSString *primaryKey = parameters[kJLRouteParametersKey][@"primaryKey"];
   // stuff
   return YES;
 }];
@@ -45,7 +45,7 @@ NSURL *editPost = [NSURL URLWithString:@"myapp://post/edit/123?debug=true&foo=ba
 [[UIApplication sharedApplication] openURL:editPost];
 ```
 
-The parameters dictionary that the handler block receives would contain the following key/value pairs:
+The parameters dictionary (via kJLRouteParametersKey) that the handler block receives would contain the following key/value pairs:
 ```json
 {
   "object": "post",
