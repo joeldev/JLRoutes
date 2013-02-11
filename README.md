@@ -26,7 +26,7 @@ In this example, the userID object in the parameters dictionary passed to the bl
 ```objc
 // would match things like /user/view/joeldev or /post/edit/123
 [JLRoutes addRoute:@"/:object/:action/:primaryKey" handler:^BOOL(NSDictionary *parameters) {
-  NSString *object = parameters[@"userID"];
+  NSString *object = parameters[@"object"];
   NSString *action = parameters[@"action"];
   NSString *primaryKey = parameters[@"primaryKey"];
   // stuff
