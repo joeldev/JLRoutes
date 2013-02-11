@@ -41,6 +41,7 @@ static JLRoutesTests *testsInstance = nil;
 	[JLRoutes addRoute:@"/user/view/:userID" handler:defaultHandler];
 	[JLRoutes addRoute:@"/:object/:action/:primaryKey" handler:defaultHandler];
 	[JLRoutes addRoute:@"/" handler:defaultHandler];
+	[JLRoutes addRoute:@"/:" handler:defaultHandler];
 	[JLRoutes addRoute:@"/interleaving/:param1/foo/:param2" handler:defaultHandler];
 	
 	// used in testPriority
@@ -66,8 +67,18 @@ static JLRoutesTests *testsInstance = nil;
 
 
 - (void)testBasicRouting {
+	[self route:@"tests:/"];
+	[self validateNoLastMatch];
+	
 	[self route:@"tests://"];
 	[self validateParameterCount:0];
+	
+	[self route:nil];
+	[self validateNoLastMatch];
+	
+	[self route:@"tests://test?"];
+	[self validateParameterCount:0];
+	[self validatePattern:@"/test"];
 	
 	[self route:@"tests://?key=value"];
 	[self validateParameterCount:1];

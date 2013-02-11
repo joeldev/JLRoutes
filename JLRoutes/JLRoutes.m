@@ -143,18 +143,20 @@
 	NSString *URLString = [URL absoluteString];
 	NSRange URLParamsRange = [URLString rangeOfString:@"?"];
 	// if there are any URL params, parse and hold on to them
-	if (URLParamsRange.location != NSNotFound && ![URLString hasSuffix:@"?"]) {
-		NSString *keyValueParams = [URLString substringFromIndex:URLParamsRange.location + 1];
-		NSArray *keyValuePairs = [keyValueParams componentsSeparatedByString:@"&"];
-		for (NSString *keyValuePair in keyValuePairs) {
-			NSArray *pair = [keyValuePair componentsSeparatedByString:@"="];
-			// don't assume we actually got a real key=value pair. start by assuming we only got @[key] before checking count
-			NSString *paramValue = pair[0];
-			if (pair.count == 2) {
-				// we got two params, so we can now use the second param as the value
-				paramValue = pair[1];
+	if (URLParamsRange.location != NSNotFound) {
+		if (![URLString hasSuffix:@"?"]) {
+			NSString *keyValueParams = [URLString substringFromIndex:URLParamsRange.location + 1];
+			NSArray *keyValuePairs = [keyValueParams componentsSeparatedByString:@"&"];
+			for (NSString *keyValuePair in keyValuePairs) {
+				NSArray *pair = [keyValuePair componentsSeparatedByString:@"="];
+				// don't assume we actually got a real key=value pair. start by assuming we only got @[key] before checking count
+				NSString *paramValue = pair[0];
+				if (pair.count == 2) {
+					// we got two params, so we can now use the second param as the value
+					paramValue = pair[1];
+				}
+				URLParameters[pair[0]] = paramValue;
 			}
-			URLParameters[pair[0]] = paramValue;
 		}
 		// strip the URL params out
 		URLString = [URLString substringToIndex:URLParamsRange.location];
