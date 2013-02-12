@@ -181,6 +181,7 @@
 	// break the URL down into path components
 	URLString = [URLString substringFromIndex:[[URL scheme] length] + 2]; // scheme + ':/'
 	NSArray *URLComponents = [URLString pathComponents];
+	// if this is a regular URL with a trailing slash, exclude the slash from our components array
 	if ([URLComponents count] > 1 && [[URLComponents lastObject] isEqualToString:@"/"]) {
 		URLComponents = [URLComponents subarrayWithRange:NSMakeRange(0, URLComponents.count - 1)];
 	}
