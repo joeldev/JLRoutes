@@ -9,6 +9,22 @@
 #import "JLRoutesTests.h"
 #import "JLRoutes.h"
 
+#define JLValidateParameterCount(c)\
+	STAssertTrue(self.didRoute, @"Route matched");\
+	STAssertNotNil(self.lastMatch, @"Matched something");\
+	STAssertEquals((NSInteger)[self.lastMatch count] - 2, (NSInteger)c, @"Expected parameter count")
+
+#define JLValidateParameter(parameter) {\
+	NSString *key = [[parameter allKeys] lastObject];\
+	NSString *value = [[parameter allValues] lastObject];\
+	STAssertEqualObjects(self.lastMatch[key], value, @"Exact parameter pair not found");}
+
+# define JLValidateNoLastMatch()\
+	STAssertFalse(self.didRoute, @"Expected not to route successfully")
+
+#define JLValidatePattern(pattern)\
+	STAssertEqualObjects(self.lastMatch[kJLRoutePatternKey], pattern, @"Pattern did not match")
+
 
 static JLRoutesTests *testsInstance = nil;
 
@@ -19,10 +35,6 @@ static JLRoutesTests *testsInstance = nil;
 @property (strong) NSDictionary *lastMatch;
 
 - (void)route:(NSString *)URLString;
-- (void)validateParameterCount:(NSUInteger)count;
-- (void)validateParameter:(NSDictionary *)parameter;
-- (void)validateNoLastMatch;
-- (void)validatePattern:(NSString *)pattern;
 
 @end
 
@@ -56,7 +68,7 @@ static JLRoutesTests *testsInstance = nil;
 		return [value isEqualToString:@"yes"];
 	}];
 	
-    [super setUp];
+	[super setUp];
 }
 
 
@@ -68,79 +80,85 @@ static JLRoutesTests *testsInstance = nil;
 
 - (void)testBasicRouting {
 	[self route:nil];
-	[self validateNoLastMatch];
+	JLValidateNoLastMatch();
 	
 	[self route:@"tests:/"];
-	[self validateNoLastMatch];
-	
+	JLValidatePattern(@"/");
+	JLValidateParameterCount(0);
+
 	[self route:@"tests://"];
-	[self validateParameterCount:0];
+	JLValidatePattern(@"/");
+	JLValidateParameterCount(0);
+
+	[self route:@"tests:/"];
+	JLValidatePattern(@"/");
+	JLValidateParameterCount(0);
 	
 	[self route:@"tests://test?"];
-	[self validateParameterCount:0];
-	[self validatePattern:@"/test"];
+	JLValidateParameterCount(0);
+	JLValidatePattern(@"/test");
 	
 	[self route:@"tests://test/"];
-	[self validateParameterCount:0];
-	[self validatePattern:@"/test"];
+	JLValidateParameterCount(0);
+	JLValidatePattern(@"/test");
 	
 	[self route:@"tests://test"];
-	[self validateParameterCount:0];
+	JLValidateParameterCount(0);
 	
 	[self route:@"tests://?key=value"];
-	[self validateParameterCount:1];
-	[self validateParameter:@{@"key": @"value"}];
+	JLValidateParameterCount(1);
+	JLValidateParameter(@{@"key": @"value"});
 	
 	[self route:@"tests://user/view/joeldev"];
-	[self validateParameterCount:1];
-	[self validateParameter:@{@"userID": @"joeldev"}];
+	JLValidateParameterCount(1);
+	JLValidateParameter(@{@"userID": @"joeldev"});
 	
 	[self route:@"tests://user/view/joeldev/"];
-	[self validateParameterCount:1];
-	[self validateParameter:@{@"userID": @"joeldev"}];
+	JLValidateParameterCount(1);
+	JLValidateParameter(@{@"userID": @"joeldev"});
 	
 	[self route:@"tests://user/view/joel%20levin"];
-	[self validateParameterCount:1];
-	[self validateParameter:@{@"userID": @"joel levin"}];
+	JLValidateParameterCount(1);
+	JLValidateParameter(@{@"userID": @"joel levin"});
 	
 	[self route:@"tests://user/view/joeldev?foo=bar&thing=stuff"];
-	[self validateParameterCount:3];
-	[self validateParameter:@{@"userID": @"joeldev"}];
-	[self validateParameter:@{@"foo" : @"bar"}];
-	[self validateParameter:@{@"thing" : @"stuff"}];
+	JLValidateParameterCount(3);
+	JLValidateParameter(@{@"userID": @"joeldev"});
+	JLValidateParameter(@{@"foo" : @"bar"});
+	JLValidateParameter(@{@"thing" : @"stuff"});
 	
 	[self route:@"tests://post/edit/123"];
-	[self validateParameterCount:3];
-	[self validateParameter:@{@"object": @"post"}];
-	[self validateParameter:@{@"action": @"edit"}];
-	[self validateParameter:@{@"primaryKey": @"123"}];
+	JLValidateParameterCount(3);
+	JLValidateParameter(@{@"object": @"post"});
+	JLValidateParameter(@{@"action": @"edit"});
+	JLValidateParameter(@{@"primaryKey": @"123"});
 	
 	[self route:@"tests://interleaving/paramvalue1/foo/paramvalue2"];
-	[self validateParameterCount:2];
-	[self validateParameter:@{@"param1": @"paramvalue1"}];
-	[self validateParameter:@{@"param2": @"paramvalue2"}];
+	JLValidateParameterCount(2);
+	JLValidateParameter(@{@"param1": @"paramvalue1"});
+	JLValidateParameter(@{@"param2": @"paramvalue2"});
 	
 	[self route:@"tests://doesnt/exist/and/wont/match"];
-	[self validateNoLastMatch];
+	JLValidateNoLastMatch();
 }
 
 
 - (void)testPriority {
 	// this should match the /test/priority/high route even though there's one before it that would match if priority wasn't being set
 	[self route:@"tests://test/priority/high"];
-	[self validateParameterCount:0];
-	[self validatePattern:@"/test/priority/high"];
+	JLValidateParameterCount(0);
+	JLValidatePattern(@"/test/priority/high");
 }
 
 
 - (void)testBlockReturnValue {
 	// even though this matches a route, the block returns NO here so there won't be a valid match
 	[self route:@"tests://return/no"];
-	[self validateNoLastMatch];
+	JLValidateNoLastMatch();
 	
 	// this one is the same route but will return yes, causing it to be flagged as a match
 	[self route:@"tests://return/yes"];
-	[self validateParameterCount:1]; // the value is parameterized, so 'yes' should be the only param
+	JLValidateParameterCount(1); // the value is parameterized, so 'yes' should be the only param
 }
 
 
@@ -151,30 +169,6 @@ static JLRoutesTests *testsInstance = nil;
 	NSLog(@"*** Routing %@", URLString);
 	self.lastMatch = nil;
 	self.didRoute = [JLRoutes routeURL:[NSURL URLWithString:URLString]];
-}
-
-
-- (void)validateParameterCount:(NSUInteger)count {
-	STAssertTrue(self.didRoute, @"didRoute should be YES");
-	STAssertNotNil(self.lastMatch, @"Last match was nil");
-	STAssertTrue([self.lastMatch count] - 2 == count, @"Incorrect parameter count: %@", self.lastMatch);
-}
-
-
-- (void)validateParameter:(NSDictionary *)parameter {
-	NSString *key = [[parameter allKeys] lastObject];
-	NSString *value = [[parameter allValues] lastObject];
-	STAssertTrue([self.lastMatch[key] isEqualToString:value], @"Exact parameter pair not found: %@ in %@", parameter, self.lastMatch);
-}
-
-
-- (void)validateNoLastMatch {
-	STAssertFalse(self.didRoute, @"Expected not to route successfully");
-}
-
-
-- (void)validatePattern:(NSString *)pattern {
-	STAssertTrue([self.lastMatch[kJLRoutePatternKey] isEqualToString:pattern], @"Pattern did not match, was expecting: %@", pattern);
 }
 
 
