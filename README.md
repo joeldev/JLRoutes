@@ -86,6 +86,9 @@ The parameters dictionary that the handler block receives would contain the foll
 * Routes prioritization
 * Return NO from a handler block for JLRoutes to look for the next matching route
 
+### Apps using JLRoutes ###
+* None that I know of so far! Feel free to create an issue asking me to add your app, if you're making use of JLRoutes.
+
 ### Installation ###
 JLRoutes is available for installation via CocoaPods. The Releases folder in the repo has binary builds as well, if you'd rather just drop something in.
 
