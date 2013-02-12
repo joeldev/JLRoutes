@@ -181,6 +181,9 @@
 	// break the URL down into path components
 	URLString = [URLString substringFromIndex:[[URL scheme] length] + 2]; // scheme + ':/'
 	NSArray *URLComponents = [URLString pathComponents];
+	if ([URLComponents count] > 1 && [[URLComponents lastObject] isEqualToString:@"/"]) {
+		URLComponents = [URLComponents subarrayWithRange:NSMakeRange(0, URLComponents.count - 1)];
+	}
 	
 	for (_JLRoute *route in routes) {
 		NSDictionary *matchParameters = [route parametersForURL:URL components:URLComponents];

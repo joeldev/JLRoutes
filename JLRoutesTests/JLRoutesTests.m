@@ -67,27 +67,35 @@ static JLRoutesTests *testsInstance = nil;
 
 
 - (void)testBasicRouting {
+	[self route:nil];
+	[self validateNoLastMatch];
+	
 	[self route:@"tests:/"];
 	[self validateNoLastMatch];
 	
 	[self route:@"tests://"];
 	[self validateParameterCount:0];
 	
-	[self route:nil];
-	[self validateNoLastMatch];
-	
 	[self route:@"tests://test?"];
 	[self validateParameterCount:0];
 	[self validatePattern:@"/test"];
+	
+	[self route:@"tests://test/"];
+	[self validateParameterCount:0];
+	[self validatePattern:@"/test"];
+	
+	[self route:@"tests://test"];
+	[self validateParameterCount:0];
 	
 	[self route:@"tests://?key=value"];
 	[self validateParameterCount:1];
 	[self validateParameter:@{@"key": @"value"}];
 	
-	[self route:@"tests://test"];
-	[self validateParameterCount:0];
-	
 	[self route:@"tests://user/view/joeldev"];
+	[self validateParameterCount:1];
+	[self validateParameter:@{@"userID": @"joeldev"}];
+	
+	[self route:@"tests://user/view/joeldev/"];
 	[self validateParameterCount:1];
 	[self validateParameter:@{@"userID": @"joeldev"}];
 	
