@@ -85,6 +85,7 @@ The parameters dictionary that the handler block receives would contain the foll
 * Seamlessly parses out GET URL parameters and passes them along as part of the parameters dictionary
 * Routes prioritization
 * Return NO from a handler block for JLRoutes to look for the next matching route
+* No dependencies other than Foundation
 
 ### Apps using JLRoutes ###
 * None that I know of so far! Feel free to create an issue asking me to add your app, if you're making use of JLRoutes.
@@ -93,7 +94,7 @@ The parameters dictionary that the handler block receives would contain the foll
 JLRoutes is available for installation via CocoaPods. The Releases folder in the repo has binary builds as well, if you'd rather just drop something in.
 
 ### Requirements ###
-ARC. Only tested on iOS 6, but I don't think there's any reason why it wouldn't work on previous versions. No dependencies other than Foundation. It should also work seamlessly on OS X.
+ARC. Only tested on iOS 6, but I don't think there's any reason why it wouldn't work on previous versions. It should also work seamlessly on OS X.
 
 ### License ###
 BSD
