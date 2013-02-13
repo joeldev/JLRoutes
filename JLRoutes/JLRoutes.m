@@ -61,7 +61,7 @@
 	}
 	
 	// do a quick component count check to quickly eliminate incorrect patterns
-	if (self.patternPathComponents.count == URLComponents.count) {
+	if (URL && self.patternPathComponents.count == URLComponents.count) {
 		// now that we've identified a possible match, move component by component to check if it's a match
 		NSUInteger componentIndex = 0;
 		NSMutableDictionary *variables = [NSMutableDictionary dictionary];
@@ -155,7 +155,6 @@
 	if (!URL) {
 		return NO;
 	}
-	
 	BOOL didRoute = NO;
 	NSArray *routes = [self sharedInstance].routes;
 	NSMutableDictionary *URLParameters = [NSMutableDictionary dictionary];

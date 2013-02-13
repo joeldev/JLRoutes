@@ -9,7 +9,6 @@
 #import "JLRoutesTests.h"
 #import "JLRoutes.h"
 
-
 #define JLValidateParameterCount(c)\
 	STAssertTrue(self.didRoute, @"Route matched");\
 	STAssertNotNil(self.lastMatch, @"Matched something");\
@@ -20,7 +19,7 @@
 	NSString *value = [[parameter allValues] lastObject];\
 	STAssertEqualObjects(self.lastMatch[key], value, @"Exact parameter pair not found");}
 
-#define JLValidateNoLastMatch()\
+# define JLValidateNoLastMatch()\
 	STAssertFalse(self.didRoute, @"Expected not to route successfully")
 
 #define JLValidatePattern(pattern)\
