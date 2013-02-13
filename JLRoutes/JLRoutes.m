@@ -32,8 +32,8 @@
 @implementation NSString (JLRoutes)
 
 - (NSString *)JLRoutes_URLDecodedString {
-	CFStringRef decodedString = CFURLCreateStringByReplacingPercentEscapesUsingEncoding(NULL, (CFStringRef)self, CFSTR(""), kCFStringEncodingUTF8);
-	return (__bridge_transfer NSString *)decodedString;
+	NSString *resultString = [self stringByReplacingOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, self.length)];
+	return [resultString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
 @end
@@ -57,11 +57,11 @@
 	NSMutableDictionary *routeParameters = nil;
 	
 	if (!self.patternPathComponents) {
-		self.patternPathComponents = [self.pattern pathComponents];
+		self.patternPathComponents = [[self.pattern pathComponents] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
 	}
 	
 	// do a quick component count check to quickly eliminate incorrect patterns
-	if (self.patternPathComponents.count == URLComponents.count) {
+	if (URL && self.patternPathComponents.count == URLComponents.count) {
 		// now that we've identified a possible match, move component by component to check if it's a match
 		NSUInteger componentIndex = 0;
 		NSMutableDictionary *variables = [NSMutableDictionary dictionary];
@@ -152,42 +152,36 @@
 
 
 + (BOOL)routeURL:(NSURL *)URL {
+	if (!URL) {
+		return NO;
+	}
 	BOOL didRoute = NO;
 	NSArray *routes = [self sharedInstance].routes;
 	NSMutableDictionary *URLParameters = [NSMutableDictionary dictionary];
-	
-	NSString *URLString = [URL absoluteString];
-	NSRange URLParamsRange = [URLString rangeOfString:@"?"];
+
 	// if there are any URL params, parse and hold on to them
-	if (URL && URLParamsRange.location != NSNotFound) {
-		if (![URLString hasSuffix:@"?"]) {
-			NSString *keyValueParams = [URLString substringFromIndex:URLParamsRange.location + 1];
-			NSArray *keyValuePairs = [keyValueParams componentsSeparatedByString:@"&"];
-			for (NSString *keyValuePair in keyValuePairs) {
-				NSArray *pair = [keyValuePair componentsSeparatedByString:@"="];
-				// don't assume we actually got a real key=value pair. start by assuming we only got @[key] before checking count
-				NSString *paramValue = pair[0];
-				if (pair.count == 2) {
-					// we got two params, so we can now use the second param as the value
-					paramValue = pair[1];
-				}
-				URLParameters[pair[0]] = [paramValue JLRoutes_URLDecodedString];
-			}
+	if (URL.query.length) {
+		NSArray *keyValuePairs = [URL.query componentsSeparatedByString:@"&"];
+		for (NSString *keyValuePair in keyValuePairs) {
+			NSArray *pair = [keyValuePair componentsSeparatedByString:@"="];
+			// don't assume we actually got a real key=value pair. start by assuming we only got @[key] before checking count
+			NSString *paramValue = pair.count == 2 ? pair[1] : @"";
+			// CFURLCreateStringByReplacingPercentEscapesUsingEncoding may return NULL
+			URLParameters[pair[0]] = [paramValue JLRoutes_URLDecodedString] ?: @"";
 		}
-		// strip the URL params out
-		URLString = [URLString substringToIndex:URLParamsRange.location];
 	}
 	
-	// break the URL down into path components
-	URLString = [URLString substringFromIndex:[[URL scheme] length] + 2]; // scheme + ':/'
-	NSArray *URLComponents = [URLString pathComponents];
-	// if this is a regular URL with a trailing slash, exclude the slash from our components array
-	if ([URLComponents count] > 1 && [[URLComponents lastObject] isEqualToString:@"/"]) {
-		URLComponents = [URLComponents subarrayWithRange:NSMakeRange(0, URLComponents.count - 1)];
+	// break the URL down into path components and filter out any leading/trailing slashes from it
+	NSArray *pathComponents = [URL.pathComponents ?: @[] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
+
+	if ([URL.host rangeOfString:@"."].location == NSNotFound) {
+		// For backward compatibility, handle scheme://path/to/ressource as if path was part of the
+		// path if it doesn't look like a domain name (no dot in it)
+		pathComponents = [@[URL.host] arrayByAddingObjectsFromArray:pathComponents];
 	}
-	
+
 	for (_JLRoute *route in routes) {
-		NSDictionary *matchParameters = [route parametersForURL:URL components:URLComponents];
+		NSDictionary *matchParameters = [route parametersForURL:URL components:pathComponents];
 		if (matchParameters) {
 			// add the URL parameters
 			NSMutableDictionary *finalParameters = (NSMutableDictionary *)matchParameters; // this is mutable because we created it as mutable in _JLRoute
