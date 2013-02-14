@@ -4,6 +4,14 @@ JLRoutes
 ### What is it? ###
 JLRoutes is advanced URL parsing with a block-based callback API. It is designed to make it very easy to handle complex URL schemes in your application without having to do any URL or string parsing of any kind.
 
+### Features ###
+* Simple API with minimal impact to existing codebases
+* Parse any number of parameters interleaved throughout the URL
+* Seamlessly parses out GET URL parameters and passes them along as part of the parameters dictionary
+* Routes prioritization
+* Return NO from a handler block for JLRoutes to look for the next matching route
+* No dependencies other than Foundation
+
 ### Simple Example ###
 ```objc
 [JLRoutes addRoute:@"/user/view/:userID" handler:^BOOL(NSDictionary *parameters) {
@@ -78,14 +86,6 @@ The parameters dictionary that the handler block receives would contain the foll
   "JLRoutePattern" : "/:object/:action/:primaryKey"
 }
 ```
-
-### Features ###
-* Simple API with minimal impact to existing codebases
-* Parse any number of parameters interleaved throughout the URL
-* Seamlessly parses out GET URL parameters and passes them along as part of the parameters dictionary
-* Routes prioritization
-* Return NO from a handler block for JLRoutes to look for the next matching route
-* No dependencies other than Foundation
 
 ### Apps using JLRoutes ###
 * None that I know of so far! Feel free to create an issue asking me to add your app, if you're making use of JLRoutes.
