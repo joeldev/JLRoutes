@@ -9,6 +9,7 @@ JLRoutes is advanced URL parsing with a block-based callback API. It is designed
 * Parse any number of parameters interleaved throughout the URL
 * Seamlessly parses out GET URL parameters and passes them along as part of the parameters dictionary
 * Routes prioritization
+* Scheme namespaces to easily segment routes and block handlers for multiple schemes (1.1)
 * Return NO from a handler block for JLRoutes to look for the next matching route
 * No dependencies other than Foundation
 
@@ -32,7 +33,7 @@ NSURL *viewUserURL = [NSURL URLWithString:@"myapp://user/view/joeldev"];
 [[UIApplication sharedApplication] openURL:viewUserURL];
 ```
 
-In this example, the userID object in the parameters dictionary passed to the block would have "userID" : "joeldev", which could then be used to present a UI or do whatever else is needed.
+In this example, the userID object in the parameters dictionary passed to the block would have the key/value pair `"userID": "joeldev"`, which could then be used to present a UI or do whatever else is needed.
 
 ### The Parameters Dictionary ###
 
@@ -51,9 +52,11 @@ static NSString *const kJLRoutePatternKey = @"JLRoutePattern";
 static NSString *const kJLRouteURLKey = @"JLRouteURL";
 ```
 
-### Handler Block Return Value ###
+### Handler Block ###
 
-As you may have noticed, the handler block is expected to return a BOOL for if it has handled the route or not. If the block returns NO, JLRoutes will behave as if that route is not a match and it will continue looking for a match. A route is considered to be a match if the pattern string matches AND the block returns YES.
+As you may have noticed, the handler block is expected to return a boolean for if it has handled the route or not. If the block returns `NO`, JLRoutes will behave as if that route is not a match and it will continue looking for a match. A route is considered to be a match if the pattern string matches **and** the block returns `YES`.
+
+It is also important to note that if you pass nil for the handler block, an internal handler block will be created that simply returns `YES`.
 
 ### More Complex Example ###
 
@@ -67,7 +70,7 @@ As you may have noticed, the handler block is expected to return a BOOL for if i
 }];
 ```
 
-This route would match things like /user/view/joeldev or /post/edit/123. Let's say you did /post/edit/123 with some URL params as well:
+This route would match things like `/user/view/joeldev` or `/post/edit/123`. Let's say you called `/post/edit/123` with some URL params as well:
 
 ```objc
 NSURL *editPost = [NSURL URLWithString:@"myapp://post/edit/123?debug=true&foo=bar"];
@@ -87,14 +90,55 @@ The parameters dictionary that the handler block receives would contain the foll
 }
 ```
 
+### Scheme Namespaces (available in 1.1) ###
+
+JLRoutes supports setting up routes within the namespace of a given URL scheme. Routes that are set up within the namespace of a single scheme can only be matched by URLs that use that same scheme. By default, all routes go into the global scheme. The current +addRoute methods will use this scheme, and no functionality is different.
+
+However, if you decide that you do need to handle multiple schemes with different sets of functionality, here is an example of how to do that:
+
+```obcj
+[JLRoutes addRoute:@"/foo" handler:^BOOL(NSDictionary *parameters) {
+  // This block is called if the scheme is not 'thing' or 'stuff' (see below)
+  return YES;
+}];
+
+[[JLRoutes routesForScheme:@"thing] addRoute:@"/foo" handler:^BOOL(NSDictionary *parameters) {
+  // This block is called for thing://foo
+  return YES;
+}];
+
+[[JLRoutes routesForScheme:@"stuff] addRoute:@"/foo" handler:^BOOL(NSDictionary *parameters) {
+  // This block is called for stuff://foo
+  return YES;
+}];
+```
+
+This example shows that you can declare the same routes in different schemes and handle them with different callbacks on a per-scheme basis.
+
+Continuing with this example, if you were to add the following route to the collection above:
+
+```objc
+[JLRoutes addRoute:@"/global" handler:^BOOL(NSDictionary *parameters) {
+  return YES;
+}];
+```
+
+and then try to route the URL `thing://global`, it would not match because that route has not been declared within the namespace `thing` but has instead been declared within the global namespace (which we'll assume is how the developer wants it). However, you can easily change this behavior by setting the following property to `YES`:
+
+```objc
+[JLRoutes routesForScheme:@"thing].shouldFallbackToGlobalRoutes = YES;
+```
+
+This tells JLRoutes that if a URL cannot be routed within the namespace `thing` (aka, it starts with `thing:` but no appropriate route can be found in the namespace), try to recover by looking for a matching route in the global routes namespace as well. After setting that property to `YES`, the URL 'thing://global` would be routed to the /global block.
+
 ### Apps using JLRoutes ###
-* None that I know of so far! Feel free to create an issue asking me to add your app, if you're making use of JLRoutes.
+*None that I know of so far! Feel free to create an issue asking me to add your app.*
 
 ### Installation ###
 JLRoutes is available for installation via CocoaPods. The Releases folder in the repo has binary builds as well, if you'd rather just drop something in.
 
 ### Requirements ###
-ARC. Only tested on iOS 6, but I don't think there's any reason why it wouldn't work on previous versions. It should also work seamlessly on OS X.
+Requires ARC. Only tested on iOS 6, but I don't think there's any reason why it wouldn't work on previous iOS versions. It should also work seamlessly on OS X.
 
 ### License ###
 BSD

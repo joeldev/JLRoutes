@@ -13,11 +13,16 @@
 #import "JLRoutes.h"
 
 
+static NSMutableDictionary *routeControllersMap = nil;
+
+
 @interface JLRoutes ()
 
 @property (strong) NSMutableArray *routes;
+@property (strong) NSString *namespaceKey;
 
-+ (JLRoutes *)sharedInstance;
++ (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController;
+- (BOOL)isGlobalRoutesController;
 
 @end
 
@@ -41,6 +46,7 @@
 
 @interface _JLRoute : NSObject
 
+@property (weak) JLRoutes *parentRoutesController;
 @property (strong) NSString *pattern;
 @property (strong) BOOL (^block)(NSDictionary *parameters);
 @property (assign) NSUInteger priority;
@@ -87,6 +93,7 @@
 			routeParameters = [NSMutableDictionary dictionaryWithDictionary:variables];
 			routeParameters[kJLRoutePatternKey] = self.pattern;
 			routeParameters[kJLRouteURLKey] = URL;
+			routeParameters[kJLRouteNamespaceKey] = self.parentRoutesController.namespaceKey;
 		}
 	}
 	
@@ -99,14 +106,28 @@
 
 @implementation JLRoutes
 
-+ (JLRoutes *)sharedInstance {
-	static JLRoutes *staticInstance = nil;
++ (instancetype)globalRoutes {
+	return [self routesForScheme:kJLRoutesGlobalNamespaceKey];
+}
+
+
++ (instancetype)routesForScheme:(NSString *)scheme {
+	JLRoutes *routesController = nil;
+	
 	static dispatch_once_t onceToken;
 	dispatch_once(&onceToken, ^{
-		staticInstance = [[JLRoutes alloc] init];
+		routeControllersMap = [[NSMutableDictionary alloc] init];
 	});
 	
-	return staticInstance;
+	if (!routeControllersMap[scheme]) {
+		routesController = [[JLRoutes alloc] init];
+		routesController.namespaceKey = scheme;
+		routeControllersMap[scheme] = routesController;
+	}
+	
+	routesController = routeControllersMap[scheme];
+	
+	return routesController;
 }
 
 
@@ -119,15 +140,26 @@
 
 
 + (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
-	[[self class] addRoute:routePattern priority:0 handler:handlerBlock];
+	[[self globalRoutes] addRoute:routePattern handler:handlerBlock];
 }
 
 
 + (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
+	[[self globalRoutes] addRoute:routePattern priority:priority handler:handlerBlock];
+}
+
+
+- (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
+	[self addRoute:routePattern priority:0 handler:handlerBlock];
+}
+
+
+- (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
 	_JLRoute *route = [[_JLRoute alloc] init];
 	route.pattern = routePattern;
 	route.priority = priority;
 	route.block = [handlerBlock copy];
+	route.parentRoutesController = self;
 	
 	if (!route.block) {
 		route.block = [^BOOL (NSDictionary *params) {
@@ -136,13 +168,13 @@
 	}
 	
 	if (priority == 0) {
-		[[self sharedInstance].routes addObject:route];
+		[self.routes addObject:route];
 	} else {
-		NSArray *existingRoutes = [self sharedInstance].routes;
+		NSArray *existingRoutes = self.routes;
 		NSUInteger index = 0;
 		for (_JLRoute *existingRoute in existingRoutes) {
 			if (existingRoute.priority < priority) {
-				[[self sharedInstance].routes insertObject:route atIndex:index];
+				[self.routes insertObject:route atIndex:index];
 				break;
 			}
 			index++;
@@ -156,10 +188,21 @@
 		return NO;
 	}
 	
-	BOOL didRoute = NO;
-	NSArray *routes = [self sharedInstance].routes;
-	NSMutableDictionary *URLParameters = [NSMutableDictionary dictionary];
+	// figure out which routes controller to use based on the scheme
+	JLRoutes *routesController = [self globalRoutes];
+	if (routeControllersMap[[URL scheme]]) {
+		routesController = routeControllersMap[[URL scheme]];
+	}
+	
+	return [self routeURL:URL withController:routesController];
+}
 
+
++ (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController {
+	BOOL didRoute = NO;
+	NSArray *routes = routesController.routes;
+	NSMutableDictionary *URLParameters = [NSMutableDictionary dictionary];
+	
 	// if there are any URL params, parse and hold on to them
 	if (URL.query.length) {
 		NSArray *keyValuePairs = [URL.query componentsSeparatedByString:@"&"];
@@ -174,13 +217,13 @@
 	
 	// break the URL down into path components and filter out any leading/trailing slashes from it
 	NSArray *pathComponents = [URL.pathComponents ?: @[] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
-
+	
 	if ([URL.host rangeOfString:@"."].location == NSNotFound) {
 		// For backward compatibility, handle scheme://path/to/ressource as if path was part of the
 		// path if it doesn't look like a domain name (no dot in it)
 		pathComponents = [@[URL.host] arrayByAddingObjectsFromArray:pathComponents];
 	}
-
+	
 	for (_JLRoute *route in routes) {
 		NSDictionary *matchParameters = [route parametersForURL:URL components:pathComponents];
 		if (matchParameters) {
@@ -194,7 +237,17 @@
 		}
 	}
 	
+	// if we couldn't find a match and this routes controller specifies to fallback and its also not the global routes controller, then...
+	if (!didRoute && routesController.shouldFallbackToGlobalRoutes && ![routesController isGlobalRoutesController]) {
+		didRoute = [self routeURL:URL withController:[self globalRoutes]];
+	}
+	
 	return didRoute;
+}
+
+
+- (BOOL)isGlobalRoutesController {
+	return [self.namespaceKey isEqualToString:kJLRoutesGlobalNamespaceKey];
 }
 
 

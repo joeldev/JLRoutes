@@ -15,6 +15,8 @@
 
 static NSString *const kJLRoutePatternKey = @"JLRoutePattern";
 static NSString *const kJLRouteURLKey = @"JLRouteURL";
+static NSString *const kJLRouteNamespaceKey = @"JLRouteNamespace";
+static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 
 
 @interface JLRoutes : NSObject
@@ -22,16 +24,27 @@ static NSString *const kJLRouteURLKey = @"JLRouteURL";
  JLRoutes is a way to manage URL routes and invoke them from a URL.
  */
 
-/// Registers a routePattern with default priority (0).
-+ (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
+/// Returns the global routing namespace (this is used by the +addRoute methods by default)
++ (instancetype)globalRoutes;
 
-/// Registers a routePattern with a handlerBlock to call when the route pattern is matched by a URL.
+/// Returns a routing namespace for the given scheme
++ (instancetype)routesForScheme:(NSString *)scheme;
+
+/// Registers a routePattern with default priority (0) in the global scheme namespace.
++ (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
+- (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method
+
+/// Registers a routePattern in the global scheme namespace with a handlerBlock to call when the route pattern is matched by a URL.
 /// The block returns a BOOL representing if the handlerBlock actually handled the route or not. If
 /// a block returns NO, JLRoutes will continue trying to find a matching route.
 + (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
+- (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method
 
 /// Routes a URL, calling handler blocks (for patterns that match URL) until one returns YES.
 + (BOOL)routeURL:(NSURL *)URL;
+
+/// Controls whether or not this routes controller will try to match a URL with global routes if it can't be matched in the current namespace. Default is NO.
+@property (assign) BOOL shouldFallbackToGlobalRoutes;
 
 @end
 

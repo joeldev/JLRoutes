@@ -10,10 +10,10 @@
 #import "JLRoutes.h"
 
 
-#define JLValidateParameterCount(c)\
+#define JLValidateParameterCount(expectedCount)\
 	STAssertTrue(self.didRoute, @"Route matched");\
 	STAssertNotNil(self.lastMatch, @"Matched something");\
-	STAssertEquals((NSInteger)[self.lastMatch count] - 2, (NSInteger)c, @"Expected parameter count")
+	STAssertEquals((NSInteger)[self.lastMatch count] - 3, (NSInteger)expectedCount, @"Expected parameter count")
 
 #define JLValidateParameter(parameter) {\
 	NSString *key = [[parameter allKeys] lastObject];\
@@ -25,6 +25,9 @@
 
 #define JLValidatePattern(pattern)\
 	STAssertEqualObjects(self.lastMatch[kJLRoutePatternKey], pattern, @"Pattern did not match")
+
+#define JLValidateScheme(scheme)\
+	STAssertEqualObjects(self.lastMatch[kJLRouteNamespaceKey], scheme, @"Scheme did not match")
 
 
 static JLRoutesTests *testsInstance = nil;
@@ -68,6 +71,11 @@ static JLRoutesTests *testsInstance = nil;
 		NSString *value = parameters[@"value"];
 		return [value isEqualToString:@"yes"];
 	}];
+	
+	// used in testNamespaces
+	[[JLRoutes routesForScheme:@"namespaceTest1"] addRoute:@"/test" handler:defaultHandler];
+	[[JLRoutes routesForScheme:@"namespaceTest2"] addRoute:@"/test" handler:defaultHandler];
+	[JLRoutes routesForScheme:@"namespaceTest2"].shouldFallbackToGlobalRoutes = YES;
 	
 	[super setUp];
 }
@@ -160,6 +168,34 @@ static JLRoutesTests *testsInstance = nil;
 	// this one is the same route but will return yes, causing it to be flagged as a match
 	[self route:@"tests://return/yes"];
 	JLValidateParameterCount(1); // the value is parameterized, so 'yes' should be the only param
+}
+
+
+- (void)testNamespaces {
+	// test that the same route can be handled differently for three different scheme namespaces
+	[self route:@"tests://test"];
+	JLValidateParameterCount(0);
+	JLValidateScheme(kJLRoutesGlobalNamespaceKey);
+	
+	[self route:@"namespaceTest1://test"];
+	JLValidateParameterCount(0);
+	JLValidateScheme(@"namespaceTest1");
+	
+	[self route:@"namespaceTest2://test"];
+	JLValidateParameterCount(0);
+	JLValidateScheme(@"namespaceTest2");
+}
+
+
+- (void)testFallbackToGlobal {
+	// first case, fallback is off and so this should fail because this route isnt declared as part of namespaceTest1
+	[self route:@"namespaceTest1://user/view/joeldev"];
+	JLValidateNoLastMatch();
+	
+	// fallback is on, so this should route
+	[self route:@"namespaceTest2://user/view/joeldev"];
+	JLValidateParameterCount(1);
+	JLValidateParameter(@{@"userID" : @"joeldev"});
 }
 
 
