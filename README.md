@@ -96,7 +96,7 @@ JLRoutes supports setting up routes within the namespace of a given URL scheme. 
 
 However, if you decide that you do need to handle multiple schemes with different sets of functionality, here is an example of how to do that:
 
-```obcj
+```objc
 [JLRoutes addRoute:@"/foo" handler:^BOOL(NSDictionary *parameters) {
   // This block is called if the scheme is not 'thing' or 'stuff' (see below)
   return YES;
