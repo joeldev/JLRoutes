@@ -126,7 +126,7 @@ Continuing with this example, if you were to add the following route to the coll
 and then try to route the URL `thing://global`, it would not match because that route has not been declared within the namespace `thing` but has instead been declared within the global namespace (which we'll assume is how the developer wants it). However, you can easily change this behavior by setting the following property to `YES`:
 
 ```objc
-[JLRoutes routesForScheme:@"thing].shouldFallbackToGlobalRoutes = YES;
+[JLRoutes routesForScheme:@"thing"].shouldFallbackToGlobalRoutes = YES;
 ```
 
 This tells JLRoutes that if a URL cannot be routed within the namespace `thing` (aka, it starts with `thing:` but no appropriate route can be found in the namespace), try to recover by looking for a matching route in the global routes namespace as well. After setting that property to `YES`, the URL 'thing://global` would be routed to the /global block.
