@@ -102,12 +102,12 @@ However, if you decide that you do need to handle multiple schemes with differen
   return YES;
 }];
 
-[[JLRoutes routesForScheme:@"thing] addRoute:@"/foo" handler:^BOOL(NSDictionary *parameters) {
+[[JLRoutes routesForScheme:@"thing"] addRoute:@"/foo" handler:^BOOL(NSDictionary *parameters) {
   // This block is called for thing://foo
   return YES;
 }];
 
-[[JLRoutes routesForScheme:@"stuff] addRoute:@"/foo" handler:^BOOL(NSDictionary *parameters) {
+[[JLRoutes routesForScheme:@"stuff"] addRoute:@"/foo" handler:^BOOL(NSDictionary *parameters) {
   // This block is called for stuff://foo
   return YES;
 }];
