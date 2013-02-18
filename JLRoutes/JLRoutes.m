@@ -230,7 +230,7 @@ static NSMutableDictionary *routeControllersMap = nil;
 			// add the URL parameters
 			NSMutableDictionary *finalParameters = (NSMutableDictionary *)matchParameters; // this is mutable because we created it as mutable in _JLRoute
 			[finalParameters addEntriesFromDictionary:URLParameters];
-			didRoute = route.block(matchParameters);
+			didRoute = route.block(finalParameters);
 			if (didRoute) {
 				break;
 			}
