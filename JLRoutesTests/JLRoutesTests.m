@@ -98,10 +98,6 @@ static JLRoutesTests *testsInstance = nil;
 	[self route:@"tests://"];
 	JLValidatePattern(@"/");
 	JLValidateParameterCount(0);
-
-	[self route:@"tests:/"];
-	JLValidatePattern(@"/");
-	JLValidateParameterCount(0);
 	
 	[self route:@"tests://test?"];
 	JLValidateParameterCount(0);
@@ -194,6 +190,7 @@ static JLRoutesTests *testsInstance = nil;
 	
 	// fallback is on, so this should route
 	[self route:@"namespaceTest2://user/view/joeldev"];
+	JLValidateScheme(kJLRoutesGlobalNamespaceKey);
 	JLValidateParameterCount(1);
 	JLValidateParameter(@{@"userID" : @"joeldev"});
 }

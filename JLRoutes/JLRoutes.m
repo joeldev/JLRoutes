@@ -189,10 +189,7 @@ static NSMutableDictionary *routeControllersMap = nil;
 	}
 	
 	// figure out which routes controller to use based on the scheme
-	JLRoutes *routesController = [self globalRoutes];
-	if (routeControllersMap[[URL scheme]]) {
-		routesController = routeControllersMap[[URL scheme]];
-	}
+	JLRoutes *routesController = routeControllersMap[[URL scheme]] ?: [self globalRoutes];
 	
 	return [self routeURL:URL withController:routesController];
 }
@@ -216,7 +213,7 @@ static NSMutableDictionary *routeControllersMap = nil;
 	}
 	
 	// break the URL down into path components and filter out any leading/trailing slashes from it
-	NSArray *pathComponents = [URL.pathComponents ?: @[] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
+	NSArray *pathComponents = [(URL.pathComponents ?: @[]) filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
 	
 	if ([URL.host rangeOfString:@"."].location == NSNotFound) {
 		// For backward compatibility, handle scheme://path/to/ressource as if path was part of the
