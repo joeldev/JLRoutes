@@ -52,15 +52,24 @@ static NSMutableDictionary *routeControllersMap = nil;
 @property (assign) NSUInteger priority;
 @property (strong) NSArray *patternPathComponents;
 
-- (NSDictionary *)parametersForURL:(NSURL *)URL components:(NSArray *)URLComponents;
+- (NSDictionary *)parametersForURL:(NSURL *)URL;
 
 @end
 
 
 @implementation _JLRoute
 
-- (NSDictionary *)parametersForURL:(NSURL *)URL components:(NSArray *)URLComponents {
+- (NSDictionary *)parametersForURL:(NSURL *)URL {
 	NSMutableDictionary *routeParameters = nil;
+	
+	// break the URL down into path components and filter out any leading/trailing slashes from it
+	NSArray *URLComponents = [URL.pathComponents ?: @[] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
+	
+	if ([URL.host rangeOfString:@"."].location == NSNotFound) {
+		// For backward compatibility, handle scheme://path/to/ressource as if path was part of the
+		// path if it doesn't look like a domain name (no dot in it)
+		URLComponents = [@[URL.host] arrayByAddingObjectsFromArray:URLComponents];
+	}
 	
 	if (!self.patternPathComponents) {
 		self.patternPathComponents = [[self.pattern pathComponents] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
@@ -189,10 +198,7 @@ static NSMutableDictionary *routeControllersMap = nil;
 	}
 	
 	// figure out which routes controller to use based on the scheme
-	JLRoutes *routesController = [self globalRoutes];
-	if (routeControllersMap[[URL scheme]]) {
-		routesController = routeControllersMap[[URL scheme]];
-	}
+	JLRoutes *routesController = routeControllersMap[[URL scheme]] ?: [self globalRoutes];
 	
 	return [self routeURL:URL withController:routesController];
 }
@@ -215,22 +221,12 @@ static NSMutableDictionary *routeControllersMap = nil;
 		}
 	}
 	
-	// break the URL down into path components and filter out any leading/trailing slashes from it
-	NSArray *pathComponents = [URL.pathComponents ?: @[] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
-	
-	if ([URL.host rangeOfString:@"."].location == NSNotFound) {
-		// For backward compatibility, handle scheme://path/to/ressource as if path was part of the
-		// path if it doesn't look like a domain name (no dot in it)
-		pathComponents = [@[URL.host] arrayByAddingObjectsFromArray:pathComponents];
-	}
-	
 	for (_JLRoute *route in routes) {
-		NSDictionary *matchParameters = [route parametersForURL:URL components:pathComponents];
-		if (matchParameters) {
+		NSMutableDictionary *parameters = [[route parametersForURL:URL] mutableCopy];
+		if (parameters) {
 			// add the URL parameters
-			NSMutableDictionary *finalParameters = (NSMutableDictionary *)matchParameters; // this is mutable because we created it as mutable in _JLRoute
-			[finalParameters addEntriesFromDictionary:URLParameters];
-			didRoute = route.block(matchParameters);
+			[parameters addEntriesFromDictionary:URLParameters];
+			didRoute = route.block(parameters);
 			if (didRoute) {
 				break;
 			}
@@ -243,6 +239,23 @@ static NSMutableDictionary *routeControllersMap = nil;
 	}
 	
 	return didRoute;
+}
+
+
++ (NSDictionary*)parametersForURL:(NSURL *)URL {
+	if (!URL) {
+		return NO;
+	}
+	
+	JLRoutes *routesController = routeControllersMap[[URL scheme]] ?: [self globalRoutes];
+    for (_JLRoute *route in routesController.routes) {
+		NSDictionary *parameters = [route parametersForURL:URL];
+        if (parameters) {
+            return parameters;
+        }
+    }
+    
+    return nil;
 }
 
 
