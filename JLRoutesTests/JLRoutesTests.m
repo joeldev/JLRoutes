@@ -11,7 +11,6 @@
 
 
 #define JLValidateParameterCount(expectedCount)\
-	STAssertTrue(self.didRoute, @"Route matched");\
 	STAssertNotNil(self.lastMatch, @"Matched something");\
 	STAssertEquals((NSInteger)[self.lastMatch count] - 3, (NSInteger)expectedCount, @"Expected parameter count")
 
@@ -19,6 +18,9 @@
 	NSString *key = [[parameter allKeys] lastObject];\
 	NSString *value = [[parameter allValues] lastObject];\
 	STAssertEqualObjects(self.lastMatch[key], value, @"Exact parameter pair not found");}
+
+#define JLValidateAnyRouteMatched()\
+	STAssertTrue(self.didRoute, @"Expected any route to match")
 
 #define JLValidateNoLastMatch()\
 	STAssertFalse(self.didRoute, @"Expected not to route successfully")
@@ -92,53 +94,65 @@ static JLRoutesTests *testsInstance = nil;
 	JLValidateNoLastMatch();
 	
 	[self route:@"tests:/"];
+	JLValidateAnyRouteMatched();
 	JLValidatePattern(@"/");
 	JLValidateParameterCount(0);
 
 	[self route:@"tests://"];
+	JLValidateAnyRouteMatched();
 	JLValidatePattern(@"/");
 	JLValidateParameterCount(0);
 	
 	[self route:@"tests://test?"];
+	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(0);
 	JLValidatePattern(@"/test");
 	
 	[self route:@"tests://test/"];
+	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(0);
 	JLValidatePattern(@"/test");
 	
 	[self route:@"tests://test"];
+	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(0);
 	
 	[self route:@"tests://?key=value"];
+	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(1);
 	JLValidateParameter(@{@"key": @"value"});
 	
 	[self route:@"tests://user/view/joeldev"];
+	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(1);
 	JLValidateParameter(@{@"userID": @"joeldev"});
 	
 	[self route:@"tests://user/view/joeldev/"];
+	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(1);
 	JLValidateParameter(@{@"userID": @"joeldev"});
 	
 	[self route:@"tests://user/view/joel%20levin"];
+	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(1);
 	JLValidateParameter(@{@"userID": @"joel levin"});
 	
 	[self route:@"tests://user/view/joeldev?foo=bar&thing=stuff"];
+	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(3);
 	JLValidateParameter(@{@"userID": @"joeldev"});
 	JLValidateParameter(@{@"foo" : @"bar"});
 	JLValidateParameter(@{@"thing" : @"stuff"});
 	
 	[self route:@"tests://post/edit/123"];
+	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(3);
 	JLValidateParameter(@{@"object": @"post"});
 	JLValidateParameter(@{@"action": @"edit"});
 	JLValidateParameter(@{@"primaryKey": @"123"});
 	
 	[self route:@"tests://interleaving/paramvalue1/foo/paramvalue2"];
+	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(2);
 	JLValidateParameter(@{@"param1": @"paramvalue1"});
 	JLValidateParameter(@{@"param2": @"paramvalue2"});
@@ -151,7 +165,7 @@ static JLRoutesTests *testsInstance = nil;
 - (void)testPriority {
 	// this should match the /test/priority/high route even though there's one before it that would match if priority wasn't being set
 	[self route:@"tests://test/priority/high"];
-	JLValidateParameterCount(0);
+	JLValidateAnyRouteMatched();
 	JLValidatePattern(@"/test/priority/high");
 }
 
@@ -163,22 +177,22 @@ static JLRoutesTests *testsInstance = nil;
 	
 	// this one is the same route but will return yes, causing it to be flagged as a match
 	[self route:@"tests://return/yes"];
-	JLValidateParameterCount(1); // the value is parameterized, so 'yes' should be the only param
+	JLValidateAnyRouteMatched();
 }
 
 
 - (void)testNamespaces {
 	// test that the same route can be handled differently for three different scheme namespaces
 	[self route:@"tests://test"];
-	JLValidateParameterCount(0);
+	JLValidateAnyRouteMatched();
 	JLValidateScheme(kJLRoutesGlobalNamespaceKey);
 	
 	[self route:@"namespaceTest1://test"];
-	JLValidateParameterCount(0);
+	JLValidateAnyRouteMatched();
 	JLValidateScheme(@"namespaceTest1");
 	
 	[self route:@"namespaceTest2://test"];
-	JLValidateParameterCount(0);
+	JLValidateAnyRouteMatched();
 	JLValidateScheme(@"namespaceTest2");
 }
 
@@ -190,6 +204,7 @@ static JLRoutesTests *testsInstance = nil;
 	
 	// fallback is on, so this should route
 	[self route:@"namespaceTest2://user/view/joeldev"];
+	JLValidateAnyRouteMatched();
 	JLValidateScheme(kJLRoutesGlobalNamespaceKey);
 	JLValidateParameterCount(1);
 	JLValidateParameter(@{@"userID" : @"joeldev"});
