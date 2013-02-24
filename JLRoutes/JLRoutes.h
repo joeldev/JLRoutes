@@ -58,6 +58,7 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 
 /* Version History
 
+2/24/13 - 1.1 - scheme namespaces, better debugging support, verbose logging
 2/11/13 - 1.0.2 - simpler to use + bug fixes
 2/10/13 - Initial release.
 

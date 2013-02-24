@@ -9,8 +9,10 @@ JLRoutes is advanced URL parsing with a block-based callback API. It is designed
 * Parse any number of parameters interleaved throughout the URL
 * Seamlessly parses out GET URL parameters and passes them along as part of the parameters dictionary
 * Route prioritization
-* Scheme namespaces to easily segment routes and block handlers for multiple schemes (1.1)
+* Scheme namespaces to easily segment routes and block handlers for multiple schemes
 * Return NO from a handler block for JLRoutes to look for the next matching route
+* Optional verbose logging
+* Pretty-print the whole routing table
 * No dependencies other than Foundation
 
 ### Simple Example ###
@@ -90,7 +92,7 @@ The parameters dictionary that the handler block receives would contain the foll
 }
 ```
 
-### Scheme Namespaces (available in 1.1) ###
+### Scheme Namespaces ###
 
 JLRoutes supports setting up routes within the namespace of a given URL scheme. Routes that are set up within the namespace of a single scheme can only be matched by URLs that use that same scheme. By default, all routes go into the global scheme. The current +addRoute methods will use this scheme, and no functionality is different.
 
