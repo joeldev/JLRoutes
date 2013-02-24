@@ -43,6 +43,13 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 /// Routes a URL, calling handler blocks (for patterns that match URL) until one returns YES.
 + (BOOL)routeURL:(NSURL *)URL;
 
+/// Prints the entire routing table
++ (NSString *)description;
+
+/// Allows configuration of verbose logging. Default is NO. This is mostly just helpful with debugging.
++ (void)setVerboseLoggingEnabled:(BOOL)loggingEnabled;
++ (BOOL)isVerboseLoggingEnabled;
+
 /// Controls whether or not this routes controller will try to match a URL with global routes if it can't be matched in the current namespace. Default is NO.
 @property (assign) BOOL shouldFallbackToGlobalRoutes;
 

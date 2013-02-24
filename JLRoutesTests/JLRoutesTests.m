@@ -49,10 +49,11 @@ static JLRoutesTests *testsInstance = nil;
 
 + (void)setUp {
 	id defaultHandler = ^BOOL (NSDictionary *params) {
-		NSLog(@"%@", params);
 		testsInstance.lastMatch = params;
 		return YES;
 	};
+	
+	[JLRoutes setVerboseLoggingEnabled:YES];
 	
 	// used in testBasicRouting
 	[JLRoutes addRoute:@"/test" handler:defaultHandler];
@@ -68,7 +69,6 @@ static JLRoutesTests *testsInstance = nil;
 	
 	// used in testBlockReturnValue
 	[JLRoutes addRoute:@"/return/:value" handler:^BOOL(NSDictionary *parameters) {
-		NSLog(@"%@", parameters);
 		testsInstance.lastMatch = parameters;
 		NSString *value = parameters[@"value"];
 		return [value isEqualToString:@"yes"];
@@ -78,6 +78,8 @@ static JLRoutesTests *testsInstance = nil;
 	[[JLRoutes routesForScheme:@"namespaceTest1"] addRoute:@"/test" handler:defaultHandler];
 	[[JLRoutes routesForScheme:@"namespaceTest2"] addRoute:@"/test" handler:defaultHandler];
 	[JLRoutes routesForScheme:@"namespaceTest2"].shouldFallbackToGlobalRoutes = YES;
+	
+	NSLog(@"%@", [JLRoutes description]);
 	
 	[super setUp];
 }

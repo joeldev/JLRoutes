@@ -14,6 +14,7 @@
 
 
 static NSMutableDictionary *routeControllersMap = nil;
+static BOOL verboseLoggingEnabled = NO;
 
 
 @interface JLRoutes ()
@@ -21,6 +22,7 @@ static NSMutableDictionary *routeControllersMap = nil;
 @property (strong) NSMutableArray *routes;
 @property (strong) NSString *namespaceKey;
 
++ (void)verboseLogWithFormat:(NSString *)format, ...;
 + (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController;
 - (BOOL)isGlobalRoutesController;
 
@@ -101,10 +103,26 @@ static NSMutableDictionary *routeControllersMap = nil;
 }
 
 
+- (NSString *)description {
+	return [NSString stringWithFormat:@"JLRoute %@ (%i)", self.pattern, self.priority];
+}
+
+
 @end
 
 
 @implementation JLRoutes
+
+- (id)init {
+	if ((self = [super init])) {
+		self.routes = [NSMutableArray array];
+	}
+	return self;
+}
+
+
+#pragma mark -
+#pragma mark Routing API
 
 + (instancetype)globalRoutes {
 	return [self routesForScheme:kJLRoutesGlobalNamespaceKey];
@@ -128,14 +146,6 @@ static NSMutableDictionary *routeControllersMap = nil;
 	routesController = routeControllersMap[scheme];
 	
 	return routesController;
-}
-
-
-- (id)init {
-	if ((self = [super init])) {
-		self.routes = [NSMutableArray array];
-	}
-	return self;
 }
 
 
@@ -195,7 +205,41 @@ static NSMutableDictionary *routeControllersMap = nil;
 }
 
 
+#pragma mark -
+#pragma mark Debugging Aids
+
+- (NSString *)description {
+	return [self.routes description];
+}
+
+
++ (NSString *)description {
+	NSMutableString *descriptionString = [NSMutableString stringWithString:@"\n"];
+	
+	for (NSString *routesNamespace in routeControllersMap) {
+		JLRoutes *routesController = routeControllersMap[routesNamespace];
+		[descriptionString appendFormat:@"\"%@\":\n%@\n\n", routesController.namespaceKey, routesController.routes];
+	}
+	
+	return descriptionString;
+}
+
+
++ (void)setVerboseLoggingEnabled:(BOOL)loggingEnabled {
+	verboseLoggingEnabled = loggingEnabled;
+}
+
+
++ (BOOL)isVerboseLoggingEnabled {
+	return verboseLoggingEnabled;
+}
+
+
+#pragma mark -
+#pragma mark Internal API
+
 + (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController {
+	[self verboseLogWithFormat:@"Trying to route URL %@", URL];
 	BOOL didRoute = NO;
 	NSArray *routes = routesController.routes;
 	NSMutableDictionary *URLParameters = [NSMutableDictionary dictionary];
@@ -210,6 +254,7 @@ static NSMutableDictionary *routeControllersMap = nil;
 			// CFURLCreateStringByReplacingPercentEscapesUsingEncoding may return NULL
 			URLParameters[pair[0]] = [paramValue JLRoutes_URLDecodedString] ?: @"";
 		}
+		[self verboseLogWithFormat:@"Parsed URL parameters: %@", URLParameters];
 	}
 	
 	// break the URL down into path components and filter out any leading/trailing slashes from it
@@ -221,12 +266,18 @@ static NSMutableDictionary *routeControllersMap = nil;
 		pathComponents = [@[URL.host] arrayByAddingObjectsFromArray:pathComponents];
 	}
 	
+	[self verboseLogWithFormat:@"URL path components: %@", pathComponents];
+	
 	for (_JLRoute *route in routes) {
 		NSDictionary *matchParameters = [route parametersForURL:URL components:pathComponents];
 		if (matchParameters) {
+			[self verboseLogWithFormat:@"Successfully matched %@", route];
+			
 			// add the URL parameters
 			NSMutableDictionary *finalParameters = (NSMutableDictionary *)matchParameters; // this is mutable because we created it as mutable in _JLRoute
 			[finalParameters addEntriesFromDictionary:URLParameters];
+			
+			[self verboseLogWithFormat:@"Final parameters are %@", finalParameters];
 			didRoute = route.block(finalParameters);
 			if (didRoute) {
 				break;
@@ -234,8 +285,13 @@ static NSMutableDictionary *routeControllersMap = nil;
 		}
 	}
 	
+	if (!didRoute) {
+		[self verboseLogWithFormat:@"Could not find a matching route, returning NO"];
+	}
+	
 	// if we couldn't find a match and this routes controller specifies to fallback and its also not the global routes controller, then...
 	if (!didRoute && routesController.shouldFallbackToGlobalRoutes && ![routesController isGlobalRoutesController]) {
+		[self verboseLogWithFormat:@"Falling back to global routes..."];
 		didRoute = [self routeURL:URL withController:[self globalRoutes]];
 	}
 	
@@ -245,6 +301,19 @@ static NSMutableDictionary *routeControllersMap = nil;
 
 - (BOOL)isGlobalRoutesController {
 	return [self.namespaceKey isEqualToString:kJLRoutesGlobalNamespaceKey];
+}
+
+
++ (void)verboseLogWithFormat:(NSString *)format, ... {
+	if (verboseLoggingEnabled && format) {
+		va_list argsList;
+		va_start(argsList, format);
+		
+		NSString *formattedLogMessage = [[NSString alloc] initWithFormat:format arguments:argsList];
+		
+		va_end(argsList);
+		NSLog(@"[JLRoutes]: %@", formattedLogMessage);
+	}
 }
 
 
