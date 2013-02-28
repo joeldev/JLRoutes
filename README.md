@@ -17,13 +17,19 @@ JLRoutes is advanced URL parsing with a block-based callback API. It is designed
 
 ### Simple Example ###
 ```objc
-[JLRoutes addRoute:@"/user/view/:userID" handler:^BOOL(NSDictionary *parameters) {
-  NSString *userID = parameters[@"userID"]; // defined in the route by specifying ":userID"
-  // present UI for viewing user with ID 'userID'
-  return YES; // return YES to say we have handled the route
-}];
-
 // in your app delegate:
+
+- (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+  // ...
+  [JLRoutes addRoute:@"/user/view/:userID" handler:^BOOL(NSDictionary *parameters) {
+    NSString *userID = parameters[@"userID"]; // defined in the route by specifying ":userID"
+    // present UI for viewing user with ID 'userID'
+    return YES; // return YES to say we have handled the route
+  }];
+  // ...
+  return YES;
+}
+
 - (BOOL)application:(UIApplication *)application openURL:(NSURL *)url sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
   return [JLRoutes routeURL:url];
 }
