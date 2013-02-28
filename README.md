@@ -48,9 +48,9 @@ In this example, the userID object in the parameters dictionary passed to the bl
 The parameters dictionary always contains at least the following three keys:
 ```json
 {
-  "JLRouteURL" : "(the NSURL that caused this block to be fired)",
-  "JLRoutePattern" : "(the actual route pattern string)",
-  "JLRouteNamespace" : "JLRoutesGlobalNamespace"
+  "JLRouteURL":  "(the NSURL that caused this block to be fired)",
+  "JLRoutePattern": "(the actual route pattern string)",
+  "JLRouteNamespace": "JLRoutesGlobalNamespace"
 }
 ```
 
@@ -97,8 +97,9 @@ The parameters dictionary that the handler block receives would contain the foll
   "primaryKey": "123",
   "debug": "true",
   "foo": "bar",
-  "JLRouteURL" : "myapp://post/edit/123?debug=true&foo=bar",
-  "JLRoutePattern" : "/:object/:action/:primaryKey"
+  "JLRouteURL": "myapp://post/edit/123?debug=true&foo=bar",
+  "JLRoutePattern": "/:object/:action/:primaryKey",
+  "JLRouteNamespace": "JLRoutesGlobalNamespace"
 }
 ```
 
