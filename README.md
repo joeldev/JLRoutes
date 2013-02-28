@@ -45,19 +45,23 @@ In this example, the userID object in the parameters dictionary passed to the bl
 
 ### The Parameters Dictionary ###
 
-The parameters dictionary always contains at least the following two keys:
+The parameters dictionary always contains at least the following three keys:
 ```json
 {
   "JLRouteURL" : "(the NSURL that caused this block to be fired)",
-  "JLRoutePattern" : "(the actual route pattern string)"
+  "JLRoutePattern" : "(the actual route pattern string)",
+  "JLRouteNamespace" : "JLRoutesGlobalNamespace"
 }
 ```
 
-These are defined as constants in JLRoutes.h for easy use.
+The JLRouteNamespace key refers to the namespace that the matched route lives in. Read more about namespaces: <https://github.com/joeldev/JLRoutes#scheme-namespaces>.
+
+These keys are defined as constants in JLRoutes.h for easy use.
 
 ```objc
 static NSString *const kJLRoutePatternKey = @"JLRoutePattern";
 static NSString *const kJLRouteURLKey = @"JLRouteURL";
+static NSString *const kJLRouteNamespaceKey = @"JLRouteNamespace";
 ```
 
 ### Handler Block ###
