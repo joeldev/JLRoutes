@@ -50,7 +50,7 @@ The parameters dictionary always contains at least the following three keys:
 {
   "JLRouteURL":  "(the NSURL that caused this block to be fired)",
   "JLRoutePattern": "(the actual route pattern string)",
-  "JLRouteNamespace": "JLRoutesGlobalNamespace"
+  "JLRouteNamespace": "(the route namespace, defaults to JLRoutesGlobalNamespace)"
 }
 ```
 
