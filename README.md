@@ -56,7 +56,7 @@ The parameters dictionary always contains at least the following three keys:
 }
 ```
 
-The JLRouteNamespace key refers to the namespace that the matched route lives in. Read more about namespaces: <https://github.com/joeldev/JLRoutes#scheme-namespaces>.
+The JLRouteNamespace key refers to the namespace that the matched route lives in. [Read more about namespaces.](https://github.com/joeldev/JLRoutes#scheme-namespaces)
 
 These keys are defined as constants in JLRoutes.h for easy use.
 
