@@ -4,6 +4,8 @@ JLRoutes
 ### What is it? ###
 JLRoutes is advanced URL parsing with a block-based callback API. It is designed to make it very easy to handle complex URL schemes in your application without having to do any URL or string parsing of any kind.
 
+[More information on how to register custom URL schemes in your application's Info.plist.](shouldFallbackToGlobalRoutes)
+
 ### Features ###
 * Simple API with minimal impact to existing codebases
 * Parse any number of parameters interleaved throughout the URL
