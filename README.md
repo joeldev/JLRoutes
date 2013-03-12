@@ -4,7 +4,7 @@ JLRoutes
 ### What is it? ###
 JLRoutes is advanced URL parsing with a block-based callback API. It is designed to make it very easy to handle complex URL schemes in your application without having to do any URL or string parsing of any kind.
 
-[More information on how to register custom URL schemes in your application's Info.plist.](shouldFallbackToGlobalRoutes)
+[More information on how to register custom URL schemes in your application's Info.plist.](http://developer.apple.com/library/ios/documentation/iphone/conceptual/iphoneosprogrammingguide/AdvancedAppTricks/AdvancedAppTricks.html#//apple_ref/doc/uid/TP40007072-CH7-SW50)
 
 ### Features ###
 * Simple API with minimal impact to existing codebases
