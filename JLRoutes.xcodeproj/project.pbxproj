@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		5D33681616C6DC9300F983AA /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D33681516C6DC9300F983AA /* Foundation.framework */; };
-		5D33681B16C6DC9300F983AA /* JLRoutes.h in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5D33681A16C6DC9300F983AA /* JLRoutes.h */; };
 		5D33681D16C6DC9300F983AA /* JLRoutes.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D33681C16C6DC9300F983AA /* JLRoutes.m */; };
 		5D33682516C6DC9300F983AA /* SenTestingKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D33682416C6DC9300F983AA /* SenTestingKit.framework */; };
 		5D33682716C6DC9300F983AA /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D33682616C6DC9300F983AA /* UIKit.framework */; };
@@ -35,7 +34,6 @@
 			dstPath = "include/${PRODUCT_NAME}";
 			dstSubfolderSpec = 16;
 			files = (
-				5D33681B16C6DC9300F983AA /* JLRoutes.h in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
