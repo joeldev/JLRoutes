@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "JLRoutes"
   s.version      = "1.2"
-  s.summary      = "Advanced URL parsing designed to handle complex URL schemes with a block-based callback API"
+  s.summary      = "Advanced URL parsing designed to handle complex URL schemes with a block-based callback API."
   s.homepage     = "https://github.com/joeldev/JLRoutes"
 
   s.license      = {
@@ -26,4 +26,6 @@ Pod::Spec.new do |s|
   s.source_files = 'JLRoutes', 'JLRoutes/*.{h,m}'
   s.framework  = 'Foundation'
   s.requires_arc = true
+  s.ios.deployment_target = '5.0'
+  s.osx.deployment_target = '10.7'
 end
