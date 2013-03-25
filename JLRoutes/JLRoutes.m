@@ -32,6 +32,7 @@ static BOOL verboseLoggingEnabled = NO;
 @interface NSString (JLRoutes)
 
 - (NSString *)JLRoutes_URLDecodedString;
+- (NSDictionary *)JLRoutes_URLParameterDictionary;
 
 @end
 
@@ -41,6 +42,23 @@ static BOOL verboseLoggingEnabled = NO;
 - (NSString *)JLRoutes_URLDecodedString {
 	NSString *resultString = [self stringByReplacingOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, self.length)];
 	return [resultString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+}
+
+- (NSDictionary *)JLRoutes_URLParameterDictionary {
+	NSMutableDictionary *parameters = [NSMutableDictionary dictionary];
+
+	if (self.length && [self rangeOfString:@"="].location != NSNotFound) {
+		NSArray *keyValuePairs = [self componentsSeparatedByString:@"&"];
+		for (NSString *keyValuePair in keyValuePairs) {
+			NSArray *pair = [keyValuePair componentsSeparatedByString:@"="];
+			// don't assume we actually got a real key=value pair. start by assuming we only got @[key] before checking count
+			NSString *paramValue = pair.count == 2 ? pair[1] : @"";
+			// CFURLCreateStringByReplacingPercentEscapesUsingEncoding may return NULL
+			parameters[pair[0]] = [paramValue JLRoutes_URLDecodedString] ?: @"";
+		}
+	}
+
+	return parameters;
 }
 
 @end
@@ -62,7 +80,7 @@ static BOOL verboseLoggingEnabled = NO;
 @implementation _JLRoute
 
 - (NSDictionary *)parametersForURL:(NSURL *)URL components:(NSArray *)URLComponents {
-	NSMutableDictionary *routeParameters = nil;
+	NSDictionary *routeParameters = nil;
 	
 	if (!self.patternPathComponents) {
 		self.patternPathComponents = [[self.pattern pathComponents] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
@@ -91,11 +109,7 @@ static BOOL verboseLoggingEnabled = NO;
 		}
 		
 		if (isMatch) {
-			// we found a match, start loading up the route parameters
-			routeParameters = [NSMutableDictionary dictionaryWithDictionary:variables];
-			routeParameters[kJLRoutePatternKey] = self.pattern;
-			routeParameters[kJLRouteURLKey] = URL;
-			routeParameters[kJLRouteNamespaceKey] = self.parentRoutesController.namespaceKey;
+			routeParameters = variables;
 		}
 	}
 	
@@ -242,21 +256,12 @@ static BOOL verboseLoggingEnabled = NO;
 	[self verboseLogWithFormat:@"Trying to route URL %@", URL];
 	BOOL didRoute = NO;
 	NSArray *routes = routesController.routes;
-	NSMutableDictionary *URLParameters = [NSMutableDictionary dictionary];
-	
-	// if there are any URL params, parse and hold on to them
-	if (URL.query.length) {
-		NSArray *keyValuePairs = [URL.query componentsSeparatedByString:@"&"];
-		for (NSString *keyValuePair in keyValuePairs) {
-			NSArray *pair = [keyValuePair componentsSeparatedByString:@"="];
-			// don't assume we actually got a real key=value pair. start by assuming we only got @[key] before checking count
-			NSString *paramValue = pair.count == 2 ? pair[1] : @"";
-			// CFURLCreateStringByReplacingPercentEscapesUsingEncoding may return NULL
-			URLParameters[pair[0]] = [paramValue JLRoutes_URLDecodedString] ?: @"";
-		}
-		[self verboseLogWithFormat:@"Parsed URL parameters: %@", URLParameters];
-	}
-	
+	NSDictionary *queryParameters = [URL.query JLRoutes_URLParameterDictionary];
+	[self verboseLogWithFormat:@"Parsed query parameters: %@", queryParameters];
+
+	NSDictionary *fragmentParameters = [URL.fragment JLRoutes_URLParameterDictionary];
+	[self verboseLogWithFormat:@"Parsed fragment parameters: %@", fragmentParameters];
+
 	// break the URL down into path components and filter out any leading/trailing slashes from it
 	NSArray *pathComponents = [(URL.pathComponents ?: @[]) filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
 	
@@ -274,9 +279,16 @@ static BOOL verboseLoggingEnabled = NO;
 			[self verboseLogWithFormat:@"Successfully matched %@", route];
 			
 			// add the URL parameters
-			NSMutableDictionary *finalParameters = (NSMutableDictionary *)matchParameters; // this is mutable because we created it as mutable in _JLRoute
-			[finalParameters addEntriesFromDictionary:URLParameters];
-			
+			NSMutableDictionary *finalParameters = [NSMutableDictionary dictionary];
+
+			// in increasing order of precedence: query, fragment, route, builtin
+			[finalParameters addEntriesFromDictionary:queryParameters];
+			[finalParameters addEntriesFromDictionary:fragmentParameters];
+			[finalParameters addEntriesFromDictionary:matchParameters];
+			finalParameters[kJLRoutePatternKey] = route.pattern;
+			finalParameters[kJLRouteURLKey] = URL;
+			finalParameters[kJLRouteNamespaceKey] = route.parentRoutesController.namespaceKey;
+
 			[self verboseLogWithFormat:@"Final parameters are %@", finalParameters];
 			didRoute = route.block(finalParameters);
 			if (didRoute) {

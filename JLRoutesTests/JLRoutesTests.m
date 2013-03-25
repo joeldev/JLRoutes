@@ -145,6 +145,24 @@ static JLRoutesTests *testsInstance = nil;
 	JLValidateParameter(@{@"userID": @"joeldev"});
 	JLValidateParameter(@{@"foo" : @"bar"});
 	JLValidateParameter(@{@"thing" : @"stuff"});
+
+	[self route:@"tests://user/view/joeldev#foo=bar&thing=stuff"];
+	JLValidateAnyRouteMatched();
+	JLValidateParameterCount(3);
+	JLValidateParameter(@{@"userID": @"joeldev"});
+	JLValidateParameter(@{@"foo" : @"bar"});
+	JLValidateParameter(@{@"thing" : @"stuff"});
+
+	[self route:@"tests://user/view/joeldev?userID=evilPerson"];
+	JLValidateAnyRouteMatched();
+	JLValidateParameterCount(1);
+	JLValidateParameter(@{@"userID": @"joeldev"});
+
+	[self route:@"tests://user/view/joeldev?userID=evilPerson&search=evilSearch#search=blarg&userID=otherEvilPerson"];
+	JLValidateAnyRouteMatched();
+	JLValidateParameterCount(2);
+	JLValidateParameter(@{@"userID": @"joeldev"});
+	JLValidateParameter(@{@"search": @"blarg"});
 	
 	[self route:@"tests://post/edit/123"];
 	JLValidateAnyRouteMatched();

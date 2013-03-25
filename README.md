@@ -9,7 +9,7 @@ JLRoutes is advanced URL parsing with a block-based callback API. It is designed
 ### Features ###
 * Simple API with minimal impact to existing codebases
 * Parse any number of parameters interleaved throughout the URL
-* Seamlessly parses out GET URL parameters and passes them along as part of the parameters dictionary
+* Seamlessly parses out query string and fragment parameters and passes them along as part of the parameters dictionary
 * Route prioritization
 * Scheme namespaces to easily segment routes and block handlers for multiple schemes
 * Return NO from a handler block for JLRoutes to look for the next matching route
@@ -154,7 +154,7 @@ This tells JLRoutes that if a URL cannot be routed within the namespace `thing` 
 *Feel free to create an issue asking me to add your app.*
 
 ### Installation ###
-JLRoutes is available for installation via CocoaPods (current release version is 1.0.2). The Releases folder in the repo has binary builds as well, if you'd rather just drop something in.
+JLRoutes is available for installation via CocoaPods (current release version is 1.1). The Releases folder in the repo has binary builds as well, if you'd rather just drop something in.
 
 ### Requirements ###
 Requires ARC. Only tested on iOS 6, but I don't think there's any reason why it wouldn't work on previous iOS versions. It should also work seamlessly on OS X.
