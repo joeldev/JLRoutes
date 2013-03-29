@@ -15,6 +15,7 @@
 		5D33682B16C6DC9300F983AA /* libJLRoutes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D33681216C6DC9300F983AA /* libJLRoutes.a */; };
 		5D33683116C6DC9300F983AA /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5D33682F16C6DC9300F983AA /* InfoPlist.strings */; };
 		5D33683416C6DC9300F983AA /* JLRoutesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D33683316C6DC9300F983AA /* JLRoutesTests.m */; };
+		D0C20A3017061066007746A6 /* JLRoutes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D33681A16C6DC9300F983AA /* JLRoutes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -26,18 +27,6 @@
 			remoteInfo = JLRoutes;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		5D33681016C6DC9300F983AA /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "include/${PRODUCT_NAME}";
-			dstSubfolderSpec = 16;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5D33681216C6DC9300F983AA /* libJLRoutes.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libJLRoutes.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -137,6 +126,17 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		D0C20A2F1706105A007746A6 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				D0C20A3017061066007746A6 /* JLRoutes.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		5D33681116C6DC9300F983AA /* JLRoutes */ = {
 			isa = PBXNativeTarget;
@@ -144,7 +144,7 @@
 			buildPhases = (
 				5D33680E16C6DC9300F983AA /* Sources */,
 				5D33680F16C6DC9300F983AA /* Frameworks */,
-				5D33681016C6DC9300F983AA /* CopyFiles */,
+				D0C20A2F1706105A007746A6 /* Headers */,
 			);
 			buildRules = (
 			);
@@ -329,6 +329,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/${PRODUCT_NAME}";
 				SKIP_INSTALL = YES;
 			};
 			name = Debug;
@@ -342,6 +343,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 5.0;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PUBLIC_HEADERS_FOLDER_PATH = "include/${PRODUCT_NAME}";
 				SKIP_INSTALL = YES;
 			};
 			name = Release;
