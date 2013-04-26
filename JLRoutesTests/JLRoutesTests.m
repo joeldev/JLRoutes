@@ -158,11 +158,12 @@ static JLRoutesTests *testsInstance = nil;
 	JLValidateParameterCount(1);
 	JLValidateParameter(@{@"userID": @"joeldev"});
 
-	[self route:@"tests://user/view/joeldev?userID=evilPerson&search=evilSearch#search=blarg&userID=otherEvilPerson"];
+	[self route:@"tests://user/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil#search=blarg&userID=otherEvilPerson" withParameters:@{@"evilThing": @"notEvil"}];
 	JLValidateAnyRouteMatched();
-	JLValidateParameterCount(2);
+	JLValidateParameterCount(3);
 	JLValidateParameter(@{@"userID": @"joeldev"});
 	JLValidateParameter(@{@"search": @"blarg"});
+	JLValidateParameter(@{@"evilThing": @"notEvil"});
 	
 	[self route:@"tests://post/edit/123"];
 	JLValidateAnyRouteMatched();
@@ -235,9 +236,14 @@ static JLRoutesTests *testsInstance = nil;
 #pragma mark Convenience Methods
 
 - (void)route:(NSString *)URLString {
+	[self route:URLString withParameters:nil];
+}
+
+
+- (void)route:(NSString *)URLString withParameters:(NSDictionary *)parameters {
 	NSLog(@"*** Routing %@", URLString);
 	self.lastMatch = nil;
-	self.didRoute = [JLRoutes routeURL:[NSURL URLWithString:URLString]];
+	self.didRoute = [JLRoutes routeURL:[NSURL URLWithString:URLString] withParameters:parameters];
 }
 
 

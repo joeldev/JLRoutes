@@ -23,7 +23,7 @@ static BOOL verboseLoggingEnabled = NO;
 @property (strong) NSString *namespaceKey;
 
 + (void)verboseLogWithFormat:(NSString *)format, ...;
-+ (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController;
++ (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController parameters:(NSDictionary *)parameters;
 - (BOOL)isGlobalRoutesController;
 
 @end
@@ -208,15 +208,21 @@ static BOOL verboseLoggingEnabled = NO;
 
 
 + (BOOL)routeURL:(NSURL *)URL {
+	return [self routeURL:URL withParameters:nil];
+}
+
+
++ (BOOL)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters {
 	if (!URL) {
 		return NO;
 	}
-	
+
 	// figure out which routes controller to use based on the scheme
 	JLRoutes *routesController = routeControllersMap[[URL scheme]] ?: [self globalRoutes];
-	
-	return [self routeURL:URL withController:routesController];
+
+	return [self routeURL:URL withController:routesController parameters:parameters];
 }
+
 
 
 #pragma mark -
@@ -252,7 +258,7 @@ static BOOL verboseLoggingEnabled = NO;
 #pragma mark -
 #pragma mark Internal API
 
-+ (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController {
++ (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController parameters:(NSDictionary *)parameters {
 	[self verboseLogWithFormat:@"Trying to route URL %@", URL];
 	BOOL didRoute = NO;
 	NSArray *routes = routesController.routes;
@@ -285,6 +291,7 @@ static BOOL verboseLoggingEnabled = NO;
 			[finalParameters addEntriesFromDictionary:queryParameters];
 			[finalParameters addEntriesFromDictionary:fragmentParameters];
 			[finalParameters addEntriesFromDictionary:matchParameters];
+			[finalParameters addEntriesFromDictionary:parameters];
 			finalParameters[kJLRoutePatternKey] = route.pattern;
 			finalParameters[kJLRouteURLKey] = URL;
 			finalParameters[kJLRouteNamespaceKey] = route.parentRoutesController.namespaceKey;
@@ -304,7 +311,7 @@ static BOOL verboseLoggingEnabled = NO;
 	// if we couldn't find a match and this routes controller specifies to fallback and its also not the global routes controller, then...
 	if (!didRoute && routesController.shouldFallbackToGlobalRoutes && ![routesController isGlobalRoutesController]) {
 		[self verboseLogWithFormat:@"Falling back to global routes..."];
-		didRoute = [self routeURL:URL withController:[self globalRoutes]];
+		didRoute = [self routeURL:URL withController:[self globalRoutes] parameters:parameters];
 	}
 	
 	return didRoute;
