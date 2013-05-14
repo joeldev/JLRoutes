@@ -40,8 +40,9 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 + (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method
 
-/// Routes a URL, calling handler blocks (for patterns that match URL) until one returns YES.
+/// Routes a URL, calling handler blocks (for patterns that match URL) until one returns YES, optionally specifying add'l parameters
 + (BOOL)routeURL:(NSURL *)URL;
++ (BOOL)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters;
 
 /// Prints the entire routing table
 + (NSString *)description;
@@ -52,6 +53,9 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 
 /// Controls whether or not this routes controller will try to match a URL with global routes if it can't be matched in the current namespace. Default is NO.
 @property (assign) BOOL shouldFallbackToGlobalRoutes;
+
+/// Called any time routeURL returns NO. Respects shouldFallbackToGlobalRoutes.
+@property (copy) void (^unmatchedURLHandler)(JLRoutes *routes, NSURL *URL, NSDictionary *parameters);
 
 @end
 
