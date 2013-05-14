@@ -54,6 +54,9 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 /// Controls whether or not this routes controller will try to match a URL with global routes if it can't be matched in the current namespace. Default is NO.
 @property (assign) BOOL shouldFallbackToGlobalRoutes;
 
+/// Called any time routeURL returns NO. Respects shouldFallbackToGlobalRoutes.
+@property (copy) void (^unmatchedURLHandler)(JLRoutes *routes, NSURL *URL, NSDictionary *parameters);
+
 @end
 
 

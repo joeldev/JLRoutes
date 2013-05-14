@@ -314,6 +314,11 @@ static BOOL verboseLoggingEnabled = NO;
 		didRoute = [self routeURL:URL withController:[self globalRoutes] parameters:parameters];
 	}
 	
+	// if, after everything, we did not route anything and we have an unmatched URL handler, then call it
+	if (!didRoute && routesController.unmatchedURLHandler) {
+		routesController.unmatchedURLHandler(routesController, URL, parameters);
+	}
+	
 	return didRoute;
 }
 
