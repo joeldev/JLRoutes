@@ -87,7 +87,9 @@ static BOOL verboseLoggingEnabled = NO;
 	}
 	
 	// do a quick component count check to quickly eliminate incorrect patterns
-	if (self.patternPathComponents.count == URLComponents.count) {
+	BOOL componentCountEqual = self.patternPathComponents.count == URLComponents.count;
+	BOOL routeContainsWildcard = !NSEqualRanges([self.pattern rangeOfString:@"*"], NSMakeRange(NSNotFound, 0));
+	if (componentCountEqual || routeContainsWildcard) {
 		// now that we've identified a possible match, move component by component to check if it's a match
 		NSUInteger componentIndex = 0;
 		NSMutableDictionary *variables = [NSMutableDictionary dictionary];
@@ -100,6 +102,11 @@ static BOOL verboseLoggingEnabled = NO;
 				NSString *variableName = [patternComponent substringFromIndex:1];
 				NSString *variableValue = URLComponent;
 				variables[variableName] = [variableValue JLRoutes_URLDecodedString];
+			} else if ([patternComponent isEqualToString:@"*"]) {
+				// match wildcards
+				variables[kJLRouteWildcardComponentsKey] = [URLComponents subarrayWithRange:NSMakeRange(componentIndex, URLComponents.count-1)];
+				isMatch = YES;
+				break;
 			} else if (![patternComponent isEqualToString:URLComponent]) {
 				// a non-variable component did not match, so this route doesn't match up - on to the next one
 				isMatch = NO;
