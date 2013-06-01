@@ -16,6 +16,7 @@
 static NSString *const kJLRoutePatternKey = @"JLRoutePattern";
 static NSString *const kJLRouteURLKey = @"JLRouteURL";
 static NSString *const kJLRouteNamespaceKey = @"JLRouteNamespace";
+static NSString *const kJLRouteWildcardComponentsKey = @"JLRouteWildcardComponents";
 static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 
 
