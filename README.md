@@ -146,6 +146,26 @@ and then try to route the URL `thing://global`, it would not match because that 
 
 This tells JLRoutes that if a URL cannot be routed within the namespace `thing` (aka, it starts with `thing:` but no appropriate route can be found in the namespace), try to recover by looking for a matching route in the global routes namespace as well. After setting that property to `YES`, the URL 'thing://global` would be routed to the /global block.
 
+
+### Wildcard routes ###
+
+JLRoutes supports setting up routes that will match an arbitrary number of path components at the end of the routed URL. An array containing the additional path components will be added to the parameters dictionary with the key `kJLRouteWildcardComponentsKey`.
+
+For example, the following route would be triggerd for any URL that started with `/wildcard/`, but would be rejected by the handler if the next component wasn't `joker`.
+
+```objc
+[JLRoutes addRoute:@"/wildcard/*" handler:^BOOL(NSDictionary *parameters) {
+	NSArray *pathComponents = parameters[kJLRouteWildcardComponentsKey];
+	if ([pathComponents length] > 0 && [pathComponents[0] isEqualToString:@"joker"]) {
+		// the route matched; do stuff
+		return YES;
+	}
+
+	// not interested unless the joker's in it
+	return NO;
+}];
+```
+
 ### Apps using JLRoutes ###
 
 * [Simple In/Out](https://simpleinout.com)
