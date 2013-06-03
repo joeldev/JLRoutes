@@ -215,11 +215,23 @@ static BOOL verboseLoggingEnabled = NO;
 
 
 + (BOOL)routeURL:(NSURL *)URL {
-	return [self routeURL:URL withParameters:nil];
+	return [self routeURL:URL withParameters:nil executeRouteBlock:YES];
+}
+
++ (BOOL)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters {
+    return [self routeURL:URL withParameters:parameters executeRouteBlock:YES];
 }
 
 
-+ (BOOL)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters {
++ (BOOL)canRouteURL:(NSURL *)URL {
+    return [self routeURL:URL withParameters:nil executeRouteBlock:NO];
+}
+
++ (BOOL)canRouteURL:(NSURL *)URL withParameters:(NSDictionary *)parameters {
+    return [self routeURL:URL withParameters:parameters executeRouteBlock:NO];
+}
+
++ (BOOL)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters executeRouteBlock:(BOOL)execute {
 	if (!URL) {
 		return NO;
 	}
@@ -227,8 +239,9 @@ static BOOL verboseLoggingEnabled = NO;
 	// figure out which routes controller to use based on the scheme
 	JLRoutes *routesController = routeControllersMap[[URL scheme]] ?: [self globalRoutes];
 
-	return [self routeURL:URL withController:routesController parameters:parameters];
+	return [self routeURL:URL withController:routesController parameters:parameters executeBlock:execute];
 }
+
 
 
 
@@ -265,7 +278,15 @@ static BOOL verboseLoggingEnabled = NO;
 #pragma mark -
 #pragma mark Internal API
 
++ (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController {
+    return [self routeURL:URL withController:routesController parameters:nil executeBlock:YES];
+}
+
 + (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController parameters:(NSDictionary *)parameters {
+    return [self routeURL:URL withController:routesController parameters:parameters executeBlock:YES];
+}
+
++ (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController parameters:(NSDictionary *)parameters executeBlock:(BOOL)executeBlock {
 	[self verboseLogWithFormat:@"Trying to route URL %@", URL];
 	BOOL didRoute = NO;
 	NSArray *routes = routesController.routes;
@@ -290,7 +311,10 @@ static BOOL verboseLoggingEnabled = NO;
 		NSDictionary *matchParameters = [route parametersForURL:URL components:pathComponents];
 		if (matchParameters) {
 			[self verboseLogWithFormat:@"Successfully matched %@", route];
-			
+            if (!executeBlock) {
+                return YES;
+            }
+
 			// add the URL parameters
 			NSMutableDictionary *finalParameters = [NSMutableDictionary dictionary];
 
