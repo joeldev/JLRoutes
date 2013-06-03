@@ -239,6 +239,15 @@ static JLRoutesTests *testsInstance = nil;
 	JLValidateParameter(@{@"userID" : @"joeldev"});
 }
 
+- (void)testForRouteExistence {
+    // This should return yes and no for whether we have a matching route.
+    
+    NSURL *shouldHaveRouteURL = [NSURL URLWithString:@"tests:/test"];
+    NSURL *shouldNotHaveRouteURL = [NSURL URLWithString:@"tests:/dfjkbsdkjfbskjdfb/sdasd"];
+
+    STAssertTrue([JLRoutes canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
+    STAssertFalse([JLRoutes canRouteURL:shouldNotHaveRouteURL], @"Should not state it can route unknown URL");
+}
 
 #pragma mark -
 #pragma mark Convenience Methods
