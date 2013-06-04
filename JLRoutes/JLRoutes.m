@@ -104,7 +104,7 @@ static BOOL verboseLoggingEnabled = NO;
 				variables[variableName] = [variableValue JLRoutes_URLDecodedString];
 			} else if ([patternComponent isEqualToString:@"*"]) {
 				// match wildcards
-				variables[kJLRouteWildcardComponentsKey] = [URLComponents subarrayWithRange:NSMakeRange(componentIndex, URLComponents.count-1)];
+				variables[kJLRouteWildcardComponentsKey] = [URLComponents subarrayWithRange:NSMakeRange(componentIndex, URLComponents.count-componentIndex)];
 				isMatch = YES;
 				break;
 			} else if (![patternComponent isEqualToString:URLComponent]) {
