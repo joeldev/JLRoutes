@@ -63,6 +63,7 @@ static JLRoutesTests *testsInstance = nil;
 	[JLRoutes addRoute:@"/:" handler:defaultHandler];
 	[JLRoutes addRoute:@"/interleaving/:param1/foo/:param2" handler:defaultHandler];
 	[JLRoutes addRoute:@"/wildcard/*" handler:defaultHandler];
+	[JLRoutes addRoute:@"/route/:param/*" handler:defaultHandler];
 	
 	// used in testPriority
 	[JLRoutes addRoute:@"/test/priority/:level" handler:defaultHandler];
@@ -179,13 +180,19 @@ static JLRoutesTests *testsInstance = nil;
 	JLValidateParameter(@{@"param1": @"paramvalue1"});
 	JLValidateParameter(@{@"param2": @"paramvalue2"});
 
-
 	[self route:@"tests://wildcard/matches/with/extra/path/components"];
 	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(1);
 	NSArray *wildcardMatches = @[@"matches", @"with", @"extra", @"path", @"components"];
 	JLValidateParameter(@{kJLRouteWildcardComponentsKey: wildcardMatches});
-	
+
+	[self route:@"tests://route/matches/with/wildcard"];
+	JLValidateAnyRouteMatched();
+	JLValidateParameterCount(2);
+	JLValidateParameter(@{@"param": @"matches"});
+	NSArray *parameterWildcardMatches = @[@"with", @"wildcard"];
+	JLValidateParameter(@{kJLRouteWildcardComponentsKey: parameterWildcardMatches});
+
 	[self route:@"tests://doesnt/exist/and/wont/match"];
 	JLValidateNoLastMatch();
 }
