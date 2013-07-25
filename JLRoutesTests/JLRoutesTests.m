@@ -256,6 +256,17 @@ static JLRoutesTests *testsInstance = nil;
     STAssertFalse([JLRoutes canRouteURL:shouldNotHaveRouteURL], @"Should not state it can route unknown URL");
 }
 
+- (void)testSubscripting {
+  JLRoutes.globalRoutes[@"/subscripting"] = ^BOOL(NSDictionary *parameters) {
+		testsInstance.lastMatch = parameters;
+		return YES;
+	};
+
+  NSURL *shouldHaveRouteURL = [NSURL URLWithString:@"subscripting"];
+
+  STAssertTrue([JLRoutes canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
+}
+
 #pragma mark -
 #pragma mark Convenience Methods
 

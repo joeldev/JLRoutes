@@ -371,5 +371,11 @@ static BOOL verboseLoggingEnabled = NO;
 	}
 }
 
+#pragma mark -
+#pragma mark Subscripting
+
+- (void)setObject:(id)handlerBlock forKeyedSubscript:(NSString *)routePatten {
+  [self addRoute:routePatten handler:handlerBlock];
+}
 
 @end
