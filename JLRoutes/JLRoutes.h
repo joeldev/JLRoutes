@@ -35,6 +35,9 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 + (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method
 
+/// Registers a routePattern with default priority (0) using dictionary-style subscripting.
+- (void)setObject:(id)handlerBlock forKeyedSubscript:(NSString *)routePatten;
+
 /// Registers a routePattern in the global scheme namespace with a handlerBlock to call when the route pattern is matched by a URL.
 /// The block returns a BOOL representing if the handlerBlock actually handled the route or not. If
 /// a block returns NO, JLRoutes will continue trying to find a matching route.
