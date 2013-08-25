@@ -48,6 +48,9 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 + (BOOL)routeURL:(NSURL *)URL;
 + (BOOL)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters;
 
+- (BOOL)routeURL:(NSURL *)url;
+- (BOOL)routeURL:(NSURL *)url withParameters:(NSDictionary *)parameters;
+
 /// Returns whether a route exists for a URL
 + (BOOL)canRouteURL:(NSURL *)URL;
 + (BOOL)canRouteURL:(NSURL *)URL withParameters:(NSDictionary *)parameters;
