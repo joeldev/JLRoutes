@@ -242,8 +242,21 @@ static BOOL verboseLoggingEnabled = NO;
 	return [self routeURL:URL withController:routesController parameters:parameters executeBlock:execute];
 }
 
+- (BOOL)routeURL:(NSURL *)URL {
+	return [[self class] routeURL:URL withController:self];
+}
 
+- (BOOL)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters {
+	return [[self class] routeURL:URL withController:self parameters:parameters];
+}
 
+- (BOOL)canRouteURL:(NSURL *)URL {
+	return [[self class] routeURL:URL withController:self parameters:nil executeBlock:NO];
+}
+
+- (BOOL)canRouteURL:(NSURL *)URL withParameters:(NSDictionary *)parameters {
+	return [[self class] routeURL:URL withController:self parameters:parameters executeBlock:NO];
+}
 
 #pragma mark -
 #pragma mark Debugging Aids
