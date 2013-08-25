@@ -55,6 +55,9 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 + (BOOL)canRouteURL:(NSURL *)URL;
 + (BOOL)canRouteURL:(NSURL *)URL withParameters:(NSDictionary *)parameters;
 
+- (BOOL)canRouteURL:(NSURL *)URL;
+- (BOOL)canRouteURL:(NSURL *)URL withParameters:(NSDictionary *)parameters;
+
 /// Prints the entire routing table
 + (NSString *)description;
 
