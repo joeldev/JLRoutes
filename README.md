@@ -156,7 +156,7 @@ For example, the following route would be triggerd for any URL that started with
 ```objc
 [JLRoutes addRoute:@"/wildcard/*" handler:^BOOL(NSDictionary *parameters) {
 	NSArray *pathComponents = parameters[kJLRouteWildcardComponentsKey];
-	if ([pathComponents length] > 0 && [pathComponents[0] isEqualToString:@"joker"]) {
+	if ([pathComponents count] > 0 && [pathComponents[0] isEqualToString:@"joker"]) {
 		// the route matched; do stuff
 		return YES;
 	}
