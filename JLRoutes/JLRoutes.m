@@ -355,7 +355,7 @@ static BOOL verboseLoggingEnabled = NO;
 	// if we couldn't find a match and this routes controller specifies to fallback and its also not the global routes controller, then...
 	if (!didRoute && routesController.shouldFallbackToGlobalRoutes && ![routesController isGlobalRoutesController]) {
 		[self verboseLogWithFormat:@"Falling back to global routes..."];
-		didRoute = [self routeURL:URL withController:[self globalRoutes] parameters:parameters];
+		didRoute = [self routeURL:URL withController:[self globalRoutes] parameters:parameters executeBlock:executeBlock];
 	}
 	
 	// if, after everything, we did not route anything and we have an unmatched URL handler, then call it
