@@ -267,6 +267,14 @@ static JLRoutesTests *testsInstance = nil;
   STAssertTrue([JLRoutes canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
 }
 
+- (void)testNonSingletonUsage
+{
+    JLRoutes *routes = [JLRoutes new];
+    NSURL *trivialURL = [NSURL URLWithString:@"/success"];
+    [routes addRoute:[trivialURL absoluteString] handler:nil];
+    STAssertTrue([routes routeURL:trivialURL], @"Non-singleton instance should route known URL");
+}
+
 #pragma mark -
 #pragma mark Convenience Methods
 
