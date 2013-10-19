@@ -125,7 +125,7 @@ static BOOL verboseLoggingEnabled = NO;
 
 
 - (NSString *)description {
-	return [NSString stringWithFormat:@"JLRoute %@ (%i)", self.pattern, self.priority];
+	return [NSString stringWithFormat:@"JLRoute %@ (%tu)", self.pattern, self.priority];
 }
 
 
