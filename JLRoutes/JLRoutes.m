@@ -220,17 +220,23 @@ static BOOL verboseLoggingEnabled = NO;
 
 
 - (void)removeRoute:(NSString *)routePattern {
-	NSInteger index = NSNotFound;
+	if (![routePattern hasPrefix:@"/"]) {
+		routePattern = [NSString stringWithFormat:@"/%@", routePattern];
+	}
+	
+	NSInteger routeIndex = NSNotFound;
+	NSInteger index = 0;
 	
 	for (_JLRoute *route in self.routes) {
 		if ([route.pattern isEqualToString:routePattern]) {
+			routeIndex = index;
 			break;
 		}
 		index++;
 	}
 	
-	if (index != NSNotFound) {
-		[self.routes removeObjectAtIndex:index];
+	if (routeIndex != NSNotFound) {
+		[self.routes removeObjectAtIndex:routeIndex];
 	}
 }
 

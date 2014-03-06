@@ -81,6 +81,10 @@ static JLRoutesTests *testsInstance = nil;
 	[[JLRoutes routesForScheme:@"namespaceTest2"] addRoute:@"/test" handler:defaultHandler];
 	[JLRoutes routesForScheme:@"namespaceTest2"].shouldFallbackToGlobalRoutes = YES;
 	
+	// used in testRouteRemoval
+	[[JLRoutes routesForScheme:@"namespaceTest3"] addRoute:@"/test1" handler:defaultHandler];
+	[[JLRoutes routesForScheme:@"namespaceTest3"] addRoute:@"/test2" handler:defaultHandler];
+	
 	NSLog(@"%@", [JLRoutes description]);
 	
 	[super setUp];
@@ -267,12 +271,27 @@ static JLRoutesTests *testsInstance = nil;
   STAssertTrue([JLRoutes canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
 }
 
-- (void)testNonSingletonUsage
-{
+- (void)testNonSingletonUsage {
     JLRoutes *routes = [JLRoutes new];
     NSURL *trivialURL = [NSURL URLWithString:@"/success"];
     [routes addRoute:[trivialURL absoluteString] handler:nil];
     STAssertTrue([routes routeURL:trivialURL], @"Non-singleton instance should route known URL");
+}
+
+- (void)testRouteRemoval {
+	[self route:@"namespaceTest3://test1"];
+	JLValidateAnyRouteMatched();
+	
+	[[JLRoutes routesForScheme:@"namespaceTest3"] removeRoute:@"test1"];
+	[self route:@"namespaceTest3://test1"];
+	JLValidateNoLastMatch();
+	
+	[self route:@"namespaceTest3://test2"];
+	JLValidateAnyRouteMatched();
+	
+	[JLRoutes unregisterRouteScheme:@"namespaceTest3"];
+	[self route:@"namespaceTest3://test2"];
+	JLValidateScheme(kJLRoutesGlobalNamespaceKey);
 }
 
 #pragma mark -
