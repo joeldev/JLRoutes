@@ -214,6 +214,42 @@ static BOOL verboseLoggingEnabled = NO;
 }
 
 
++ (void)removeRoute:(NSString *)routePattern {
+	[[JLRoutes globalRoutes] removeRoute:routePattern];
+}
+
+
+- (void)removeRoute:(NSString *)routePattern {
+	NSInteger index = NSNotFound;
+	
+	for (_JLRoute *route in self.routes) {
+		if ([route.pattern isEqualToString:routePattern]) {
+			break;
+		}
+		index++;
+	}
+	
+	if (index != NSNotFound) {
+		[self.routes removeObjectAtIndex:index];
+	}
+}
+
+
++ (void)removeAllRoutes {
+	[[JLRoutes globalRoutes] removeAllRoutes];
+}
+
+
+- (void)removeAllRoutes {
+	[self.routes removeAllObjects];
+}
+
+
++ (void)unregisterRouteScheme:(NSString *)scheme {
+	[routeControllersMap removeObjectForKey:scheme];
+}
+
+
 + (BOOL)routeURL:(NSURL *)URL {
 	return [self routeURL:URL withParameters:nil executeRouteBlock:YES];
 }

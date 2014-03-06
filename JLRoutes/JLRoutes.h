@@ -31,9 +31,20 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 /// Returns a routing namespace for the given scheme
 + (instancetype)routesForScheme:(NSString *)scheme;
 
-/// Registers a routePattern with default priority (0) in the global scheme namespace.
+/// Registers a routePattern with default priority (0) in the receiving scheme namespace.
 + (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method
+
+/// Removes a routePattern from the receiving scheme namespace.
++ (void)removeRoute:(NSString *)routePattern;
+- (void)removeRoute:(NSString *)routePattern; // instance method
+
+/// Removes all routes from the receiving scheme namespace.
++ (void)removeAllRoutes;
+- (void)removeAllRoutes; // instance method
+
+/// Unregister and delete an entire scheme namespace
++ (void)unregisterRouteScheme:(NSString *)scheme;
 
 /// Registers a routePattern with default priority (0) using dictionary-style subscripting.
 - (void)setObject:(id)handlerBlock forKeyedSubscript:(NSString *)routePatten;
@@ -48,15 +59,15 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 + (BOOL)routeURL:(NSURL *)URL;
 + (BOOL)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters;
 
-- (BOOL)routeURL:(NSURL *)url;
-- (BOOL)routeURL:(NSURL *)url withParameters:(NSDictionary *)parameters;
+- (BOOL)routeURL:(NSURL *)URL; // instance method
+- (BOOL)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters; // instance method
 
 /// Returns whether a route exists for a URL
 + (BOOL)canRouteURL:(NSURL *)URL;
 + (BOOL)canRouteURL:(NSURL *)URL withParameters:(NSDictionary *)parameters;
 
-- (BOOL)canRouteURL:(NSURL *)URL;
-- (BOOL)canRouteURL:(NSURL *)URL withParameters:(NSDictionary *)parameters;
+- (BOOL)canRouteURL:(NSURL *)URL; // instance method
+- (BOOL)canRouteURL:(NSURL *)URL withParameters:(NSDictionary *)parameters; // instance method
 
 /// Prints the entire routing table
 + (NSString *)description;
@@ -72,12 +83,3 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 @property (copy) void (^unmatchedURLHandler)(JLRoutes *routes, NSURL *URL, NSDictionary *parameters);
 
 @end
-
-
-/* Version History
-
-2/24/13 - 1.1 - scheme namespaces, better debugging support, verbose logging
-2/11/13 - 1.0.2 - simpler to use + bug fixes
-2/10/13 - Initial release.
-
-*/
