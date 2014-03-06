@@ -288,9 +288,13 @@ static JLRoutesTests *testsInstance = nil;
 	
 	[self route:@"namespaceTest3://test2"];
 	JLValidateAnyRouteMatched();
+	JLValidateScheme(@"namespaceTest3");
 	
 	[JLRoutes unregisterRouteScheme:@"namespaceTest3"];
+	
+	// this will get matched by our "/:" route in the global namespace - we just want to make sure it doesn't get matched by namespaceTest3
 	[self route:@"namespaceTest3://test2"];
+	JLValidateAnyRouteMatched();
 	JLValidateScheme(kJLRoutesGlobalNamespaceKey);
 }
 
