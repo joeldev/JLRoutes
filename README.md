@@ -166,13 +166,6 @@ For example, the following route would be triggerd for any URL that started with
 }];
 ```
 
-### Apps using JLRoutes ###
-
-* [Simple In/Out](https://simpleinout.com)
-* [Seesaw](https://seesaw.co) - [Article about JLRoutes](http://engineering.seesaw.co/post/44642797540/an-ios-url-router)
-
-*Feel free to create an issue asking me to add your app.*
-
 ### Installation ###
 JLRoutes is available for installation via CocoaPods (current release version is 1.1). The Releases folder in the repo has binary builds as well, if you'd rather just drop something in.
 
