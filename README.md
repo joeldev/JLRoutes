@@ -9,6 +9,7 @@ JLRoutes is advanced URL parsing with a block-based callback API. It is designed
 ### Features ###
 * Simple API with minimal impact to existing codebases
 * Parse any number of parameters interleaved throughout the URL
+* Wildcard parameter support
 * Seamlessly parses out query string and fragment parameters and passes them along as part of the parameters dictionary
 * Route prioritization
 * Scheme namespaces to easily segment routes and block handlers for multiple schemes
