@@ -14,6 +14,10 @@
 	STAssertNotNil(self.lastMatch, @"Matched something");\
 	STAssertEquals((NSInteger)[self.lastMatch count] - 3, (NSInteger)expectedCount, @"Expected parameter count")
 
+#define JLValidateParameterCountIncludingWildcard(expectedCount)\
+	STAssertNotNil(self.lastMatch, @"Matched something");\
+	STAssertEquals((NSInteger)[self.lastMatch count] - 4, (NSInteger)expectedCount, @"Expected parameter count")
+
 #define JLValidateParameter(parameter) {\
 	NSString *key = [[parameter allKeys] lastObject];\
 	NSString *value = [[parameter allValues] lastObject];\
@@ -90,12 +94,10 @@ static JLRoutesTests *testsInstance = nil;
 	[super setUp];
 }
 
-
 - (void)setUp {
 	testsInstance = self;
 	[super setUp];
 }
-
 
 - (void)testBasicRouting {
 	[self route:nil];
@@ -183,7 +185,11 @@ static JLRoutesTests *testsInstance = nil;
 	JLValidateParameterCount(2);
 	JLValidateParameter(@{@"param1": @"paramvalue1"});
 	JLValidateParameter(@{@"param2": @"paramvalue2"});
-
+	
+	[self route:@"tests://wildcard"];
+	JLValidateAnyRouteMatched();
+	JLValidateParameterCount(0);
+	
 	[self route:@"tests://wildcard/matches/with/extra/path/components"];
 	JLValidateAnyRouteMatched();
 	JLValidateParameterCount(1);
@@ -201,14 +207,12 @@ static JLRoutesTests *testsInstance = nil;
 	JLValidateNoLastMatch();
 }
 
-
 - (void)testPriority {
 	// this should match the /test/priority/high route even though there's one before it that would match if priority wasn't being set
 	[self route:@"tests://test/priority/high"];
 	JLValidateAnyRouteMatched();
 	JLValidatePattern(@"/test/priority/high");
 }
-
 
 - (void)testBlockReturnValue {
 	// even though this matches a route, the block returns NO here so there won't be a valid match
@@ -219,7 +223,6 @@ static JLRoutesTests *testsInstance = nil;
 	[self route:@"tests://return/yes"];
 	JLValidateAnyRouteMatched();
 }
-
 
 - (void)testNamespaces {
 	// test that the same route can be handled differently for three different scheme namespaces
@@ -235,7 +238,6 @@ static JLRoutesTests *testsInstance = nil;
 	JLValidateAnyRouteMatched();
 	JLValidateScheme(@"namespaceTest2");
 }
-
 
 - (void)testFallbackToGlobal {
 	// first case, fallback is off and so this should fail because this route isnt declared as part of namespaceTest1

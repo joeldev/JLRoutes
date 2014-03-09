@@ -96,12 +96,20 @@ static BOOL verboseLoggingEnabled = NO;
 		BOOL isMatch = YES;
 		
 		for (NSString *patternComponent in self.patternPathComponents) {
-			NSString *URLComponent = URLComponents[componentIndex];
+			NSString *URLComponent = nil;
+			if (componentIndex < [URLComponents count]) {
+				URLComponent = URLComponents[componentIndex];
+			} else {
+				URLComponent = [URLComponents lastObject];
+			}
+			
 			if ([patternComponent hasPrefix:@":"]) {
 				// this component is a variable
 				NSString *variableName = [patternComponent substringFromIndex:1];
 				NSString *variableValue = URLComponent;
-				variables[variableName] = [variableValue JLRoutes_URLDecodedString];
+				if ([variableName length] > 0) {
+					variables[variableName] = [variableValue JLRoutes_URLDecodedString];
+				}
 			} else if ([patternComponent isEqualToString:@"*"]) {
 				// match wildcards
 				variables[kJLRouteWildcardComponentsKey] = [URLComponents subarrayWithRange:NSMakeRange(componentIndex, URLComponents.count-componentIndex)];
