@@ -31,6 +31,10 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 /// Returns a routing namespace for the given scheme
 + (instancetype)routesForScheme:(NSString *)scheme;
 
+/// Tells JLRoutes that it should manually replace '+' in parsed values to ' '. Defaults to YES.
++ (void)setShouldDecodePlusSymbols:(BOOL)shouldDeecode;
++ (BOOL)shouldDecodePlusSymbols;
+
 /// Registers a routePattern with default priority (0) in the receiving scheme namespace.
 + (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method

@@ -15,6 +15,7 @@
 
 static NSMutableDictionary *routeControllersMap = nil;
 static BOOL verboseLoggingEnabled = NO;
+static BOOL shouldDecodePlusSymbols = YES;
 
 
 @interface JLRoutes ()
@@ -40,8 +41,8 @@ static BOOL verboseLoggingEnabled = NO;
 @implementation NSString (JLRoutes)
 
 - (NSString *)JLRoutes_URLDecodedString {
-	NSString *resultString = [self stringByReplacingOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, self.length)];
-	return [resultString stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	NSString *input = shouldDecodePlusSymbols ? [self stringByReplacingOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, self.length)] : self;
+	return [input stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 }
 
 - (NSDictionary *)JLRoutes_URLParameterDictionary {
@@ -149,6 +150,13 @@ static BOOL verboseLoggingEnabled = NO;
 	return self;
 }
 
++ (void)setShouldDecodePlusSymbols:(BOOL)shouldDecode {
+	shouldDecodePlusSymbols = shouldDecode;
+}
+
++ (BOOL)shouldDecodePlusSymbols {
+	return shouldDecodePlusSymbols;
+}
 
 #pragma mark -
 #pragma mark Routing API

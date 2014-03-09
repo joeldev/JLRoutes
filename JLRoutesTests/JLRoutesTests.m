@@ -300,6 +300,107 @@ static JLRoutesTests *testsInstance = nil;
 	JLValidateScheme(kJLRoutesGlobalNamespaceKey);
 }
 
+- (void)testPercentEncoding {
+    /*
+     from http://en.wikipedia.org/wiki/Percent-encoding
+        !   #   $   &   '   (   )   *   +   ,   /   :   ;   =   ?   @   [   ]
+	   %21 %23 %24 %26 %27 %28 %29 %2A %2B %2C %2F %3A %3B %3D %3F %40 %5B %5D
+     */
+	
+	// NOTE: %2F is not supported.
+	//  [URL pathComponents] automatically expands values with %2F as if it was just a regular slash.
+	
+	BOOL oldDecodeSetting = [JLRoutes shouldDecodePlusSymbols];
+	[JLRoutes setShouldDecodePlusSymbols:NO];
+	
+    [self route:@"tests://user/view/joel%21levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel!levin"});
+	
+    [self route:@"tests://user/view/joel%23levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel#levin"});
+	
+    [self route:@"tests://user/view/joel%24levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel$levin"});
+	
+    [self route:@"tests://user/view/joel%26levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel&levin"});
+	
+    [self route:@"tests://user/view/joel%27levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel'levin"});
+	
+    [self route:@"tests://user/view/joel%28levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel(levin"});
+	
+    [self route:@"tests://user/view/joel%29levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel)levin"});
+	
+    [self route:@"tests://user/view/joel%2Alevin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel*levin"});
+	
+    [self route:@"tests://user/view/joel%2Blevin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel+levin"});
+	
+    [self route:@"tests://user/view/joel%2Clevin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel,levin"});
+	
+    [self route:@"tests://user/view/joel%3Alevin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel:levin"});
+	
+    [self route:@"tests://user/view/joel%3Blevin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel;levin"});
+	
+    [self route:@"tests://user/view/joel%3Dlevin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel=levin"});
+	
+    [self route:@"tests://user/view/joel%3Flevin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel?levin"});
+	
+    [self route:@"tests://user/view/joel%40levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel@levin"});
+	
+    [self route:@"tests://user/view/joel%5Blevin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel[levin"});
+	
+    [self route:@"tests://user/view/joel%5Dlevin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel]levin"});
+	
+	[JLRoutes setShouldDecodePlusSymbols:oldDecodeSetting];
+}
+
 #pragma mark -
 #pragma mark Convenience Methods
 
