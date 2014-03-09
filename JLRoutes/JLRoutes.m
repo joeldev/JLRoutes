@@ -99,7 +99,7 @@ static BOOL verboseLoggingEnabled = NO;
 			NSString *URLComponent = nil;
 			if (componentIndex < [URLComponents count]) {
 				URLComponent = URLComponents[componentIndex];
-			} else {
+			} else if ([patternComponent isEqualToString:@"*"]) { // match /foo by /foo/*
 				URLComponent = [URLComponents lastObject];
 			}
 			
