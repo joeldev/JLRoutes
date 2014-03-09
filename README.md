@@ -171,7 +171,9 @@ For example, the following route would be triggerd for any URL that started with
 JLRoutes is available for installation via CocoaPods.
 
 ### Requirements ###
-Requires ARC. Only tested on iOS 6 and 7, but I don't think there's any reason why it wouldn't work on previous iOS versions. It should also work seamlessly on OS X.
+* ARC
+* iOS 5.0+ or OS X 10.7+
+* Foundation.framework
 
 ### License ###
 BSD 3-Clause License:
