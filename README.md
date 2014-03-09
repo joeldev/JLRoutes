@@ -167,10 +167,10 @@ For example, the following route would be triggerd for any URL that started with
 ```
 
 ### Installation ###
-JLRoutes is available for installation via CocoaPods (current release version is 1.1). The Releases folder in the repo has binary builds as well, if you'd rather just drop something in.
+JLRoutes is available for installation via CocoaPods.
 
 ### Requirements ###
-Requires ARC. Only tested on iOS 6, but I don't think there's any reason why it wouldn't work on previous iOS versions. It should also work seamlessly on OS X.
+Requires ARC. Only tested on iOS 6 and 7, but I don't think there's any reason why it wouldn't work on previous iOS versions. It should also work seamlessly on OS X.
 
 ### License ###
 BSD 3-Clause License:
