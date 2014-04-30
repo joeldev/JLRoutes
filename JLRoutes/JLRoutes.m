@@ -20,8 +20,8 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 @interface JLRoutes ()
 
-@property (strong) NSMutableArray *routes;
-@property (strong) NSString *namespaceKey;
+@property (nonatomic, strong) NSMutableArray *routes;
+@property (nonatomic, strong) NSString *namespaceKey;
 
 + (void)verboseLogWithFormat:(NSString *)format, ...;
 + (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController parameters:(NSDictionary *)parameters;
@@ -67,11 +67,11 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 @interface _JLRoute : NSObject
 
-@property (weak) JLRoutes *parentRoutesController;
-@property (strong) NSString *pattern;
-@property (strong) BOOL (^block)(NSDictionary *parameters);
-@property (assign) NSUInteger priority;
-@property (strong) NSArray *patternPathComponents;
+@property (nonatomic, weak) JLRoutes *parentRoutesController;
+@property (nonatomic, strong) NSString *pattern;
+@property (nonatomic, strong) BOOL (^block)(NSDictionary *parameters);
+@property (nonatomic, assign) NSUInteger priority;
+@property (nonatomic, strong) NSArray *patternPathComponents;
 
 - (NSDictionary *)parametersForURL:(NSURL *)URL components:(NSArray *)URLComponents;
 
@@ -252,7 +252,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 	}
 	
 	if (routeIndex != NSNotFound) {
-		[self.routes removeObjectAtIndex:routeIndex];
+		[self.routes removeObjectAtIndex:(NSUInteger)routeIndex];
 	}
 }
 
@@ -396,7 +396,8 @@ static BOOL shouldDecodePlusSymbols = YES;
 			[finalParameters addEntriesFromDictionary:parameters];
 			finalParameters[kJLRoutePatternKey] = route.pattern;
 			finalParameters[kJLRouteURLKey] = URL;
-			finalParameters[kJLRouteNamespaceKey] = route.parentRoutesController.namespaceKey ?: [NSNull null];
+            __strong __typeof(route.parentRoutesController) strongParentRoutesController = route.parentRoutesController;
+			finalParameters[kJLRouteNamespaceKey] = strongParentRoutesController ?: [NSNull null];
 
 			[self verboseLogWithFormat:@"Final parameters are %@", finalParameters];
 			didRoute = route.block(finalParameters);
@@ -434,8 +435,10 @@ static BOOL shouldDecodePlusSymbols = YES;
 	if (verboseLoggingEnabled && format) {
 		va_list argsList;
 		va_start(argsList, format);
-		
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
 		NSString *formattedLogMessage = [[NSString alloc] initWithFormat:format arguments:argsList];
+#pragma clang diagnostic pop
 		
 		va_end(argsList);
 		NSLog(@"[JLRoutes]: %@", formattedLogMessage);
