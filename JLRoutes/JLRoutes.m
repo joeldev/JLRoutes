@@ -397,7 +397,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 			finalParameters[kJLRoutePatternKey] = route.pattern;
 			finalParameters[kJLRouteURLKey] = URL;
             __strong __typeof(route.parentRoutesController) strongParentRoutesController = route.parentRoutesController;
-			finalParameters[kJLRouteNamespaceKey] = strongParentRoutesController ?: [NSNull null];
+			finalParameters[kJLRouteNamespaceKey] = strongParentRoutesController.namespaceKey ?: [NSNull null];
 
 			[self verboseLogWithFormat:@"Final parameters are %@", finalParameters];
 			didRoute = route.block(finalParameters);
