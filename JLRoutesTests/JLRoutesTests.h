@@ -6,10 +6,10 @@
 //  Copyright (c) 2013 Afterwork Studios. All rights reserved.
 //
 
-#import <SenTestingKit/SenTestingKit.h>
+#import <XCTest/XCTest.h>
 #import <Foundation/Foundation.h>
 
 
-@interface JLRoutesTests : SenTestCase
+@interface JLRoutesTests : XCTestCase
 
 @end

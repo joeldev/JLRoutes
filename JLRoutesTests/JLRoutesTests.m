@@ -11,29 +11,29 @@
 
 
 #define JLValidateParameterCount(expectedCount)\
-	STAssertNotNil(self.lastMatch, @"Matched something");\
-	STAssertEquals((NSInteger)[self.lastMatch count] - 3, (NSInteger)expectedCount, @"Expected parameter count")
+	XCTAssertNotNil(self.lastMatch, @"Matched something");\
+	XCTAssertEqual((NSInteger)[self.lastMatch count] - 3, (NSInteger)expectedCount, @"Expected parameter count")
 
 #define JLValidateParameterCountIncludingWildcard(expectedCount)\
-	STAssertNotNil(self.lastMatch, @"Matched something");\
-	STAssertEquals((NSInteger)[self.lastMatch count] - 4, (NSInteger)expectedCount, @"Expected parameter count")
+	XCTAssertNotNil(self.lastMatch, @"Matched something");\
+	XCTAssertEqual((NSInteger)[self.lastMatch count] - 4, (NSInteger)expectedCount, @"Expected parameter count")
 
 #define JLValidateParameter(parameter) {\
 	NSString *key = [[parameter allKeys] lastObject];\
 	NSString *value = [[parameter allValues] lastObject];\
-	STAssertEqualObjects(self.lastMatch[key], value, @"Exact parameter pair not found");}
+	XCTAssertEqualObjects(self.lastMatch[key], value, @"Exact parameter pair not found");}
 
 #define JLValidateAnyRouteMatched()\
-	STAssertTrue(self.didRoute, @"Expected any route to match")
+	XCTAssertTrue(self.didRoute, @"Expected any route to match")
 
 #define JLValidateNoLastMatch()\
-	STAssertFalse(self.didRoute, @"Expected not to route successfully")
+	XCTAssertFalse(self.didRoute, @"Expected not to route successfully")
 
 #define JLValidatePattern(pattern)\
-	STAssertEqualObjects(self.lastMatch[kJLRoutePatternKey], pattern, @"Pattern did not match")
+	XCTAssertEqualObjects(self.lastMatch[kJLRoutePatternKey], pattern, @"Pattern did not match")
 
 #define JLValidateScheme(scheme)\
-	STAssertEqualObjects(self.lastMatch[kJLRouteNamespaceKey], scheme, @"Scheme did not match")
+	XCTAssertEqualObjects(self.lastMatch[kJLRouteNamespaceKey], scheme, @"Scheme did not match")
 
 
 static JLRoutesTests *testsInstance = nil;
@@ -258,8 +258,8 @@ static JLRoutesTests *testsInstance = nil;
     NSURL *shouldHaveRouteURL = [NSURL URLWithString:@"tests:/test"];
     NSURL *shouldNotHaveRouteURL = [NSURL URLWithString:@"tests:/dfjkbsdkjfbskjdfb/sdasd"];
 
-    STAssertTrue([JLRoutes canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
-    STAssertFalse([JLRoutes canRouteURL:shouldNotHaveRouteURL], @"Should not state it can route unknown URL");
+    XCTAssertTrue([JLRoutes canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
+    XCTAssertFalse([JLRoutes canRouteURL:shouldNotHaveRouteURL], @"Should not state it can route unknown URL");
 }
 
 - (void)testSubscripting {
@@ -270,14 +270,14 @@ static JLRoutesTests *testsInstance = nil;
 
   NSURL *shouldHaveRouteURL = [NSURL URLWithString:@"subscripting"];
 
-  STAssertTrue([JLRoutes canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
+  XCTAssertTrue([JLRoutes canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
 }
 
 - (void)testNonSingletonUsage {
     JLRoutes *routes = [JLRoutes new];
     NSURL *trivialURL = [NSURL URLWithString:@"/success"];
     [routes addRoute:[trivialURL absoluteString] handler:nil];
-    STAssertTrue([routes routeURL:trivialURL], @"Non-singleton instance should route known URL");
+    XCTAssertTrue([routes routeURL:trivialURL], @"Non-singleton instance should route known URL");
 }
 
 - (void)testRouteRemoval {
