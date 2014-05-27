@@ -175,7 +175,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 	});
 	
 	if (!routeControllersMap[scheme]) {
-		routesController = [[JLRoutes alloc] init];
+		routesController = [[self alloc] init];
 		routesController.namespaceKey = scheme;
 		routeControllersMap[scheme] = routesController;
 	}
