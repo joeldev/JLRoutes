@@ -33,6 +33,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 @interface NSString (JLRoutes)
 
 - (NSString *)JLRoutes_URLDecodedString;
+- (NSNumber *)JLRoutes_URLDecodedNumber;
 - (NSDictionary *)JLRoutes_URLParameterDictionary;
 
 @end
@@ -43,6 +44,12 @@ static BOOL shouldDecodePlusSymbols = YES;
 - (NSString *)JLRoutes_URLDecodedString {
 	NSString *input = shouldDecodePlusSymbols ? [self stringByReplacingOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, self.length)] : self;
 	return [input stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+}
+
+- (NSNumber *)JLRoutes_URLDecodedNumber {
+    NSNumberFormatter * f = [[NSNumberFormatter alloc] init];
+    [f setNumberStyle:NSNumberFormatterDecimalStyle];
+    return [f numberFromString:self];
 }
 
 - (NSDictionary *)JLRoutes_URLParameterDictionary {
@@ -109,7 +116,11 @@ static BOOL shouldDecodePlusSymbols = YES;
 				NSString *variableName = [patternComponent substringFromIndex:1];
 				NSString *variableValue = URLComponent;
 				if ([variableName length] > 0 && [variableValue length] > 0) {
-					variables[variableName] = [variableValue JLRoutes_URLDecodedString];
+                    if ([variableValue JLRoutes_URLDecodedNumber] != nil) {
+                        variables[variableName] = [variableValue JLRoutes_URLDecodedNumber];
+                    } else {
+                        variables[variableName] = [variableValue JLRoutes_URLDecodedString];
+                    }
 				}
 			} else if ([patternComponent isEqualToString:@"*"]) {
 				// match wildcards
