@@ -370,7 +370,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 	// break the URL down into path components and filter out any leading/trailing slashes from it
 	NSArray *pathComponents = [(URL.pathComponents ?: @[]) filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
 	
-	if ([URL.host rangeOfString:@"."].location == NSNotFound) {
+	if ([URL.host rangeOfString:@"."].location == NSNotFound && ![URL.host isEqualToString:@"localhost"]) {
 		// For backward compatibility, handle scheme://path/to/ressource as if path was part of the
 		// path if it doesn't look like a domain name (no dot in it)
 		pathComponents = [@[URL.host] arrayByAddingObjectsFromArray:pathComponents];

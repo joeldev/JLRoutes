@@ -205,6 +205,11 @@ static JLRoutesTests *testsInstance = nil;
 
 	[self route:@"tests://doesnt/exist/and/wont/match"];
 	JLValidateNoLastMatch();
+    
+    [self routeURL:[NSURL URLWithString:@"/test" relativeToURL:[NSURL URLWithString:@"http://localhost"]] withParameters:nil];
+    JLValidateAnyRouteMatched();
+    JLValidatePattern(@"/test");
+    JLValidateParameterCount(0);
 }
 
 - (void)testPriority {
@@ -410,9 +415,14 @@ static JLRoutesTests *testsInstance = nil;
 
 
 - (void)route:(NSString *)URLString withParameters:(NSDictionary *)parameters {
-	NSLog(@"*** Routing %@", URLString);
+    [self routeURL:[NSURL URLWithString:URLString] withParameters:parameters];
+}
+
+
+- (void)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters {
+    NSLog(@"*** Routing %@", URL);
 	self.lastMatch = nil;
-	self.didRoute = [JLRoutes routeURL:[NSURL URLWithString:URLString] withParameters:parameters];
+	self.didRoute = [JLRoutes routeURL:URL withParameters:parameters];
 }
 
 
