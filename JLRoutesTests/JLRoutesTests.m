@@ -52,10 +52,7 @@ static JLRoutesTests *testsInstance = nil;
 @implementation JLRoutesTests
 
 + (void)setUp {
-	id defaultHandler = ^BOOL (NSDictionary *params) {
-		testsInstance.lastMatch = params;
-		return YES;
-	};
+    id defaultHandler = [self defaultRouteHandler];
 	
 	[JLRoutes setVerboseLoggingEnabled:YES];
 	
@@ -217,6 +214,22 @@ static JLRoutesTests *testsInstance = nil;
 	[self route:@"tests://test/priority/high"];
 	JLValidateAnyRouteMatched();
 	JLValidatePattern(@"/test/priority/high");
+    
+    // test for adding only routes with non-zero priority (https://github.com/joeldev/JLRoutes/issues/46)
+    [[JLRoutes routesForScheme:@"priorityTest"] addRoute:@"/:foo/bar/:baz" priority:20 handler:[[self class] defaultRouteHandler]];
+    [[JLRoutes routesForScheme:@"priorityTest"] addRoute:@"/:foo/things/:baz" priority:10 handler:[[self class] defaultRouteHandler]];
+    [[JLRoutes routesForScheme:@"priorityTest"] addRoute:@"/:foo/:baz" priority:1 handler:[[self class] defaultRouteHandler]];
+    
+    [self route:@"priorityTest://stuff/things/foo"];
+    JLValidateAnyRouteMatched();
+    
+    [self route:@"priorityTest://one/two"];
+    JLValidateAnyRouteMatched();
+    
+    [self route:@"priorityTest://stuff/bar/baz"];
+    JLValidateAnyRouteMatched();
+    
+    [[JLRoutes routesForScheme:@"priorityTest"] removeAllRoutes];
 }
 
 - (void)testBlockReturnValue {
@@ -408,6 +421,13 @@ static JLRoutesTests *testsInstance = nil;
 
 #pragma mark -
 #pragma mark Convenience Methods
+
++ (BOOL (^)(NSDictionary *))defaultRouteHandler {
+    return ^BOOL (NSDictionary *params) {
+        testsInstance.lastMatch = params;
+        return YES;
+    };
+}
 
 - (void)route:(NSString *)URLString {
 	[self route:URLString withParameters:nil];

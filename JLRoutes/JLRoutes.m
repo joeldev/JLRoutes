@@ -215,18 +215,27 @@ static BOOL shouldDecodePlusSymbols = YES;
 		} copy];
 	}
 	
-	if (priority == 0) {
+	if (priority == 0 || self.routes.count == 0) {
 		[self.routes addObject:route];
 	} else {
 		NSArray *existingRoutes = self.routes;
 		NSUInteger index = 0;
+        BOOL addedRoute = NO;
+        
+        // search through existing routes looking for a lower priority route than this one
 		for (_JLRoute *existingRoute in existingRoutes) {
 			if (existingRoute.priority < priority) {
+                // if found, add the route after it
 				[self.routes insertObject:route atIndex:index];
+                addedRoute = YES;
 				break;
 			}
 			index++;
 		}
+        
+        // if we weren't able to find a lower priority route, this is the new lowest priority route (or same priority as self.routes.lastObject) and should just be added
+        if (!addedRoute)
+            [self.routes addObject:route];
 	}
 }
 
