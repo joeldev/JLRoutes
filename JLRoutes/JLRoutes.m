@@ -221,6 +221,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     [self addRoute:routePattern priority:0 validator:validatorBlock handler:handlerBlock];
 }
 
+
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(JLRoutesHandler)handlerBlock {
     [self addRoute:routePattern priority:priority validator:nil handler:handlerBlock];
 }
