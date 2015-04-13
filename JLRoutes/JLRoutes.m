@@ -69,7 +69,8 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 @property (nonatomic, weak) JLRoutes *parentRoutesController;
 @property (nonatomic, strong) NSString *pattern;
-@property (nonatomic, strong) BOOL (^block)(NSDictionary *parameters);
+@property (nonatomic, copy) JLRoutesHandler validatorBlock;
+@property (nonatomic, copy) JLRoutesHandler helperBlock;
 @property (nonatomic, assign) NSUInteger priority;
 @property (nonatomic, strong) NSArray *patternPathComponents;
 
@@ -187,32 +188,66 @@ static BOOL shouldDecodePlusSymbols = YES;
 }
 
 
-+ (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
++ (void)addRoute:(NSString *)routePattern handler:(JLRoutesHandler)handlerBlock {
 	[[self globalRoutes] addRoute:routePattern handler:handlerBlock];
 }
 
 
-+ (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
++ (void)addRoute:(NSString *)routePattern validator:(JLRoutesHandler)validatorBlock handler:(JLRoutesHandler)handlerBlock {
+	[[self globalRoutes] addRoute:routePattern validator:validatorBlock handler:handlerBlock];
+}
+
+
++ (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(JLRoutesHandler)handlerBlock {
 	[[self globalRoutes] addRoute:routePattern priority:priority handler:handlerBlock];
 }
 
 
-- (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
++ (void)addRoute:(NSString *)routePattern
+        priority:(NSUInteger)priority
+       validator:(JLRoutesHandler)validatorBlock
+         handler:(JLRoutesHandler)handlerBlock
+{
+	[[self globalRoutes] addRoute:routePattern priority:priority validator:validatorBlock handler:handlerBlock];
+}
+
+
+- (void)addRoute:(NSString *)routePattern handler:(JLRoutesHandler)handlerBlock {
 	[self addRoute:routePattern priority:0 handler:handlerBlock];
 }
 
 
-- (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
+- (void)addRoute:(NSString *)routePattern validator:(JLRoutesHandler)validatorBlock handler:(JLRoutesHandler)handlerBlock {
+	[self addRoute:routePattern priority:0 validator:validatorBlock handler:handlerBlock];
+}
+
+
+- (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(JLRoutesHandler)handlerBlock {
+	[self addRoute:routePattern priority:priority validator:nil handler:handlerBlock];
+}
+
+
+- (void)addRoute:(NSString *)routePattern
+        priority:(NSUInteger)priority
+       validator:(JLRoutesHandler)validatorBlock
+         handler:(JLRoutesHandler)handlerBlock
+{
 	_JLRoute *route = [[_JLRoute alloc] init];
 	route.pattern = routePattern;
 	route.priority = priority;
-	route.block = [handlerBlock copy];
+	route.validatorBlock = validatorBlock;
+	route.helperBlock = handlerBlock;
 	route.parentRoutesController = self;
 	
-	if (!route.block) {
-		route.block = [^BOOL (NSDictionary *params) {
+	if (!route.validatorBlock) {
+		route.validatorBlock = ^BOOL (NSDictionary *params) {
 			return YES;
-		} copy];
+		};
+	}
+	if (!route.helperBlock) {
+		route.helperBlock = ^BOOL (NSDictionary *params) {
+			return YES;
+		};
 	}
 	
 	if (priority == 0 || self.routes.count == 0) {
@@ -220,22 +255,22 @@ static BOOL shouldDecodePlusSymbols = YES;
 	} else {
 		NSArray *existingRoutes = self.routes;
 		NSUInteger index = 0;
-        BOOL addedRoute = NO;
-        
-        // search through existing routes looking for a lower priority route than this one
+		BOOL addedRoute = NO;
+		
+		// search through existing routes looking for a lower priority route than this one
 		for (_JLRoute *existingRoute in existingRoutes) {
 			if (existingRoute.priority < priority) {
-                // if found, add the route after it
+				// if found, add the route after it
 				[self.routes insertObject:route atIndex:index];
-                addedRoute = YES;
+				addedRoute = YES;
 				break;
 			}
 			index++;
 		}
-        
-        // if we weren't able to find a lower priority route, this is the new lowest priority route (or same priority as self.routes.lastObject) and should just be added
-        if (!addedRoute)
-            [self.routes addObject:route];
+		
+		// if we weren't able to find a lower priority route, this is the new lowest priority route (or same priority as self.routes.lastObject) and should just be added
+		if (!addedRoute)
+			[self.routes addObject:route];
 	}
 }
 
@@ -287,16 +322,16 @@ static BOOL shouldDecodePlusSymbols = YES;
 }
 
 + (BOOL)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters {
-    return [self routeURL:URL withParameters:parameters executeRouteBlock:YES];
+	return [self routeURL:URL withParameters:parameters executeRouteBlock:YES];
 }
 
 
 + (BOOL)canRouteURL:(NSURL *)URL {
-    return [self routeURL:URL withParameters:nil executeRouteBlock:NO];
+	return [self routeURL:URL withParameters:nil executeRouteBlock:NO];
 }
 
 + (BOOL)canRouteURL:(NSURL *)URL withParameters:(NSDictionary *)parameters {
-    return [self routeURL:URL withParameters:parameters executeRouteBlock:NO];
+	return [self routeURL:URL withParameters:parameters executeRouteBlock:NO];
 }
 
 + (BOOL)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters executeRouteBlock:(BOOL)execute {
@@ -360,11 +395,11 @@ static BOOL shouldDecodePlusSymbols = YES;
 #pragma mark Internal API
 
 + (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController {
-    return [self routeURL:URL withController:routesController parameters:nil executeBlock:YES];
+	return [self routeURL:URL withController:routesController parameters:nil executeBlock:YES];
 }
 
 + (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController parameters:(NSDictionary *)parameters {
-    return [self routeURL:URL withController:routesController parameters:parameters executeBlock:YES];
+	return [self routeURL:URL withController:routesController parameters:parameters executeBlock:YES];
 }
 
 + (BOOL)routeURL:(NSURL *)URL withController:(JLRoutes *)routesController parameters:(NSDictionary *)parameters executeBlock:(BOOL)executeBlock {
@@ -390,11 +425,11 @@ static BOOL shouldDecodePlusSymbols = YES;
 	
 	for (_JLRoute *route in routes) {
 		NSDictionary *matchParameters = [route parametersForURL:URL components:pathComponents];
-		if (matchParameters) {
+		if (matchParameters && route.validatorBlock(matchParameters)) {
 			[self verboseLogWithFormat:@"Successfully matched %@", route];
-            if (!executeBlock) {
-                return YES;
-            }
+			if (!executeBlock) {
+				return YES;
+			}
 
 			// add the URL parameters
 			NSMutableDictionary *finalParameters = [NSMutableDictionary dictionary];
@@ -406,11 +441,11 @@ static BOOL shouldDecodePlusSymbols = YES;
 			[finalParameters addEntriesFromDictionary:parameters];
 			finalParameters[kJLRoutePatternKey] = route.pattern;
 			finalParameters[kJLRouteURLKey] = URL;
-            __strong __typeof(route.parentRoutesController) strongParentRoutesController = route.parentRoutesController;
+			__strong __typeof(route.parentRoutesController) strongParentRoutesController = route.parentRoutesController;
 			finalParameters[kJLRouteNamespaceKey] = strongParentRoutesController.namespaceKey ?: [NSNull null];
 
 			[self verboseLogWithFormat:@"Final parameters are %@", finalParameters];
-			didRoute = route.block(finalParameters);
+			didRoute = route.helperBlock(finalParameters);
 			if (didRoute) {
 				break;
 			}
