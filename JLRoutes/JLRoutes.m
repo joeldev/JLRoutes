@@ -69,8 +69,8 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 @property (nonatomic, weak) JLRoutes *parentRoutesController;
 @property (nonatomic, strong) NSString *pattern;
-@property (nonatomic, strong) BOOL (^validatorBlock)(NSDictionary *parameters);
-@property (nonatomic, strong) BOOL (^helperBlock)(NSDictionary *parameters);
+@property (nonatomic, copy) JLRoutesHandler validatorBlock;
+@property (nonatomic, copy) JLRoutesHandler helperBlock;
 @property (nonatomic, assign) NSUInteger priority;
 @property (nonatomic, strong) NSArray *patternPathComponents;
 
@@ -235,19 +235,19 @@ static BOOL shouldDecodePlusSymbols = YES;
 	_JLRoute *route = [[_JLRoute alloc] init];
 	route.pattern = routePattern;
 	route.priority = priority;
-    route.validatorBlock = [validatorBlock copy];
-    route.helperBlock = [handlerBlock copy];
+    route.validatorBlock = validatorBlock;
+    route.helperBlock = handlerBlock;
 	route.parentRoutesController = self;
 	
     if (!route.validatorBlock) {
-        route.validatorBlock = [^BOOL (NSDictionary *params) {
+        route.validatorBlock = ^BOOL (NSDictionary *params) {
             return YES;
-        } copy];
+        };
     }
     if (!route.helperBlock) {
-        route.helperBlock = [^BOOL (NSDictionary *params) {
+        route.helperBlock = ^BOOL (NSDictionary *params) {
             return YES;
-        } copy];
+        };
     }
 	
 	if (priority == 0 || self.routes.count == 0) {
