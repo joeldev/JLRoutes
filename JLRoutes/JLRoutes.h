@@ -38,6 +38,12 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 /// Registers a routePattern with default priority (0) in the receiving scheme namespace.
 + (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method
++ (void)addRoute:(NSString *)routePattern
+       validator:(BOOL (^)(NSDictionary *parameters))validatorBlock
+         handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
+- (void)addRoute:(NSString *)routePattern
+       validator:(BOOL (^)(NSDictionary *parameters))validatorBlock
+         handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method
 
 /// Removes a routePattern from the receiving scheme namespace.
 + (void)removeRoute:(NSString *)routePattern;
@@ -58,6 +64,14 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 /// a block returns NO, JLRoutes will continue trying to find a matching route.
 + (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method
++ (void)addRoute:(NSString *)routePattern
+        priority:(NSUInteger)priority
+       validator:(BOOL (^)(NSDictionary *parameters))validatorBlock
+         handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
+- (void)addRoute:(NSString *)routePattern
+        priority:(NSUInteger)priority
+       validator:(BOOL (^)(NSDictionary *parameters))validatorBlock
+         handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method
 
 /// Routes a URL, calling handler blocks (for patterns that match URL) until one returns YES, optionally specifying add'l parameters
 + (BOOL)routeURL:(NSURL *)URL;

@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "JLRoutes"
-  s.version      = "1.5.2"
+  s.version      = "1.6.0"
   s.summary      = "Advanced URL parsing designed to handle complex URL schemes with a block-based callback API."
   s.homepage     = "https://github.com/joeldev/JLRoutes"
 
