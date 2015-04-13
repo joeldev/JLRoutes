@@ -188,48 +188,48 @@ static BOOL shouldDecodePlusSymbols = YES;
 }
 
 
-+ (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
++ (void)addRoute:(NSString *)routePattern handler:(JLRoutesHandler)handlerBlock {
 	[[self globalRoutes] addRoute:routePattern handler:handlerBlock];
 }
 
 
-+ (void)addRoute:(NSString *)routePattern validator:(BOOL (^)(NSDictionary *))validatorBlock handler:(BOOL (^)(NSDictionary *))handlerBlock {
++ (void)addRoute:(NSString *)routePattern validator:(JLRoutesHandler)validatorBlock handler:(JLRoutesHandler)handlerBlock {
     [[self globalRoutes] addRoute:routePattern validator:validatorBlock handler:handlerBlock];
 }
 
 
-+ (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
++ (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(JLRoutesHandler)handlerBlock {
     [[self globalRoutes] addRoute:routePattern priority:priority handler:handlerBlock];
 }
 
 
 + (void)addRoute:(NSString *)routePattern
         priority:(NSUInteger)priority
-       validator:(BOOL (^)(NSDictionary *))validatorBlock
-         handler:(BOOL (^)(NSDictionary *))handlerBlock
+       validator:(JLRoutesHandler)validatorBlock
+         handler:(JLRoutesHandler)handlerBlock
 {
     [[self globalRoutes] addRoute:routePattern priority:priority validator:validatorBlock handler:handlerBlock];
 }
 
 
-- (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
+- (void)addRoute:(NSString *)routePattern handler:(JLRoutesHandler)handlerBlock {
 	[self addRoute:routePattern priority:0 handler:handlerBlock];
 }
 
 
-- (void)addRoute:(NSString *)routePattern validator:(BOOL (^)(NSDictionary *))validatorBlock handler:(BOOL (^)(NSDictionary *))handlerBlock {
+- (void)addRoute:(NSString *)routePattern validator:(JLRoutesHandler)validatorBlock handler:(JLRoutesHandler)handlerBlock {
     [self addRoute:routePattern priority:0 validator:validatorBlock handler:handlerBlock];
 }
 
-- (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
+- (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(JLRoutesHandler)handlerBlock {
     [self addRoute:routePattern priority:priority validator:nil handler:handlerBlock];
 }
 
 
 - (void)addRoute:(NSString *)routePattern
         priority:(NSUInteger)priority
-       validator:(BOOL (^)(NSDictionary *))validatorBlock
-         handler:(BOOL (^)(NSDictionary *))handlerBlock
+       validator:(JLRoutesHandler)validatorBlock
+         handler:(JLRoutesHandler)handlerBlock
 {
 	_JLRoute *route = [[_JLRoute alloc] init];
 	route.pattern = routePattern;
