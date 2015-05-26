@@ -109,9 +109,8 @@ static BOOL shouldDecodePlusSymbols = YES;
 				// this component is a variable
 				NSString *variableName = [patternComponent substringFromIndex:1];
 				NSString *variableValue = URLComponent;
-				NSString *urlDecodedVariableValue = [variableValue JLRoutes_URLDecodedString];
-				if ([variableName length] > 0 && [urlDecodedVariableValue length] > 0) {
-					variables[variableName] = urlDecodedVariableValue;
+				if (variableName.length && variableValue.length) {
+					variables[variableName] = variableValue;
 				}
 			} else if ([patternComponent isEqualToString:@"*"]) {
 				// match wildcards
