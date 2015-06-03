@@ -18,6 +18,14 @@ JLRoutes is advanced URL parsing with a block-based callback API. It is designed
 * Pretty-print the whole routing table
 * No dependencies other than Foundation
 
+### Installation ###
+JLRoutes is available for installation via CocoaPods.
+
+### Requirements ###
+* ARC
+* iOS 5.0+ or OS X 10.7+
+* Foundation.framework
+
 ### Simple Example ###
 ```objc
 // in your app delegate:
@@ -166,14 +174,6 @@ For example, the following route would be triggerd for any URL that started with
 	return NO;
 }];
 ```
-
-### Installation ###
-JLRoutes is available for installation via CocoaPods.
-
-### Requirements ###
-* ARC
-* iOS 5.0+ or OS X 10.7+
-* Foundation.framework
 
 ### License ###
 BSD 3-Clause License:
