@@ -177,7 +177,7 @@ JLRoutes is available for installation via CocoaPods.
 
 ### License ###
 BSD 3-Clause License:
-> Copyright (c) 2013, Joel Levin. All rights reserved.
+> Copyright (c) 2015, Joel Levin. All rights reserved.
  
 > Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
  
