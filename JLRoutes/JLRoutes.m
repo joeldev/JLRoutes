@@ -191,6 +191,12 @@ static BOOL shouldDecodePlusSymbols = YES;
 	[[self globalRoutes] addRoute:routePattern handler:handlerBlock];
 }
 
++ (void)addRoutes:(NSArray *)routePatterns handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
+    for (NSString *routePattern in routePatterns) {
+        [self addRoute:routePattern handler:handlerBlock];
+    }
+}
+
 
 + (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
 	[[self globalRoutes] addRoute:routePattern priority:priority handler:handlerBlock];
@@ -199,6 +205,12 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
 	[self addRoute:routePattern priority:0 handler:handlerBlock];
+}
+
+- (void)addRoutes:(NSArray *)routePatterns handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
+    for (NSString *routePattern in routePatterns) {
+        [self addRoute:routePattern handler:handlerBlock];
+    }
 }
 
 
