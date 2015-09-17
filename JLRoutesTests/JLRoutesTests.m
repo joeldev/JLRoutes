@@ -65,6 +65,9 @@ static JLRoutesTests *testsInstance = nil;
 	[JLRoutes addRoute:@"/interleaving/:param1/foo/:param2" handler:defaultHandler];
 	[JLRoutes addRoute:@"/xyz/wildcard/*" handler:defaultHandler];
 	[JLRoutes addRoute:@"/route/:param/*" handler:defaultHandler];
+    
+    // used in testMultiple
+    [JLRoutes addRoutes:@[@"/multiple1", @"/multiple2"] handler:defaultHandler];
 	
 	// used in testPriority
 	[JLRoutes addRoute:@"/test/priority/:level" handler:defaultHandler];
@@ -206,6 +209,16 @@ static JLRoutesTests *testsInstance = nil;
     [self routeURL:[NSURL URLWithString:@"/test" relativeToURL:[NSURL URLWithString:@"http://localhost"]] withParameters:nil];
     JLValidateAnyRouteMatched();
     JLValidatePattern(@"/test");
+    JLValidateParameterCount(0);
+}
+
+- (void)testMultiple {
+    [self route:@"tests://multiple1"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(0);
+    
+    [self route:@"tests://multiple2"];
+    JLValidateAnyRouteMatched();
     JLValidateParameterCount(0);
 }
 

@@ -39,6 +39,11 @@ static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
 + (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method
 
+/// Registers multiple routePatterns for one handler with default priority (0) in the receiving scheme namespace.
++ (void)addRoutes:(NSArray *)routePatterns handler:(BOOL (^)(NSDictionary *parameters))handlerBlock;
+- (void)addRoutes:(NSArray *)routePatterns handler:(BOOL (^)(NSDictionary *parameters))handlerBlock; // instance method
+
+
 /// Removes a routePattern from the receiving scheme namespace.
 + (void)removeRoute:(NSString *)routePattern;
 - (void)removeRoute:(NSString *)routePattern; // instance method
