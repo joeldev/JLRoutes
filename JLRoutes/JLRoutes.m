@@ -13,6 +13,13 @@
 #import "JLRoutes.h"
 
 
+NSString *const kJLRoutePatternKey = @"JLRoutePattern";
+NSString *const kJLRouteURLKey = @"JLRouteURL";
+NSString *const kJLRouteNamespaceKey = @"JLRouteNamespace";
+NSString *const kJLRouteWildcardComponentsKey = @"JLRouteWildcardComponents";
+NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
+
+
 static NSMutableDictionary *routeControllersMap = nil;
 static BOOL verboseLoggingEnabled = NO;
 static BOOL shouldDecodePlusSymbols = YES;
