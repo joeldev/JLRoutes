@@ -112,6 +112,11 @@ static BOOL shouldDecodePlusSymbols = YES;
 				if ([variableName length] > 0 && [urlDecodedVariableValue length] > 0) {
 					variables[variableName] = urlDecodedVariableValue;
 				}
+                else {
+                    NSMutableArray * newComponents = [NSMutableArray arrayWithArray:URLComponents];
+                    [newComponents addObject:@""];
+                    URLComponents = newComponents;
+                }
 			} else if ([patternComponent isEqualToString:@"*"]) {
 				// match wildcards
 				variables[kJLRouteWildcardComponentsKey] = [URLComponents subarrayWithRange:NSMakeRange(componentIndex, URLComponents.count-componentIndex)];
