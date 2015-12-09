@@ -13,11 +13,11 @@
 #import <Foundation/Foundation.h>
 
 
-static NSString *const kJLRoutePatternKey = @"JLRoutePattern";
-static NSString *const kJLRouteURLKey = @"JLRouteURL";
-static NSString *const kJLRouteNamespaceKey = @"JLRouteNamespace";
-static NSString *const kJLRouteWildcardComponentsKey = @"JLRouteWildcardComponents";
-static NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalNamespace";
+FOUNDATION_EXTERN NSString *const kJLRoutePatternKey;
+FOUNDATION_EXTERN NSString *const kJLRouteURLKey;
+FOUNDATION_EXTERN NSString *const kJLRouteNamespaceKey;
+FOUNDATION_EXTERN NSString *const kJLRouteWildcardComponentsKey;
+FOUNDATION_EXTERN NSString *const kJLRoutesGlobalNamespaceKey;
 
 
 @interface JLRoutes : NSObject
