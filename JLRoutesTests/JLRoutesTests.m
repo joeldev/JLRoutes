@@ -432,6 +432,12 @@ static JLRoutesTests *testsInstance = nil;
 	[JLRoutes setShouldDecodePlusSymbols:oldDecodeSetting];
 }
 
+- (void) testVariableEmptyFollowedByWildcard {
+    [[JLRoutes routesForScheme:@"wildcardTests"] addRoute:@"list/:variable/detail/:variable2/*" handler:nil];
+    [self route:@"wildcardTests://list/variable/detail/"];
+    JLValidateAnyRouteMatched();
+}
+
 #pragma mark -
 #pragma mark Convenience Methods
 
