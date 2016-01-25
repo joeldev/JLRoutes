@@ -95,8 +95,6 @@ static BOOL shouldDecodePlusSymbols = YES;
 	}
 	
 	// do a quick component count check to quickly eliminate incorrect patterns
-    self.pattern = [self.pattern stringByReplacingOccurrencesOfString:@"(" withString:@""];
-    self.pattern = [self.pattern stringByReplacingOccurrencesOfString:@")" withString:@""];
 	BOOL componentCountEqual = self.patternPathComponents.count == URLComponents.count;
 	BOOL routeContainsWildcard = !NSEqualRanges([self.pattern rangeOfString:@"*"], NSMakeRange(NSNotFound, 0));
 	if (componentCountEqual || routeContainsWildcard) {
