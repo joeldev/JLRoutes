@@ -95,6 +95,8 @@ static BOOL shouldDecodePlusSymbols = YES;
 	}
 	
 	// do a quick component count check to quickly eliminate incorrect patterns
+    self.pattern = [self.pattern stringByReplacingOccurrencesOfString:@"(" withString:@""];
+    self.pattern = [self.pattern stringByReplacingOccurrencesOfString:@")" withString:@""];
 	BOOL componentCountEqual = self.patternPathComponents.count == URLComponents.count;
 	BOOL routeContainsWildcard = !NSEqualRanges([self.pattern rangeOfString:@"*"], NSMakeRange(NSNotFound, 0));
 	if (componentCountEqual || routeContainsWildcard) {
@@ -216,7 +218,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
-	[self addRoute:routePattern priority:0 handler:handlerBlock];
+    [self addRoute:routePattern priority:0 handler:handlerBlock];
 }
 
 - (void)addRoutes:(NSArray *)routePatterns handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
@@ -227,6 +229,37 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
+    
+    // if there's a pair of parenthesis, process optionals, trim the parenthesis, put it on trimmedRoute
+    NSString *trimmedRoute = routePattern;
+    
+    // repeat until no parenthesis pair is found
+    while ([trimmedRoute rangeOfString:@")" options:NSBackwardsSearch].location > [trimmedRoute rangeOfString:@"(" options:NSBackwardsSearch].location) {
+        
+        //Build route with the optionals
+        NSString *patternWithOptionals = [trimmedRoute stringByReplacingOccurrencesOfString:@"(" withString:@""];
+        patternWithOptionals = [patternWithOptionals stringByReplacingOccurrencesOfString:@")" withString:@""];
+        [self registerRoute:patternWithOptionals priority:priority handler:handlerBlock];
+        
+        //Build route without optionals
+        NSRange rangeOfLastParentheses = [trimmedRoute rangeOfString:@"(" options:NSBackwardsSearch];
+        NSRange rangeToRemove = NSMakeRange(rangeOfLastParentheses.location, trimmedRoute.length - rangeOfLastParentheses.location);
+        NSString *patternWithLastOptionalRemoved = [trimmedRoute stringByReplacingCharactersInRange:rangeToRemove withString:@""];
+        //Remove any parenthesis for other optionals that might still be in the route
+        NSString *patternWithoutOptionals = [patternWithLastOptionalRemoved stringByReplacingOccurrencesOfString:@"(" withString:@""];
+        patternWithoutOptionals = [patternWithoutOptionals stringByReplacingOccurrencesOfString:@")" withString:@""];
+        [self registerRoute:patternWithoutOptionals priority:priority handler:handlerBlock];
+        
+        trimmedRoute = patternWithLastOptionalRemoved;
+    }
+    
+    //Only register original route if trimmedRoute haven't been modified.
+    if (trimmedRoute == routePattern) {
+        [self registerRoute:routePattern priority:priority handler:handlerBlock];
+    }
+}
+
+- (void)registerRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
 	_JLRoute *route = [[_JLRoute alloc] init];
 	route.pattern = routePattern;
 	route.priority = priority;

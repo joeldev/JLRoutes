@@ -65,6 +65,7 @@ static JLRoutesTests *testsInstance = nil;
 	[JLRoutes addRoute:@"/interleaving/:param1/foo/:param2" handler:defaultHandler];
 	[JLRoutes addRoute:@"/xyz/wildcard/*" handler:defaultHandler];
 	[JLRoutes addRoute:@"/route/:param/*" handler:defaultHandler];
+    [JLRoutes addRoute:@"/required/:requiredParam(/optional/:optionalParam)(/moreOptional/:moreOptionalParam)" handler:defaultHandler];
     
     // used in testMultiple
     [JLRoutes addRoutes:@[@"/multiple1", @"/multiple2"] handler:defaultHandler];
@@ -210,6 +211,24 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
     JLValidatePattern(@"/test");
     JLValidateParameterCount(0);
+    
+    [self route:@"tests://required/mustExist"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"requiredParam": @"mustExist"});
+    
+    [self route:@"tests://required/mustExist/optional/mightExist"];    
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(2);
+    JLValidateParameter(@{@"requiredParam": @"mustExist"});
+    JLValidateParameter(@{@"optionalParam": @"mightExist"});
+    
+    [self route:@"tests://required/mustExist/optional/mightExist/moreOptional/mightExistToo"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(3);
+    JLValidateParameter(@{@"requiredParam": @"mustExist"});
+    JLValidateParameter(@{@"optionalParam": @"mightExist"});
+    JLValidateParameter(@{@"moreOptionalParam": @"mightExistToo"});
 }
 
 - (void)testMultiple {
