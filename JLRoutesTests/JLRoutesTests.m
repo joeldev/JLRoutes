@@ -432,10 +432,19 @@ static JLRoutesTests *testsInstance = nil;
 	[JLRoutes setShouldDecodePlusSymbols:oldDecodeSetting];
 }
 
-- (void) testVariableEmptyFollowedByWildcard {
+- (void)testVariableEmptyFollowedByWildcard
+{
     [[JLRoutes routesForScheme:@"wildcardTests"] addRoute:@"list/:variable/detail/:variable2/*" handler:nil];
     [self route:@"wildcardTests://list/variable/detail/"];
     JLValidateAnyRouteMatched();
+}
+
+- (void)testUniversalLinks
+{
+    [[JLRoutes routesForScheme:@"myapp"] addRoute:@"invite.myapp.com/:inviteId" handler:[[self class] defaultRouteHandler]];
+    [self route:@"myapp://invite.myapp.com/abc123"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"inviteId": @"abc123"});
 }
 
 #pragma mark -
