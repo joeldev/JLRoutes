@@ -160,7 +160,7 @@ This tells JLRoutes that if a URL cannot be routed within the namespace `thing` 
 
 JLRoutes supports setting up routes that will match an arbitrary number of path components at the end of the routed URL. An array containing the additional path components will be added to the parameters dictionary with the key `kJLRouteWildcardComponentsKey`.
 
-For example, the following route would be triggerd for any URL that started with `/wildcard/`, but would be rejected by the handler if the next component wasn't `joker`.
+For example, the following route would be triggered for any URL that started with `/wildcard/`, but would be rejected by the handler if the next component wasn't `joker`.
 
 ```objc
 [JLRoutes addRoute:@"/wildcard/*" handler:^BOOL(NSDictionary *parameters) {
@@ -173,7 +173,17 @@ For example, the following route would be triggerd for any URL that started with
 	// not interested unless the joker's in it
 	return NO;
 }];
-```
+```    
+
+
+### Optional routes ###
+
+JLRoutes supports setting up routes with optional parameters. At the route registration moment, JLRoute will register multiple routes with all combinations of the route with the optional parameters and without the optional parameters. For example, for the route `/user/:userId(/post/:postId)(/reply/:replyId)`, it will register the following routes:
+
+- `/user/:userId/post/:postId/reply/:replyId`
+- `/user/:userId/post/:postId/`
+- `/user/:userId`
+
 
 ### License ###
 BSD 3-Clause License:
