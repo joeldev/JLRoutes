@@ -66,19 +66,10 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		5CB4EB4A1B45BF5B0058E91A /* JLRoutes iOS Framework */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			name = "JLRoutes iOS Framework";
-			path = "JLRoutes-iOS";
-			sourceTree = "<group>";
-		};
 		5D33680916C6DC9300F983AA = {
 			isa = PBXGroup;
 			children = (
 				5D33681716C6DC9300F983AA /* JLRoutes */,
-				5CB4EB4A1B45BF5B0058E91A /* JLRoutes iOS Framework */,
 				5D3CB0701C73DA2700870B55 /* JLRoutesTests */,
 				5D33681416C6DC9300F983AA /* Frameworks */,
 				5D33681316C6DC9300F983AA /* Products */,
