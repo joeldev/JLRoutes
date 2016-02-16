@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "JLRoutes"
-  s.version      = "1.5.4"
+  s.version      = "1.5.5"
   s.summary      = "URL routing library for iOS with a simple block-based API."
   s.homepage     = "https://github.com/joeldev/JLRoutes"
 
@@ -20,7 +20,7 @@ Pod::Spec.new do |s|
   }
 
   s.author       = { "Joel Levin" => "joel@joeldev.com" }
-  s.source       = { :git => "https://github.com/joeldev/JLRoutes.git", :tag => "1.5.4" }
+  s.source       = { :git => "https://github.com/joeldev/JLRoutes.git", :tag => "1.5.5" }
 
   s.source_files = 'JLRoutes', 'JLRoutes/*.{h,m}'
   s.framework  = 'Foundation'
