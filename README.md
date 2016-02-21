@@ -18,8 +18,8 @@ JLRoutes is advanced URL parsing with a block-based callback API. It is designed
 * Pretty-print the whole routing table
 * No dependencies other than Foundation
 
-### Installation ###
-JLRoutes is available for installation via CocoaPods.
+### Package Managers ###
+JLRoutes is available for installation using CocoaPods or Carthage (add `github "joeldev/JLRoutes"` to your `Cartfile`).
 
 ### Requirements ###
 * ARC
