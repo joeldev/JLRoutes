@@ -327,12 +327,12 @@ static JLRoutesTests *testsInstance = nil;
     [self route:@"tests://doesnt/exist#/and/wont/match"];
     JLValidateNoLastMatch();
     
-    [self route:@"tests://required/mustExist"];
+    [self route:@"tests://required#/mustExist"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"requiredParam": @"mustExist"});
     
-    [self route:@"tests://required/mustExist/optional/mightExist"];
+    [self route:@"tests://required#/mustExist/optional/mightExist"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(2);
     JLValidateParameter(@{@"requiredParam": @"mustExist"});
