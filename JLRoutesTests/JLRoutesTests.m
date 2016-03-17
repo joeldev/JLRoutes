@@ -64,6 +64,14 @@ static JLRoutesTests *testsInstance = nil;
     
     [JLRoutes setVerboseLoggingEnabled:YES];
     
+    // used in testBasicFragmentRouting
+    [JLRoutes addRoute:@"/user#/view/:userID" handler:defaultHandler];
+    [JLRoutes addRoute:@"/:object#/:action/:primaryKey" handler:defaultHandler];
+    [JLRoutes addRoute:@"/interleaving/:param1#/foo/:param2" handler:defaultHandler];
+    [JLRoutes addRoute:@"/xyz/wildcard#/*" handler:defaultHandler];
+    [JLRoutes addRoute:@"/route#/:param/*" handler:defaultHandler];
+    [JLRoutes addRoute:@"/required#/:requiredParam(/optional/:optionalParam)(/moreOptional/:moreOptionalParam)" handler:defaultHandler];
+    
     // used in testBasicRouting
     [JLRoutes addRoute:@"/test" handler:defaultHandler];
     [JLRoutes addRoute:@"/user/view/:userID" handler:defaultHandler];
@@ -232,6 +240,105 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameter(@{@"optionalParam": @"mightExist"});
     
     [self route:@"tests://required/mustExist/optional/mightExist/moreOptional/mightExistToo"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(3);
+    JLValidateParameter(@{@"requiredParam": @"mustExist"});
+    JLValidateParameter(@{@"optionalParam": @"mightExist"});
+    JLValidateParameter(@{@"moreOptionalParam": @"mightExistToo"});
+}
+
+
+- (void)testBasicFragmentRouting {
+    [self route:nil];
+    JLValidateNoLastMatch();
+    
+    [self route:@"tests://user#/view/joeldev"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joeldev"});
+    
+    [self route:@"tests://user#/view/joeldev/"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joeldev"});
+    
+    [self route:@"tests://user#/view/joel%20levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel levin"});
+    
+    [self route:@"tests://user#/view/joeldev?foo=bar&thing=stuff"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(3);
+    JLValidateParameter(@{@"userID": @"joeldev"});
+    JLValidateParameter(@{@"foo" : @"bar"});
+    JLValidateParameter(@{@"thing" : @"stuff"});
+    
+    [self route:@"tests://user#/view/joeldev?userID=evilPerson"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joeldev"});
+    
+    [self route:@"tests://user#/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil" withParameters:@{@"evilThing": @"notEvil"}];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(3);
+    JLValidateParameter(@{@"userID": @"joeldev"});
+    JLValidateParameter(@{@"search": @"evilSearch"});
+    JLValidateParameter(@{@"evilThing": @"notEvil"});
+    
+    [self route:@"tests://user?search=niceSearch&go=home#/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil" withParameters:@{@"evilThing": @"notEvil"}];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(4);
+    JLValidateParameter(@{@"userID": @"joeldev"});
+    JLValidateParameter(@{@"go": @"home"});
+    JLValidateParameter(@{@"search": @"evilSearch"});
+    JLValidateParameter(@{@"evilThing": @"notEvil"});
+    
+    [self route:@"tests://post#/edit/123"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(3);
+    JLValidateParameter(@{@"object": @"post"});
+    JLValidateParameter(@{@"action": @"edit"});
+    JLValidateParameter(@{@"primaryKey": @"123"});
+    
+    [self route:@"tests://interleaving/paramvalue1#/foo/paramvalue2"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(2);
+    JLValidateParameter(@{@"param1": @"paramvalue1"});
+    JLValidateParameter(@{@"param2": @"paramvalue2"});
+    
+    [self route:@"tests://xyz/wildcard#"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCountIncludingWildcard(0);
+    
+    [self route:@"tests://xyz/wildcard#/matches/with/extra/path/components"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    NSArray *wildcardMatches = @[@"matches", @"with", @"extra", @"path", @"components"];
+    JLValidateParameter(@{kJLRouteWildcardComponentsKey: wildcardMatches});
+    
+    [self route:@"tests://route#/matches/with/wildcard"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(2);
+    JLValidateParameter(@{@"param": @"matches"});
+    NSArray *parameterWildcardMatches = @[@"with", @"wildcard"];
+    JLValidateParameter(@{kJLRouteWildcardComponentsKey: parameterWildcardMatches});
+    
+    [self route:@"tests://doesnt/exist#/and/wont/match"];
+    JLValidateNoLastMatch();
+    
+    [self route:@"tests://required/mustExist"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"requiredParam": @"mustExist"});
+    
+    [self route:@"tests://required/mustExist/optional/mightExist"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(2);
+    JLValidateParameter(@{@"requiredParam": @"mustExist"});
+    JLValidateParameter(@{@"optionalParam": @"mightExist"});
+    
+    [self route:@"tests://required#/mustExist/optional/mightExist/moreOptional/mightExistToo"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(3);
     JLValidateParameter(@{@"requiredParam": @"mustExist"});
