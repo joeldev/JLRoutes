@@ -49,7 +49,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 - (NSString *)JLRoutes_URLDecodedString {
 	NSString *input = shouldDecodePlusSymbols ? [self stringByReplacingOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, self.length)] : self;
-	return [input stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+	return [input stringByRemovingPercentEncoding];
 }
 
 - (NSDictionary *)JLRoutes_URLParameterDictionary {
