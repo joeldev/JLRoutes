@@ -22,9 +22,7 @@ JLRoutes is advanced URL parsing with a block-based callback API. It is designed
 JLRoutes is available for installation using CocoaPods or Carthage (add `github "joeldev/JLRoutes"` to your `Cartfile`).
 
 ### Requirements ###
-* ARC
-* iOS 5.0+ or OS X 10.7+
-* Foundation.framework
+* iOS 7.0+ or OS X 10.9+
 
 ### Simple Example ###
 ```objc
