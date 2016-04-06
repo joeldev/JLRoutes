@@ -71,6 +71,38 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 @end
 
+@interface NSURL (JLRoutes)
+
+- (NSArray *)JLRoutes_fragmentPathComponents;
+- (NSString *)JLRoutes_fragmentQuery;
+
+@end
+
+
+@implementation NSURL (JLRoutes)
+
+- (NSArray *)JLRoutes_fragmentPathComponents {
+    NSString *fragment = self.fragment;
+    if (!fragment) {
+        return nil;
+    }
+    
+    NSURL *URL = [[NSURL alloc] initWithString:fragment];
+    return URL.pathComponents;
+}
+
+- (NSString *)JLRoutes_fragmentQuery {
+    NSString *fragment = self.fragment;
+    if (!fragment) {
+        return nil;
+    }
+    
+    NSURL *URL = [[NSURL alloc] initWithString:fragment];
+    return URL.query;
+}
+
+@end
+
 
 @interface _JLRoute : NSObject
 
@@ -79,70 +111,113 @@ static BOOL shouldDecodePlusSymbols = YES;
 @property (nonatomic, strong) BOOL (^block)(NSDictionary *parameters);
 @property (nonatomic, assign) NSUInteger priority;
 @property (nonatomic, strong) NSArray *patternPathComponents;
+@property (nonatomic, strong) NSArray *patternFragmentComponents;
+@property (nonatomic, assign) BOOL matchFragmentComponents;
 
-- (NSDictionary *)parametersForURL:(NSURL *)URL components:(NSArray *)URLComponents;
+- (NSDictionary *)parametersForURL:(NSURL *)URL pathComponents:(NSArray *)pathComponents fragmentComponents:(NSArray *)fragmentComponents;
 
 @end
 
 
 @implementation _JLRoute
 
-- (NSDictionary *)parametersForURL:(NSURL *)URL components:(NSArray *)URLComponents {
-	NSDictionary *routeParameters = nil;
-	
-	if (!self.patternPathComponents) {
-		self.patternPathComponents = [[self.pattern pathComponents] filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
+- (NSDictionary *)parametersForURL:(NSURL *)URL pathComponents:(NSArray *)pathComponents fragmentComponents:(NSArray *)fragmentComponents {
+
+    if (!self.patternPathComponents) {
+        NSString *fragmentIdentifier = @"#";
+        NSRange range = [self.pattern rangeOfString:fragmentIdentifier];
+        
+        NSString *pathPattern;
+        NSString *fragmentPattern;
+        
+        if (range.location != NSNotFound) {
+            pathPattern = [self.pattern substringToIndex:range.location];
+            fragmentPattern = [self.pattern substringFromIndex:range.location + fragmentIdentifier.length];
+            self.matchFragmentComponents = YES;
+        } else {
+            pathPattern = self.pattern;
+        }
+        
+        NSPredicate *filterSlashesPredicate = [NSPredicate predicateWithFormat:@"NOT SELF like '/'"];
+		self.patternPathComponents = [[pathPattern pathComponents] filteredArrayUsingPredicate:filterSlashesPredicate];
+        self.patternFragmentComponents = [[fragmentPattern pathComponents] filteredArrayUsingPredicate:filterSlashesPredicate];
 	}
-	
-	// do a quick component count check to quickly eliminate incorrect patterns
-	BOOL componentCountEqual = self.patternPathComponents.count == URLComponents.count;
-	BOOL routeContainsWildcard = !NSEqualRanges([self.pattern rangeOfString:@"*"], NSMakeRange(NSNotFound, 0));
-	if (componentCountEqual || routeContainsWildcard) {
-		// now that we've identified a possible match, move component by component to check if it's a match
-		NSUInteger componentIndex = 0;
-		NSMutableDictionary *variables = [NSMutableDictionary dictionary];
-		BOOL isMatch = YES;
-		
-		for (NSString *patternComponent in self.patternPathComponents) {
-			NSString *URLComponent = nil;
-			if (componentIndex < [URLComponents count]) {
-				URLComponent = URLComponents[componentIndex];
-			} else if ([patternComponent isEqualToString:@"*"]) { // match /foo by /foo/*
-				URLComponent = [URLComponents lastObject];
-			}
-			
-			if ([patternComponent hasPrefix:@":"]) {
-				// this component is a variable
-				NSString *variableName = [patternComponent substringFromIndex:1];
-				NSString *variableValue = URLComponent;
-				NSString *urlDecodedVariableValue = [variableValue JLRoutes_URLDecodedString];
-				if ([variableName length] > 0 && [urlDecodedVariableValue length] > 0) {
-					variables[variableName] = urlDecodedVariableValue;
-				}
-                else {
-                    NSMutableArray * newComponents = [NSMutableArray arrayWithArray:URLComponents];
-                    [newComponents addObject:@""];
-                    URLComponents = newComponents;
+    
+    NSMutableDictionary *routeParameters = [NSMutableDictionary dictionary];
+    
+    NSDictionary *pathParameters = [self parametersForURL:URL patternComponents:self.patternPathComponents components:pathComponents];
+    if (!pathParameters) {
+        return nil;
+    }
+    
+    NSDictionary *fragmentParameters;
+    if (self.matchFragmentComponents) {
+         fragmentParameters = [self parametersForURL:URL patternComponents:self.patternFragmentComponents components:fragmentComponents];
+        if (!fragmentParameters) {
+            return nil;
+        }
+        
+        [routeParameters addEntriesFromDictionary:fragmentParameters];
+    }
+    
+    [routeParameters addEntriesFromDictionary:pathParameters];
+    
+    
+    return routeParameters;
+}
+
+- (NSDictionary *)parametersForURL:(NSURL *)URL patternComponents:(NSArray *)patternComponents components:(NSArray *)components {
+    NSDictionary *routeParameters = nil;
+    
+    // do a quick component count check to quickly eliminate incorrect patterns
+    BOOL componentCountEqual = patternComponents.count == components.count;
+    BOOL patternContainsWildcard = [patternComponents containsObject:@"*"];
+    if (componentCountEqual || patternContainsWildcard) {
+        // now that we've identified a possible match, move component by component to check if it's a match
+        NSUInteger componentIndex = 0;
+        NSMutableDictionary *variables = [NSMutableDictionary dictionary];
+        BOOL isMatch = YES;
+        
+        for (NSString *patternComponent in patternComponents) {
+            NSString *URLComponent = nil;
+            if (componentIndex < [components count]) {
+                URLComponent = components[componentIndex];
+            } else if ([patternComponent isEqualToString:@"*"]) { // match /foo by /foo/*
+                URLComponent = [components lastObject];
+            }
+            
+            if ([patternComponent hasPrefix:@":"]) {
+                // this component is a variable
+                NSString *variableName = [patternComponent substringFromIndex:1];
+                NSString *variableValue = URLComponent;
+                NSString *urlDecodedVariableValue = [variableValue JLRoutes_URLDecodedString];
+                if ([variableName length] > 0 && [urlDecodedVariableValue length] > 0) {
+                    variables[variableName] = urlDecodedVariableValue;
                 }
-			} else if ([patternComponent isEqualToString:@"*"]) {
-				// match wildcards
-				variables[kJLRouteWildcardComponentsKey] = [URLComponents subarrayWithRange:NSMakeRange(componentIndex, URLComponents.count-componentIndex)];
-				isMatch = YES;
-				break;
-			} else if (![patternComponent isEqualToString:URLComponent]) {
-				// a non-variable component did not match, so this route doesn't match up - on to the next one
-				isMatch = NO;
-				break;
-			}
-			componentIndex++;
-		}
-		
-		if (isMatch) {
-			routeParameters = variables;
-		}
-	}
-	
-	return routeParameters;
+                else {
+                    NSMutableArray * newComponents = [NSMutableArray arrayWithArray:components];
+                    [newComponents addObject:@""];
+                    components = newComponents;
+                }
+            } else if ([patternComponent isEqualToString:@"*"]) {
+                // match wildcards
+                variables[kJLRouteWildcardComponentsKey] = [components subarrayWithRange:NSMakeRange(componentIndex, components.count-componentIndex)];
+                isMatch = YES;
+                break;
+            } else if (![patternComponent isEqualToString:URLComponent]) {
+                // a non-variable component did not match, so this route doesn't match up - on to the next one
+                isMatch = NO;
+                break;
+            }
+            componentIndex++;
+        }
+        
+        if (isMatch) {
+            routeParameters = variables;
+        }
+    }
+    
+    return routeParameters;
 }
 
 
@@ -431,9 +506,14 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 	NSDictionary *fragmentParameters = [URL.fragment JLRoutes_URLParameterDictionary];
 	[self verboseLogWithFormat:@"Parsed fragment parameters: %@", fragmentParameters];
+    
+    NSDictionary *fragmentQueryParameters = [URL.JLRoutes_fragmentQuery JLRoutes_URLParameterDictionary];
+    [self verboseLogWithFormat:@"Parsed fragment query parameters: %@", fragmentParameters];
 
 	// break the URL down into path components and filter out any leading/trailing slashes from it
-	NSArray *pathComponents = [(URL.pathComponents ?: @[]) filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"NOT SELF like '/'"]];
+    NSPredicate *filterSlashesPredicate = [NSPredicate predicateWithFormat:@"NOT SELF like '/'"];
+	NSArray *pathComponents = [(URL.pathComponents ?: @[]) filteredArrayUsingPredicate:filterSlashesPredicate];
+    NSArray *fragmentComponents = [(URL.JLRoutes_fragmentPathComponents ?: @[]) filteredArrayUsingPredicate:filterSlashesPredicate];
 	
 	if (URL.host.length > 0 && ![URL.host isEqualToString:@"localhost"]) {
 		// For backward compatibility, handle scheme://path/to/ressource as if path was part of the
@@ -442,9 +522,11 @@ static BOOL shouldDecodePlusSymbols = YES;
 	}
 	
 	[self verboseLogWithFormat:@"URL path components: %@", pathComponents];
+    
+    [self verboseLogWithFormat:@"URL fragment components: %@", fragmentComponents];
 	
 	for (_JLRoute *route in routes) {
-		NSDictionary *matchParameters = [route parametersForURL:URL components:pathComponents];
+        NSDictionary *matchParameters = [route parametersForURL:URL pathComponents:pathComponents fragmentComponents:fragmentComponents];
 		if (matchParameters) {
 			[self verboseLogWithFormat:@"Successfully matched %@", route];
             if (!executeBlock) {
@@ -456,7 +538,11 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 			// in increasing order of precedence: query, fragment, route, builtin
 			[finalParameters addEntriesFromDictionary:queryParameters];
-			[finalParameters addEntriesFromDictionary:fragmentParameters];
+            if (route.matchFragmentComponents) {
+                [finalParameters addEntriesFromDictionary:fragmentQueryParameters];
+            } else {
+                [finalParameters addEntriesFromDictionary:fragmentParameters];
+            }
 			[finalParameters addEntriesFromDictionary:matchParameters];
 			[finalParameters addEntriesFromDictionary:parameters];
 			finalParameters[kJLRoutePatternKey] = route.pattern;
