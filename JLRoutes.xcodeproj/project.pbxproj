@@ -532,6 +532,7 @@
 				5D3CB0791C73DA2700870B55 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
