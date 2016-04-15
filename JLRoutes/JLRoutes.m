@@ -518,7 +518,9 @@ static BOOL shouldDecodePlusSymbols = YES;
 	if (URL.host.length > 0 && ![URL.host isEqualToString:@"localhost"]) {
 		// For backward compatibility, handle scheme://path/to/ressource as if path was part of the
 		// path if it doesn't look like a domain name (no dot in it)
-		pathComponents = [@[URL.host] arrayByAddingObjectsFromArray:pathComponents];
+		if ([URL.host rangeOfString:@"."].location == NSNotFound) {
+			pathComponents = [@[URL.host] arrayByAddingObjectsFromArray:pathComponents];
+		}
 	}
 	
 	[self verboseLogWithFormat:@"URL path components: %@", pathComponents];
