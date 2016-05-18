@@ -274,34 +274,34 @@ static BOOL shouldDecodePlusSymbols = YES;
 }
 
 
-+ (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
++ (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock {
 	[[self globalRoutes] addRoute:routePattern handler:handlerBlock];
 }
 
-+ (void)addRoutes:(NSArray *)routePatterns handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
++ (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock {
     for (NSString *routePattern in routePatterns) {
         [self addRoute:routePattern handler:handlerBlock];
     }
 }
 
 
-+ (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
++ (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock {
 	[[self globalRoutes] addRoute:routePattern priority:priority handler:handlerBlock];
 }
 
 
-- (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
+- (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock {
     [self addRoute:routePattern priority:0 handler:handlerBlock];
 }
 
-- (void)addRoutes:(NSArray *)routePatterns handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
+- (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock {
     for (NSString *routePattern in routePatterns) {
         [self addRoute:routePattern handler:handlerBlock];
     }
 }
 
 
-- (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock {
+- (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock {
     
     // if there's a pair of parenthesis, process optionals, trim the parenthesis, put it on trimmedRoute
     NSString *trimmedRoute = routePattern;
