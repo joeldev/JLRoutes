@@ -32,7 +32,7 @@ FOUNDATION_EXTERN NSString *__nonnull const kJLRoutesGlobalNamespaceKey;
 + (nonnull instancetype)routesForScheme:(nonnull NSString *)scheme;
 
 /// Tells JLRoutes that it should manually replace '+' in parsed values to ' '. Defaults to YES.
-+ (void)setShouldDecodePlusSymbols:(BOOL)shouldDeecode;
++ (void)setShouldDecodePlusSymbols:(BOOL)shouldDecode;
 + (BOOL)shouldDecodePlusSymbols;
 
 /// Registers a routePattern with default priority (0) in the receiving scheme namespace.
