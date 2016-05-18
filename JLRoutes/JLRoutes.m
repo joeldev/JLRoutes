@@ -514,8 +514,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     NSArray *fragmentComponents = [(URL.JLRoutes_fragmentPathComponents ?: @[]) filteredArrayUsingPredicate:filterSlashesPredicate];
 
     if (URL.host.length > 0 && ![URL.host isEqualToString:@"localhost"]) {
-        // For backward compatibility, handle scheme://path/to/resource as if path was part of the
-        // path if it doesn't look like a domain name (no dot in it)
+        // For backward compatibility, handle scheme://path/to/resource as if path was part of the path
         pathComponents = [@[URL.host] arrayByAddingObjectsFromArray:pathComponents];
     }
 
