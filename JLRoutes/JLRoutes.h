@@ -12,12 +12,14 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
-FOUNDATION_EXTERN NSString *__nonnull const kJLRoutePatternKey;
-FOUNDATION_EXTERN NSString *__nonnull const kJLRouteURLKey;
-FOUNDATION_EXTERN NSString *__nonnull const kJLRouteNamespaceKey;
-FOUNDATION_EXTERN NSString *__nonnull const kJLRouteWildcardComponentsKey;
-FOUNDATION_EXTERN NSString *__nonnull const kJLRoutesGlobalNamespaceKey;
+
+FOUNDATION_EXTERN NSString *const kJLRoutePatternKey;
+FOUNDATION_EXTERN NSString *const kJLRouteURLKey;
+FOUNDATION_EXTERN NSString *const kJLRouteNamespaceKey;
+FOUNDATION_EXTERN NSString *const kJLRouteWildcardComponentsKey;
+FOUNDATION_EXTERN NSString *const kJLRoutesGlobalNamespaceKey;
 
 
 @interface JLRoutes : NSObject
@@ -26,43 +28,43 @@ FOUNDATION_EXTERN NSString *__nonnull const kJLRoutesGlobalNamespaceKey;
  */
 
 /// Returns the global routing namespace (this is used by the +addRoute methods by default)
-+ (nonnull instancetype)globalRoutes;
++ (instancetype)globalRoutes;
 
 /// Returns a routing namespace for the given scheme
-+ (nonnull instancetype)routesForScheme:(nonnull NSString *)scheme;
++ (instancetype)routesForScheme:(NSString *)scheme;
 
 /// Tells JLRoutes that it should manually replace '+' in parsed values to ' '. Defaults to YES.
 + (void)setShouldDecodePlusSymbols:(BOOL)shouldDecode;
 + (BOOL)shouldDecodePlusSymbols;
 
 /// Registers a routePattern with default priority (0) in the receiving scheme namespace.
-+ (void)addRoute:(nonnull NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *__nonnull parameters))handlerBlock;
-- (void)addRoute:(nonnull NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *__nonnull parameters))handlerBlock; // instance method
++ (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock;
+- (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock; // instance method
 
 /// Registers multiple routePatterns for one handler with default priority (0) in the receiving scheme namespace.
-+ (void)addRoutes:(nonnull NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *__nonnull parameters))handlerBlock;
-- (void)addRoutes:(nonnull NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *__nonnull parameters))handlerBlock; // instance method
++ (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock;
+- (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock; // instance method
 
 
 /// Removes a routePattern from the receiving scheme namespace.
-+ (void)removeRoute:(nonnull NSString *)routePattern;
-- (void)removeRoute:(nonnull NSString *)routePattern; // instance method
++ (void)removeRoute:(NSString *)routePattern;
+- (void)removeRoute:(NSString *)routePattern; // instance method
 
 /// Removes all routes from the receiving scheme namespace.
 + (void)removeAllRoutes;
 - (void)removeAllRoutes; // instance method
 
 /// Unregister and delete an entire scheme namespace
-+ (void)unregisterRouteScheme:(nonnull NSString *)scheme;
++ (void)unregisterRouteScheme:(NSString *)scheme;
 
 /// Registers a routePattern with default priority (0) using dictionary-style subscripting.
-- (void)setObject:(nullable id)handlerBlock forKeyedSubscript:(nonnull NSString *)routePatten;
+- (void)setObject:(nullable id)handlerBlock forKeyedSubscript:(NSString *)routePatten;
 
 /// Registers a routePattern in the global scheme namespace with a handlerBlock to call when the route pattern is matched by a URL.
 /// The block returns a BOOL representing if the handlerBlock actually handled the route or not. If
 /// a block returns NO, JLRoutes will continue trying to find a matching route.
-+ (void)addRoute:(nonnull NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *__nonnull parameters))handlerBlock;
-- (void)addRoute:(nonnull NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *__nonnull parameters))handlerBlock; // instance method
++ (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock;
+- (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock; // instance method
 
 /// Routes a URL, calling handler blocks (for patterns that match URL) until one returns YES, optionally specifying add'l parameters
 + (BOOL)routeURL:(nullable NSURL *)URL;
@@ -79,7 +81,7 @@ FOUNDATION_EXTERN NSString *__nonnull const kJLRoutesGlobalNamespaceKey;
 - (BOOL)canRouteURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, NSString *> *)parameters; // instance method
 
 /// Prints the entire routing table
-+ (nonnull NSString *)description;
++ (NSString *)description;
 
 /// Allows configuration of verbose logging. Default is NO. This is mostly just helpful with debugging.
 + (void)setVerboseLoggingEnabled:(BOOL)loggingEnabled;
@@ -89,6 +91,8 @@ FOUNDATION_EXTERN NSString *__nonnull const kJLRoutesGlobalNamespaceKey;
 @property (nonatomic, assign) BOOL shouldFallbackToGlobalRoutes;
 
 /// Called any time routeURL returns NO. Respects shouldFallbackToGlobalRoutes.
-@property (nonatomic, copy) void (^__nullable unmatchedURLHandler)(JLRoutes *__nonnull routes, NSURL *__nullable URL, NSDictionary<NSString *, NSString *> *__nullable parameters);
+@property (nonatomic, copy) void (^__nullable unmatchedURLHandler)(JLRoutes *routes, NSURL *__nullable URL, NSDictionary<NSString *, NSString *> *__nullable parameters);
 
 @end
+
+NS_ASSUME_NONNULL_END
