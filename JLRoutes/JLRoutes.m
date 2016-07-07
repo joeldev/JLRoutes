@@ -513,7 +513,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     NSArray *pathComponents = [(URL.pathComponents ?: @[]) filteredArrayUsingPredicate:filterSlashesPredicate];
     NSArray *fragmentComponents = [(URL.JLRoutes_fragmentPathComponents ?: @[]) filteredArrayUsingPredicate:filterSlashesPredicate];
 
-    if (URL.host.length > 0 && ![URL.host isEqualToString:@"localhost"]) {
+    if ([URL.host rangeOfString:@"."].location == NSNotFound && ![URL.host isEqualToString:@"localhost"]) {
         // For backward compatibility, handle scheme://path/to/resource as if path was part of the path
         pathComponents = [@[URL.host] arrayByAddingObjectsFromArray:pathComponents];
     }

@@ -573,14 +573,6 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
 }
 
-- (void)testUniversalLinks
-{
-    [[JLRoutes routesForScheme:@"myapp"] addRoute:@"invite.myapp.com/:inviteId" handler:[[self class] defaultRouteHandler]];
-    [self route:@"myapp://invite.myapp.com/abc123"];
-    JLValidateAnyRouteMatched();
-    JLValidateParameter(@{@"inviteId": @"abc123"});
-}
-
 #pragma mark -
 #pragma mark Convenience Methods
 
