@@ -38,12 +38,12 @@ FOUNDATION_EXTERN NSString *const kJLRoutesGlobalNamespaceKey;
 + (BOOL)shouldDecodePlusSymbols;
 
 /// Registers a routePattern with default priority (0) in the receiving scheme namespace.
-+ (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock;
-- (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock; // instance method
++ (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock;
+- (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock; // instance method
 
 /// Registers multiple routePatterns for one handler with default priority (0) in the receiving scheme namespace.
-+ (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock;
-- (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock; // instance method
++ (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock;
+- (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock; // instance method
 
 
 /// Removes a routePattern from the receiving scheme namespace.
@@ -63,22 +63,22 @@ FOUNDATION_EXTERN NSString *const kJLRoutesGlobalNamespaceKey;
 /// Registers a routePattern in the global scheme namespace with a handlerBlock to call when the route pattern is matched by a URL.
 /// The block returns a BOOL representing if the handlerBlock actually handled the route or not. If
 /// a block returns NO, JLRoutes will continue trying to find a matching route.
-+ (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock;
-- (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, NSString *> *parameters))handlerBlock; // instance method
++ (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock;
+- (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock; // instance method
 
 /// Routes a URL, calling handler blocks (for patterns that match URL) until one returns YES, optionally specifying add'l parameters
 + (BOOL)routeURL:(nullable NSURL *)URL;
-+ (BOOL)routeURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, NSString *> *)parameters;
++ (BOOL)routeURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, id> *)parameters;
 
 - (BOOL)routeURL:(nullable NSURL *)URL; // instance method
-- (BOOL)routeURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, NSString *> *)parameters; // instance method
+- (BOOL)routeURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, id> *)parameters; // instance method
 
 /// Returns whether a route exists for a URL
 + (BOOL)canRouteURL:(nullable NSURL *)URL;
-+ (BOOL)canRouteURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, NSString *> *)parameters;
++ (BOOL)canRouteURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, id> *)parameters;
 
 - (BOOL)canRouteURL:(nullable NSURL *)URL; // instance method
-- (BOOL)canRouteURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, NSString *> *)parameters; // instance method
+- (BOOL)canRouteURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, id> *)parameters; // instance method
 
 /// Prints the entire routing table
 + (NSString *)description;
@@ -91,7 +91,7 @@ FOUNDATION_EXTERN NSString *const kJLRoutesGlobalNamespaceKey;
 @property (nonatomic, assign) BOOL shouldFallbackToGlobalRoutes;
 
 /// Called any time routeURL returns NO. Respects shouldFallbackToGlobalRoutes.
-@property (nonatomic, copy) void (^__nullable unmatchedURLHandler)(JLRoutes *routes, NSURL *__nullable URL, NSDictionary<NSString *, NSString *> *__nullable parameters);
+@property (nonatomic, copy) void (^__nullable unmatchedURLHandler)(JLRoutes *routes, NSURL *__nullable URL, NSDictionary<NSString *, id> *__nullable parameters);
 
 @end
 
