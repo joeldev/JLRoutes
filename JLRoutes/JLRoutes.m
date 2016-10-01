@@ -564,7 +564,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     }
 
     // if, after everything, we did not route anything and we have an unmatched URL handler, then call it
-    if (!didRoute && routesController.unmatchedURLHandler) {
+    if (!didRoute && executeBlock && routesController.unmatchedURLHandler) {
         routesController.unmatchedURLHandler(routesController, URL, parameters);
     }
 
