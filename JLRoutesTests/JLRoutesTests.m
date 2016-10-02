@@ -13,6 +13,7 @@
 #import <XCTest/XCTest.h>
 #import "JLRoutes.h"
 
+
 #define JLValidateParameterCount(expectedCount)\
 XCTAssertNotNil(self.lastMatch, @"Matched something");\
 XCTAssertEqual((NSInteger)[self.lastMatch count] - 3, (NSInteger)expectedCount, @"Expected parameter count")
@@ -39,7 +40,17 @@ XCTAssertEqualObjects(self.lastMatch[kJLRoutePatternKey], pattern, @"Pattern did
 XCTAssertEqualObjects(self.lastMatch[kJLRouteNamespaceKey], scheme, @"Scheme did not match")
 
 
+#pragma mark -
+
+
 @interface JLRoutesTests : XCTestCase
+
+@property (assign) BOOL didRoute;
+@property (strong) NSDictionary *lastMatch;
+
++ (BOOL (^)(NSDictionary *))defaultRouteHandler;
+
+- (void)route:(NSString *)URLString;
 
 @end
 
@@ -47,76 +58,42 @@ XCTAssertEqualObjects(self.lastMatch[kJLRouteNamespaceKey], scheme, @"Scheme did
 static JLRoutesTests *testsInstance = nil;
 
 
-@interface JLRoutesTests ()
-
-@property (assign) BOOL didRoute;
-@property (strong) NSDictionary *lastMatch;
-
-- (void)route:(NSString *)URLString;
-
-@end
-
-
 @implementation JLRoutesTests
 
-+ (void)setUp {
-    id defaultHandler = [self defaultRouteHandler];
-    
++ (void)setUp
+{
+    [super setUp];
     [JLRoutes setVerboseLoggingEnabled:YES];
-    
-    // used in testBasicFragmentRouting
-    [JLRoutes addRoute:@"/user#/view/:userID" handler:defaultHandler];
-    [JLRoutes addRoute:@"/:object#/:action/:primaryKey" handler:defaultHandler];
-    [JLRoutes addRoute:@"/interleaving/:param1#/foo/:param2" handler:defaultHandler];
-    [JLRoutes addRoute:@"/xyz/wildcard#/*" handler:defaultHandler];
-    [JLRoutes addRoute:@"/route#/:param/*" handler:defaultHandler];
-    [JLRoutes addRoute:@"/required#/:requiredParam(/optional/:optionalParam)(/moreOptional/:moreOptionalParam)" handler:defaultHandler];
-    
-    // used in testBasicRouting
-    [JLRoutes addRoute:@"/test" handler:defaultHandler];
-    [JLRoutes addRoute:@"/user/view/:userID" handler:defaultHandler];
-    [JLRoutes addRoute:@"/:object/:action/:primaryKey" handler:defaultHandler];
-    [JLRoutes addRoute:@"/" handler:defaultHandler];
-    [JLRoutes addRoute:@"/:" handler:defaultHandler];
-    [JLRoutes addRoute:@"/interleaving/:param1/foo/:param2" handler:defaultHandler];
-    [JLRoutes addRoute:@"/xyz/wildcard/*" handler:defaultHandler];
-    [JLRoutes addRoute:@"/route/:param/*" handler:defaultHandler];
-    [JLRoutes addRoute:@"/required/:requiredParam(/optional/:optionalParam)(/moreOptional/:moreOptionalParam)" handler:defaultHandler];
-    
-    // used in testMultiple
-    [JLRoutes addRoutes:@[@"/multiple1", @"/multiple2"] handler:defaultHandler];
-    
-    // used in testPriority
-    [JLRoutes addRoute:@"/test/priority/:level" handler:defaultHandler];
-    [JLRoutes addRoute:@"/test/priority/high" priority:20 handler:defaultHandler];
-    
-    // used in testBlockReturnValue
-    [JLRoutes addRoute:@"/return/:value" handler:^BOOL(NSDictionary *parameters) {
-        testsInstance.lastMatch = parameters;
-        NSString *value = parameters[@"value"];
-        return [value isEqualToString:@"yes"];
-    }];
-    
-    // used in testNamespaces
-    [[JLRoutes routesForScheme:@"namespaceTest1"] addRoute:@"/test" handler:defaultHandler];
-    [[JLRoutes routesForScheme:@"namespaceTest2"] addRoute:@"/test" handler:defaultHandler];
-    [JLRoutes routesForScheme:@"namespaceTest2"].shouldFallbackToGlobalRoutes = YES;
-    
-    // used in testRouteRemoval
-    [[JLRoutes routesForScheme:@"namespaceTest3"] addRoute:@"/test1" handler:defaultHandler];
-    [[JLRoutes routesForScheme:@"namespaceTest3"] addRoute:@"/test2" handler:defaultHandler];
-    
-    NSLog(@"%@", [JLRoutes description]);
-    
-    [super setUp];
 }
 
-- (void)setUp {
+- (void)setUp
+{
+    [super setUp];
     testsInstance = self;
-    [super setUp];
 }
 
-- (void)testBasicRouting {
+- (void)tearDown
+{
+    [super tearDown];
+    [JLRoutes unregisterAllRouteSchemes];
+}
+
+#pragma mark - Tests
+
+- (void)testBasicRouting
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/test" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/user/view/:userID" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/:object/:action/:primaryKey" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/:" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/interleaving/:param1/foo/:param2" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/xyz/wildcard/*" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/route/:param/*" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/required/:requiredParam(/optional/:optionalParam)(/moreOptional/:moreOptionalParam)" handler:defaultHandler];
+    
     [self route:nil];
     JLValidateNoLastMatch();
     
@@ -247,8 +224,17 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameter(@{@"moreOptionalParam": @"mightExistToo"});
 }
 
-
-- (void)testBasicFragmentRouting {
+- (void)testBasicFragmentRouting
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/user#/view/:userID" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/:object#/:action/:primaryKey" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/interleaving/:param1#/foo/:param2" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/xyz/wildcard#/*" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/route#/:param/*" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/required#/:requiredParam(/optional/:optionalParam)(/moreOptional/:moreOptionalParam)" handler:defaultHandler];
+    
     [self route:nil];
     JLValidateNoLastMatch();
     
@@ -346,7 +332,10 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameter(@{@"moreOptionalParam": @"mightExistToo"});
 }
 
-- (void)testMultiple {
+- (void)testMultiple
+{
+    [[JLRoutes globalRoutes] addRoutes:@[@"/multiple1", @"/multiple2"] handler:[[self class] defaultRouteHandler]];
+    
     [self route:@"tests://multiple1"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(0);
@@ -356,7 +345,13 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameterCount(0);
 }
 
-- (void)testPriority {
+- (void)testPriority
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/test/priority/:level" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/test/priority/high" priority:20 handler:defaultHandler];
+    
     // this should match the /test/priority/high route even though there's one before it that would match if priority wasn't being set
     [self route:@"tests://test/priority/high"];
     JLValidateAnyRouteMatched();
@@ -379,7 +374,14 @@ static JLRoutesTests *testsInstance = nil;
     [[JLRoutes routesForScheme:@"priorityTest"] removeAllRoutes];
 }
 
-- (void)testBlockReturnValue {
+- (void)testBlockReturnValue
+{
+    [[JLRoutes globalRoutes] addRoute:@"/return/:value" handler:^BOOL(NSDictionary *parameters) {
+        testsInstance.lastMatch = parameters;
+        NSString *value = parameters[@"value"];
+        return [value isEqualToString:@"yes"];
+    }];
+    
     // even though this matches a route, the block returns NO here so there won't be a valid match
     [self route:@"tests://return/no"];
     JLValidateNoLastMatch();
@@ -389,7 +391,14 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
 }
 
-- (void)testNamespaces {
+- (void)testNamespaces
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/test" handler:defaultHandler];
+    [[JLRoutes routesForScheme:@"namespaceTest1"] addRoute:@"/test" handler:defaultHandler];
+    [[JLRoutes routesForScheme:@"namespaceTest2"] addRoute:@"/test" handler:defaultHandler];
+    
     // test that the same route can be handled differently for three different scheme namespaces
     [self route:@"tests://test"];
     JLValidateAnyRouteMatched();
@@ -404,7 +413,15 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateScheme(@"namespaceTest2");
 }
 
-- (void)testFallbackToGlobal {
+- (void)testFallbackToGlobal
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/user/view/:userID" handler:defaultHandler];
+    [[JLRoutes routesForScheme:@"namespaceTest1"] addRoute:@"/test" handler:defaultHandler];
+    [[JLRoutes routesForScheme:@"namespaceTest2"] addRoute:@"/test" handler:defaultHandler];
+    [JLRoutes routesForScheme:@"namespaceTest2"].shouldFallbackToGlobalRoutes = YES;
+    
     // first case, fallback is off and so this should fail because this route isnt declared as part of namespaceTest1
     [self route:@"namespaceTest1://user/view/joeldev"];
     JLValidateNoLastMatch();
@@ -417,17 +434,21 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameter(@{@"userID" : @"joeldev"});
 }
 
-- (void)testForRouteExistence {
+- (void)testForRouteExistence
+{
     // This should return yes and no for whether we have a matching route.
     
     NSURL *shouldHaveRouteURL = [NSURL URLWithString:@"tests:/test"];
     NSURL *shouldNotHaveRouteURL = [NSURL URLWithString:@"tests:/dfjkbsdkjfbskjdfb/sdasd"];
     
-    XCTAssertTrue([JLRoutes canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
-    XCTAssertFalse([JLRoutes canRouteURL:shouldNotHaveRouteURL], @"Should not state it can route unknown URL");
+    [[JLRoutes globalRoutes] addRoute:@"/test" handler:[[self class] defaultRouteHandler]];
+    
+    XCTAssertTrue([[JLRoutes globalRoutes] canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
+    XCTAssertFalse([[JLRoutes globalRoutes] canRouteURL:shouldNotHaveRouteURL], @"Should not state it can route unknown URL");
 }
 
-- (void)testSubscripting {
+- (void)testSubscripting
+{
     JLRoutes.globalRoutes[@"/subscripting"] = ^BOOL(NSDictionary *parameters) {
         testsInstance.lastMatch = parameters;
         return YES;
@@ -435,17 +456,25 @@ static JLRoutesTests *testsInstance = nil;
     
     NSURL *shouldHaveRouteURL = [NSURL URLWithString:@"subscripting"];
     
-    XCTAssertTrue([JLRoutes canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
+    XCTAssertTrue([[JLRoutes globalRoutes] canRouteURL:shouldHaveRouteURL], @"Should state it can route known URL");
 }
 
-- (void)testNonSingletonUsage {
+- (void)testNonSingletonUsage
+{
     JLRoutes *routes = [JLRoutes new];
     NSURL *trivialURL = [NSURL URLWithString:@"/success"];
     [routes addRoute:[trivialURL absoluteString] handler:nil];
     XCTAssertTrue([routes routeURL:trivialURL], @"Non-singleton instance should route known URL");
 }
 
-- (void)testRouteRemoval {
+- (void)testRouteRemoval
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/:" handler:defaultHandler];
+    [[JLRoutes routesForScheme:@"namespaceTest3"] addRoute:@"/test1" handler:defaultHandler];
+    [[JLRoutes routesForScheme:@"namespaceTest3"] addRoute:@"/test2" handler:defaultHandler];
+    
     [self route:@"namespaceTest3://test1"];
     JLValidateAnyRouteMatched();
     
@@ -465,7 +494,8 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateScheme(kJLRoutesGlobalNamespaceKey);
 }
 
-- (void)testPercentEncoding {
+- (void)testPercentEncoding
+{
     /*
      from http://en.wikipedia.org/wiki/Percent-encoding
      !   #   $   &   '   (   )   *   +   ,   /   :   ;   =   ?   @   [   ]
@@ -475,7 +505,8 @@ static JLRoutesTests *testsInstance = nil;
     // NOTE: %2F is not supported.
     //  [URL pathComponents] automatically expands values with %2F as if it was just a regular slash.
     
-    BOOL oldDecodeSetting = [JLRoutes shouldDecodePlusSymbols];
+    [[JLRoutes globalRoutes] addRoute:@"/user/view/:userID" handler:[[self class] defaultRouteHandler]];
+    
     [JLRoutes setShouldDecodePlusSymbols:NO];
     
     [self route:@"tests://user/view/joel%21levin"];
@@ -563,7 +594,7 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID": @"joel]levin"});
     
-    [JLRoutes setShouldDecodePlusSymbols:oldDecodeSetting];
+    [JLRoutes setShouldDecodePlusSymbols:YES];
 }
 
 - (void)testVariableEmptyFollowedByWildcard
@@ -573,31 +604,31 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
 }
 
-#pragma mark -
-#pragma mark Convenience Methods
+#pragma mark - Convenience Methods
 
-+ (BOOL (^)(NSDictionary *))defaultRouteHandler {
++ (BOOL (^)(NSDictionary *))defaultRouteHandler
+{
     return ^BOOL (NSDictionary *params) {
         testsInstance.lastMatch = params;
         return YES;
     };
 }
 
-- (void)route:(NSString *)URLString {
+- (void)route:(NSString *)URLString
+{
     [self route:URLString withParameters:nil];
 }
 
-
-- (void)route:(NSString *)URLString withParameters:(NSDictionary *)parameters {
+- (void)route:(NSString *)URLString withParameters:(NSDictionary *)parameters
+{
     [self routeURL:[NSURL URLWithString:URLString] withParameters:parameters];
 }
 
-
-- (void)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters {
+- (void)routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters
+{
     NSLog(@"*** Routing %@", URL);
     self.lastMatch = nil;
     self.didRoute = [JLRoutes routeURL:URL withParameters:parameters];
 }
-
 
 @end
