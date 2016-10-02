@@ -30,7 +30,7 @@ JLRoutes is available for installation using CocoaPods or Carthage (add `github 
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
   // ...
-  [JLRoutes addRoute:@"/user/view/:userID" handler:^BOOL(NSDictionary *parameters) {
+  [[JLRoutes globalRoutes] addRoute:@"/user/view/:userID" handler:^BOOL(NSDictionary *parameters) {
     NSString *userID = parameters[@"userID"]; // defined in the route by specifying ":userID"
     // present UI for viewing user with ID 'userID'
     return YES; // return YES to say we have handled the route
@@ -82,7 +82,7 @@ It is also important to note that if you pass nil for the handler block, an inte
 ### More Complex Example ###
 
 ```objc
-[JLRoutes addRoute:@"/:object/:action/:primaryKey" handler:^BOOL(NSDictionary *parameters) {
+[[JLRoutes globalRoutes] addRoute:@"/:object/:action/:primaryKey" handler:^BOOL(NSDictionary *parameters) {
   NSString *object = parameters[@"object"];
   NSString *action = parameters[@"action"];
   NSString *primaryKey = parameters[@"primaryKey"];
@@ -119,7 +119,7 @@ JLRoutes supports setting up routes within the namespace of a given URL scheme. 
 However, if you decide that you do need to handle multiple schemes with different sets of functionality, here is an example of how to do that:
 
 ```objc
-[JLRoutes addRoute:@"/foo" handler:^BOOL(NSDictionary *parameters) {
+[[JLRoutes globalRoutes] addRoute:@"/foo" handler:^BOOL(NSDictionary *parameters) {
   // This block is called if the scheme is not 'thing' or 'stuff' (see below)
   return YES;
 }];
@@ -140,7 +140,7 @@ This example shows that you can declare the same routes in different schemes and
 Continuing with this example, if you were to add the following route to the collection above:
 
 ```objc
-[JLRoutes addRoute:@"/global" handler:^BOOL(NSDictionary *parameters) {
+[[JLRoutes globalRoutes] addRoute:@"/global" handler:^BOOL(NSDictionary *parameters) {
   return YES;
 }];
 ```
@@ -161,7 +161,7 @@ JLRoutes supports setting up routes that will match an arbitrary number of path 
 For example, the following route would be triggered for any URL that started with `/wildcard/`, but would be rejected by the handler if the next component wasn't `joker`.
 
 ```objc
-[JLRoutes addRoute:@"/wildcard/*" handler:^BOOL(NSDictionary *parameters) {
+[[JLRoutes globalRoutes] addRoute:@"/wildcard/*" handler:^BOOL(NSDictionary *parameters) {
   NSArray *pathComponents = parameters[kJLRouteWildcardComponentsKey];
   if ([pathComponents count] > 0 && [pathComponents[0] isEqualToString:@"joker"]) {
     // the route matched; do stuff
@@ -171,7 +171,7 @@ For example, the following route would be triggered for any URL that started wit
   // not interested unless the joker's in it
   return NO;
 }];
-```    
+```
 
 
 ### Optional routes ###
@@ -186,9 +186,9 @@ JLRoutes supports setting up routes with optional parameters. At the route regis
 ### License ###
 BSD 3-Clause License:
 > Copyright (c) 2016, Joel Levin. All rights reserved.
- 
+
 > Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
- 
+
 >*  Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
 * Neither the name of JLRoutes nor the names of its contributors may be used to endorse or promote products derived from this software without specific prior written permission.
