@@ -67,6 +67,12 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 @end
 
+@interface NSArray (Combinations)
+
+- (NSArray<NSArray *> *)JLRoutes_allOrderedCombinations;
+
+@end
+
 
 #pragma mark -
 
@@ -152,33 +158,18 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlock
 {
-    // if there's a pair of parenthesis, process optionals, trim the parenthesis, put it on trimmedRoute
-    NSString *trimmedRoute = routePattern;
+    NSArray <NSString *> *optionalRoutePatterns = [self _optionalRoutesForPattern:routePattern];
     
-    // repeat until no parenthesis pair is found
-    while ([trimmedRoute rangeOfString:@")" options:NSBackwardsSearch].location > [trimmedRoute rangeOfString:@"(" options:NSBackwardsSearch].location) {
-        // build route with the optionals
-        NSString *patternWithOptionals = [trimmedRoute stringByReplacingOccurrencesOfString:@"(" withString:@""];
-        patternWithOptionals = [patternWithOptionals stringByReplacingOccurrencesOfString:@")" withString:@""];
-        [self _registerRoute:patternWithOptionals priority:priority handler:handlerBlock];
-        
-        // build route without optionals
-        NSRange rangeOfLastParentheses = [trimmedRoute rangeOfString:@"(" options:NSBackwardsSearch];
-        NSRange rangeToRemove = NSMakeRange(rangeOfLastParentheses.location, trimmedRoute.length - rangeOfLastParentheses.location);
-        NSString *patternWithLastOptionalRemoved = [trimmedRoute stringByReplacingCharactersInRange:rangeToRemove withString:@""];
-        
-        // remove any parenthesis for other optionals that might still be in the route
-        NSString *patternWithoutOptionals = [patternWithLastOptionalRemoved stringByReplacingOccurrencesOfString:@"(" withString:@""];
-        patternWithoutOptionals = [patternWithoutOptionals stringByReplacingOccurrencesOfString:@")" withString:@""];
-        [self _registerRoute:patternWithoutOptionals priority:priority handler:handlerBlock];
-        
-        trimmedRoute = patternWithLastOptionalRemoved;
+    if (optionalRoutePatterns.count > 0) {
+        // there are optional params, parse and add them
+        for (NSString *route in optionalRoutePatterns) {
+            [self _verboseLog:@"Automatically created optional route: %@", route];
+            [self _registerRoute:route priority:priority handler:handlerBlock];
+        }
+        return;
     }
     
-    //Only register original route if trimmedRoute haven't been modified.
-    if (trimmedRoute == routePattern) {
-        [self _registerRoute:routePattern priority:priority handler:handlerBlock];
-    }
+    [self _registerRoute:routePattern priority:priority handler:handlerBlock];
 }
 
 - (void)removeRoute:(NSString *)routePattern
@@ -248,6 +239,15 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 
 #pragma mark - Private
+
++ (instancetype)_routesControllerForURL:(NSURL *)URL
+{
+    if (URL == nil) {
+        return nil;
+    }
+    
+    return routeControllersMap[URL.scheme] ?: [JLRoutes globalRoutes];
+}
 
 - (void)_registerRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock
 {
@@ -369,13 +369,102 @@ static BOOL shouldDecodePlusSymbols = YES;
     return didRoute;
 }
 
-+ (instancetype)_routesControllerForURL:(NSURL *)URL
+- (NSArray <NSString *> *)_optionalRoutesForPattern:(NSString *)routePattern
 {
-    if (URL == nil) {
+    /* this method exists to take a route pattern that is known to contain optional params, such as:
+     
+     /path/:thing/(/a)(/b)(/c)
+     
+     and create the following paths:
+     
+     /path/:thing/a/b/c
+     /path/:thing/a/b
+     /path/:thing/a/c
+     /path/:thing/b/a
+     /path/:thing/a
+     /path/:thing/b
+     /path/:thing/c
+     */
+    
+    if ([routePattern rangeOfString:@"("].location == NSNotFound) {
         return nil;
     }
     
-    return routeControllersMap[URL.scheme] ?: [JLRoutes globalRoutes];
+    NSString *baseRoute = nil;
+    NSArray *components = [self _optionalComponentsForPattern:routePattern baseRoute:&baseRoute];
+    NSArray *routes = [self _routesForOptionalComponents:components baseRoute:baseRoute];
+    
+    return routes;
+}
+
+- (NSArray <NSString *> *)_optionalComponentsForPattern:(NSString *)routePattern baseRoute:(NSString **)outBaseRoute;
+{
+    if (routePattern.length == 0) {
+        return nil;
+    }
+    
+    NSMutableArray *optionalComponents = [NSMutableArray array];
+    
+    NSScanner *scanner = [NSScanner scannerWithString:routePattern];
+    NSString *nonOptionalRouteSubpath = nil;
+    
+    BOOL parsedBaseRoute = NO;
+    BOOL parseError = NO;
+    
+    // first, we need to parse the string and find the array of optional params.
+    // aka, take (/a)(/b)(/c) and turn it into ["/a", "/b", "/c"]
+    while ([scanner scanUpToString:@"(" intoString:&nonOptionalRouteSubpath]) {
+        if ([scanner isAtEnd]) {
+            break;
+        }
+        
+        if (nonOptionalRouteSubpath.length > 0 && outBaseRoute != NULL && !parsedBaseRoute) {
+            // the first 'non optional subpath' is always the base route
+            *outBaseRoute = nonOptionalRouteSubpath;
+            parsedBaseRoute = YES;
+        }
+        
+        scanner.scanLocation = scanner.scanLocation + 1;
+        
+        NSString *component = nil;
+        if (![scanner scanUpToString:@")" intoString:&component]) {
+            parseError = YES;
+            break;
+        }
+        
+        [optionalComponents addObject:component];
+    }
+    
+    if (parseError) {
+        NSLog(@"[JLRoutes]: Parse error, unsupported route: %@", routePattern);
+        return nil;
+    }
+    
+    return [optionalComponents copy];
+}
+
+- (NSArray <NSString *> *)_routesForOptionalComponents:(NSArray <NSString *> *)optionalComponents baseRoute:(NSString *)baseRoute
+{
+    if (optionalComponents.count == 0 || baseRoute.length == 0) {
+        return nil;
+    }
+    
+    NSMutableArray *routes = [NSMutableArray array];
+    
+    // generate all possible combinations of the components that could exist (taking order into account)
+    // aka, "/path/:thing/(/a)(/b)(/c)" should never generate a route for "/path/:thing/(/b)(/a)"
+    NSArray *combinations = [optionalComponents JLRoutes_allOrderedCombinations];
+    
+    // generate the actual final route path strings
+    for (NSArray *components in combinations) {
+        NSString *path = [components componentsJoinedByString:@""];
+        [routes addObject:[baseRoute stringByAppendingString:path]];
+    }
+    
+    // sort them so that the longest routes are first (since they are the most selective)
+    [routes sortUsingSelector:@selector(length)];
+    
+    return [routes copy];
 }
 
 - (BOOL)_isGlobalRoutesController
@@ -480,8 +569,7 @@ static BOOL shouldDecodePlusSymbols = YES;
                 NSString *urlDecodedVariableValue = [variableValue JLRoutes_URLDecodedString];
                 if ([variableName length] > 0 && [urlDecodedVariableValue length] > 0) {
                     variables[variableName] = urlDecodedVariableValue;
-                }
-                else {
+                } else {
                     NSMutableArray * newComponents = [NSMutableArray arrayWithArray:components];
                     [newComponents addObject:@""];
                     components = newComponents;
@@ -567,6 +655,29 @@ static BOOL shouldDecodePlusSymbols = YES;
     
     NSURL *URL = [[NSURL alloc] initWithString:fragment];
     return URL.query;
+}
+
+@end
+
+@implementation NSArray (JLRoutes)
+
+- (NSArray<NSArray *> *)JLRoutes_allOrderedCombinations
+{
+    NSInteger length = self.count;
+    if (length == 0) {
+        return [NSArray arrayWithObject:[NSArray array]];
+    }
+    
+    id lastObject = [self lastObject];
+    NSArray *subarray = [self subarrayWithRange:NSMakeRange(0, length - 1)];
+    NSArray *subarrayCombinations = [subarray JLRoutes_allOrderedCombinations];
+    NSMutableArray *combinations = [NSMutableArray arrayWithArray:subarrayCombinations];
+    
+    for (NSArray *subarrayCombos in subarrayCombinations) {
+        [combinations addObject:[subarrayCombos arrayByAddingObject:lastObject]];
+    }
+    
+    return [NSArray arrayWithArray:combinations];
 }
 
 @end

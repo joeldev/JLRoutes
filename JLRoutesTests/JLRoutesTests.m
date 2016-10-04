@@ -604,6 +604,32 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
 }
 
+- (void)testMultipleOptionalRoutes
+{
+    [[JLRoutes globalRoutes] addRoute:@"/path/:thing(/new)(/anotherpath/:anotherthing)" handler:[[self class] defaultRouteHandler]];
+    
+    [self route:@"foo://path/abc/new/anotherpath/def"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"thing": @"abc"});
+    JLValidateParameter(@{@"anotherthing": @"def"});
+    
+    [self route:@"foo://path/foo/anotherpath/bar"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"thing": @"foo"});
+    JLValidateParameter(@{@"anotherthing": @"bar"});
+    
+    [self route:@"foo://path/yyy/new"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"thing": @"yyy"});
+    
+    [self route:@"foo://path/zzz"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"thing": @"zzz"});
+    
+    [self route:@"foo://path/zzz/anotherpath"];
+    JLValidateNoLastMatch();
+}
+
 #pragma mark - Convenience Methods
 
 + (BOOL (^)(NSDictionary *))defaultRouteHandler
