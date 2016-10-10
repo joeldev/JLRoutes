@@ -255,7 +255,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     
     for (JLRRouteDefinition *route in self.routes) {
         // check each route for a matching response
-        JLRRouteResponse *response = [route routeResponseForRequest:request];
+        JLRRouteResponse *response = [route routeResponseForRequest:request decodePlusSymbols:shouldDecodePlusSymbols];
         if (!response.isMatch) {
             continue;
         }

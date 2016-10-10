@@ -25,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithScheme:(NSString *)scheme pattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock;
 
-- (JLRRouteResponse *)routeResponseForRequest:(JLRRouteRequest *)request;
+- (JLRRouteResponse *)routeResponseForRequest:(JLRRouteRequest *)request decodePlusSymbols:(BOOL)decodePlusSymbols;
 
 - (BOOL)callHandlerBlockWithParameters:(NSDictionary *)parameters;
 

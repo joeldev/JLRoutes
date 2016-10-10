@@ -597,6 +597,25 @@ static JLRoutesTests *testsInstance = nil;
     [JLRoutes setShouldDecodePlusSymbols:YES];
 }
 
+- (void)testDecodePlusSymbols
+{
+    [[JLRoutes globalRoutes] addRoute:@"/user/view/:userID" handler:[[self class] defaultRouteHandler]];
+    
+    [JLRoutes setShouldDecodePlusSymbols:YES];
+    
+    [self route:@"tests://user/view/joel%2Blevin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel levin"});
+    
+    [JLRoutes setShouldDecodePlusSymbols:NO];
+    
+    [self route:@"tests://user/view/joel%2Blevin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel+levin"});
+}
+
 - (void)testVariableEmptyFollowedByWildcard
 {
     [[JLRoutes routesForScheme:@"wildcardTests"] addRoute:@"list/:variable/detail/:variable2/*" handler:nil];

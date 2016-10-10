@@ -50,7 +50,7 @@
     return [NSString stringWithFormat:@"<%@ %p> - %@ (priority: %@)", NSStringFromClass([self class]), self, self.pattern, @(self.priority)];
 }
 
-- (JLRRouteResponse *)routeResponseForRequest:(JLRRouteRequest *)request
+- (JLRRouteResponse *)routeResponseForRequest:(JLRRouteRequest *)request decodePlusSymbols:(BOOL)decodePlusSymbols
 {
     BOOL patternContainsWildcard = [self.patternComponents containsObject:@"*"];
     
@@ -78,7 +78,7 @@
         if ([patternComponent hasPrefix:@":"]) {
             // this is a variable
             NSString *variableName = [self variableNameForValue:patternComponent];
-            NSString *variableValue = [self variableValueForValue:URLComponent];
+            NSString *variableValue = [self variableValueForValue:URLComponent decodePlusSymbols:decodePlusSymbols];
             routeParams[variableName] = variableValue;
         } else if ([patternComponent isEqualToString:@"*"]) {
             // match wildcards
@@ -127,12 +127,16 @@
     return name;
 }
 
-- (NSString *)variableValueForValue:(NSString *)value
+- (NSString *)variableValueForValue:(NSString *)value decodePlusSymbols:(BOOL)decodePlusSymbols
 {
     NSString *var = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     if (var.length > 1 && [var characterAtIndex:var.length - 1] == '#') {
         var = [var substringToIndex:var.length - 1];
+    }
+    
+    if (decodePlusSymbols) {
+        var = [var stringByReplacingOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, var.length)];
     }
     
     return var;
