@@ -11,8 +11,8 @@
  */
 
 #import "JLRoutes.h"
-#import "JLRouteDefinition.h"
-#import "JLOptionalRouteParser.h"
+#import "JLRRouteDefinition.h"
+#import "JLROptionalRouteParser.h"
 
 
 NSString *const kJLRoutePatternKey = @"JLRoutePattern";
@@ -122,7 +122,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlock
 {
-    NSArray <NSString *> *optionalRoutePatterns = [JLOptionalRouteParser expandOptionalRoutePatternsForPattern:routePattern];
+    NSArray <NSString *> *optionalRoutePatterns = [JLROptionalRouteParser expandOptionalRoutePatternsForPattern:routePattern];
     
     if (optionalRoutePatterns.count > 0) {
         // there are optional params, parse and add them
@@ -145,7 +145,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     NSInteger routeIndex = NSNotFound;
     NSInteger index = 0;
     
-    for (JLRouteDefinition *route in self.routes) {
+    for (JLRRouteDefinition *route in self.routes) {
         if ([route.pattern isEqualToString:routePattern]) {
             routeIndex = index;
             break;
@@ -215,7 +215,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 - (void)_registerRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock
 {
-    JLRouteDefinition *route = [[JLRouteDefinition alloc] initWithScheme:self.scheme pattern:routePattern priority:priority handlerBlock:handlerBlock];
+    JLRRouteDefinition *route = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:routePattern priority:priority handlerBlock:handlerBlock];
     
     if (priority == 0 || self.routes.count == 0) {
         [self.routes addObject:route];
@@ -225,7 +225,7 @@ static BOOL shouldDecodePlusSymbols = YES;
         BOOL addedRoute = NO;
         
         // search through existing routes looking for a lower priority route than this one
-        for (JLRouteDefinition *existingRoute in existingRoutes) {
+        for (JLRRouteDefinition *existingRoute in existingRoutes) {
             if (existingRoute.priority < priority) {
                 // if found, add the route after it
                 [self.routes insertObject:route atIndex:index];
@@ -251,11 +251,11 @@ static BOOL shouldDecodePlusSymbols = YES;
     [self _verboseLog:@"Trying to route URL %@", URL];
     
     BOOL didRoute = NO;
-    JLRouteRequest *request = [[JLRouteRequest alloc] initWithURL:URL];
+    JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL];
     
-    for (JLRouteDefinition *route in self.routes) {
+    for (JLRRouteDefinition *route in self.routes) {
         // check each route for a matching response
-        JLRouteResponse *response = [route routeResponseForRequest:request];
+        JLRRouteResponse *response = [route routeResponseForRequest:request];
         if (!response.isMatch) {
             continue;
         }

@@ -10,11 +10,11 @@
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "JLRouteDefinition.h"
+#import "JLRRouteDefinition.h"
 #import "JLRoutes.h"
 
 
-@interface JLRouteDefinition ()
+@interface JLRRouteDefinition ()
 
 @property (nonatomic, strong) NSString *pattern;
 @property (nonatomic, strong) NSString *scheme;
@@ -26,7 +26,7 @@
 @end
 
 
-@implementation JLRouteDefinition
+@implementation JLRRouteDefinition
 
 - (instancetype)initWithScheme:(NSString *)scheme pattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock
 {
@@ -50,16 +50,16 @@
     return [NSString stringWithFormat:@"<%@ %p> - %@ (priority: %@)", NSStringFromClass([self class]), self, self.pattern, @(self.priority)];
 }
 
-- (JLRouteResponse *)routeResponseForRequest:(JLRouteRequest *)request
+- (JLRRouteResponse *)routeResponseForRequest:(JLRRouteRequest *)request
 {
     BOOL patternContainsWildcard = [self.patternComponents containsObject:@"*"];
     
     if (request.pathComponents.count != self.patternComponents.count && !patternContainsWildcard) {
         // definitely not a match, nothing left to do
-        return [JLRouteResponse invalidMatchResponse];
+        return [JLRRouteResponse invalidMatchResponse];
     }
     
-    JLRouteResponse *response = [JLRouteResponse invalidMatchResponse];
+    JLRRouteResponse *response = [JLRRouteResponse invalidMatchResponse];
     NSMutableDictionary *routeParams = [NSMutableDictionary dictionary];
     BOOL isMatch = YES;
     NSUInteger index = 0;
@@ -106,7 +106,7 @@
         [params addEntriesFromDictionary:request.queryParams];
         [params addEntriesFromDictionary:routeParams];
         [params addEntriesFromDictionary:[self baseMatchParametersForRequest:request]];
-        response = [JLRouteResponse validMatchResponseWithParameters:[params copy]];
+        response = [JLRRouteResponse validMatchResponseWithParameters:[params copy]];
     }
     
     return response;
@@ -138,7 +138,7 @@
     return var;
 }
 
-- (NSDictionary *)baseMatchParametersForRequest:(JLRouteRequest *)request
+- (NSDictionary *)baseMatchParametersForRequest:(JLRRouteRequest *)request
 {
     return @{kJLRoutePatternKey: self.pattern ?: [NSNull null], kJLRouteURLKey: request.URL ?: [NSNull null], kJLRouteSchemeKey: self.scheme ?: [NSNull null]};
 }

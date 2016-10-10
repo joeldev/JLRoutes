@@ -12,14 +12,14 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
-@interface JLRouteResponse : NSObject
 
-@property (nonatomic, assign, readonly, getter=isMatch) BOOL match;
-@property (nonatomic, strong, readonly) NSDictionary *parameters;
+@interface JLROptionalRouteParser : NSObject
 
-+ (instancetype)invalidMatchResponse;
-
-+ (instancetype)validMatchResponseWithParameters:(NSDictionary *)parameters;
++ (NSArray <NSString *> *)expandOptionalRoutePatternsForPattern:(NSString *)routePattern;
 
 @end
+
+
+NS_ASSUME_NONNULL_END

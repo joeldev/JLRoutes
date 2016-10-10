@@ -12,13 +12,19 @@
 
 #import <Foundation/Foundation.h>
 
+NS_ASSUME_NONNULL_BEGIN
 
-@interface JLRouteRequest : NSObject
 
-@property (nonatomic, strong, readonly) NSURL *URL;
-@property (nonatomic, strong, readonly) NSArray *pathComponents;
-@property (nonatomic, strong, readonly) NSDictionary *queryParams;
+@interface JLRRouteResponse : NSObject
 
-- (instancetype)initWithURL:(NSURL *)URL;
+@property (nonatomic, assign, readonly, getter=isMatch) BOOL match;
+@property (nonatomic, strong, readonly, nullable) NSDictionary *parameters;
+
++ (instancetype)invalidMatchResponse;
+
++ (instancetype)validMatchResponseWithParameters:(NSDictionary *)parameters;
 
 @end
+
+
+NS_ASSUME_NONNULL_END

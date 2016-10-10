@@ -15,9 +15,13 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-@interface JLOptionalRouteParser : NSObject
+@interface JLRRouteRequest : NSObject
 
-+ (NSArray <NSString *> *)expandOptionalRoutePatternsForPattern:(NSString *)routePattern;
+@property (nonatomic, strong, readonly) NSURL *URL;
+@property (nonatomic, strong, readonly) NSArray *pathComponents;
+@property (nonatomic, strong, readonly) NSDictionary *queryParams;
+
+- (instancetype)initWithURL:(NSURL *)URL;
 
 @end
 

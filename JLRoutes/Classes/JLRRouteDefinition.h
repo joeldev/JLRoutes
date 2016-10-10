@@ -11,11 +11,13 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "JLRouteRequest.h"
-#import "JLRouteResponse.h"
+#import "JLRRouteRequest.h"
+#import "JLRRouteResponse.h"
+
+NS_ASSUME_NONNULL_BEGIN
 
 
-@interface JLRouteDefinition : NSObject
+@interface JLRRouteDefinition : NSObject
 
 @property (nonatomic, strong, readonly) NSString *scheme;
 @property (nonatomic, strong, readonly) NSString *pattern;
@@ -23,8 +25,11 @@
 
 - (instancetype)initWithScheme:(NSString *)scheme pattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock;
 
-- (JLRouteResponse *)routeResponseForRequest:(JLRouteRequest *)request;
+- (JLRRouteResponse *)routeResponseForRequest:(JLRRouteRequest *)request;
 
 - (BOOL)callHandlerBlockWithParameters:(NSDictionary *)parameters;
 
 @end
+
+
+NS_ASSUME_NONNULL_END
