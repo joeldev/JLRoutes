@@ -15,11 +15,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-FOUNDATION_EXTERN NSString *const kJLRoutePatternKey;
-FOUNDATION_EXTERN NSString *const kJLRouteURLKey;
-FOUNDATION_EXTERN NSString *const kJLRouteSchemeKey;
-FOUNDATION_EXTERN NSString *const kJLRouteWildcardComponentsKey;
-FOUNDATION_EXTERN NSString *const kJLRoutesGlobalRoutesScheme;
+extern NSString *const kJLRoutePatternKey;
+extern NSString *const kJLRouteURLKey;
+extern NSString *const kJLRouteSchemeKey;
+extern NSString *const kJLRouteWildcardComponentsKey;
+extern NSString *const kJLRoutesGlobalRoutesScheme;
 
 
 @interface JLRoutes : NSObject
@@ -117,8 +117,8 @@ FOUNDATION_EXTERN NSString *const kJLRoutesGlobalRoutesScheme;
 
 #pragma mark - Deprecated
 
-FOUNDATION_EXTERN NSString *const kJLRouteNamespaceKey DEPRECATED_MSG_ATTRIBUTE("Use kJLRouteSchemeKey instead.");
-FOUNDATION_EXTERN NSString *const kJLRoutesGlobalNamespaceKey DEPRECATED_MSG_ATTRIBUTE("Use kJLRoutesGlobalRoutesScheme instead.");
+extern NSString *const kJLRouteNamespaceKey DEPRECATED_MSG_ATTRIBUTE("Use kJLRouteSchemeKey instead.");
+extern NSString *const kJLRoutesGlobalNamespaceKey DEPRECATED_MSG_ATTRIBUTE("Use kJLRoutesGlobalRoutesScheme instead.");
 
 @interface JLRoutes (Deprecated)
 
