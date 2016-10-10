@@ -46,9 +46,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "5CB4EB521B45BF5B0058E91A"
-               BuildableName = "JLRoutes-iOSTests.xctest"
-               BlueprintName = "JLRoutes-iOSTests"
+               BlueprintIdentifier = "5D3CB06E1C73DA2700870B55"
+               BuildableName = "JLRoutesTests.xctest"
+               BlueprintName = "JLRoutesTests"
                ReferencedContainer = "container:JLRoutes.xcodeproj">
             </BuildableReference>
          </TestableReference>

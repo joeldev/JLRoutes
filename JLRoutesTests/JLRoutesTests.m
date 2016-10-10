@@ -37,7 +37,7 @@ XCTAssertFalse(self.didRoute, @"Expected not to route successfully")
 XCTAssertEqualObjects(self.lastMatch[kJLRoutePatternKey], pattern, @"Pattern did not match")
 
 #define JLValidateScheme(scheme)\
-XCTAssertEqualObjects(self.lastMatch[kJLRouteNamespaceKey], scheme, @"Scheme did not match")
+XCTAssertEqualObjects(self.lastMatch[kJLRouteSchemeKey], scheme, @"Scheme did not match")
 
 
 #pragma mark -
@@ -402,7 +402,7 @@ static JLRoutesTests *testsInstance = nil;
     // test that the same route can be handled differently for three different scheme namespaces
     [self route:@"tests://test"];
     JLValidateAnyRouteMatched();
-    JLValidateScheme(kJLRoutesGlobalNamespaceKey);
+    JLValidateScheme(kJLRoutesGlobalRoutesScheme);
     
     [self route:@"namespaceTest1://test"];
     JLValidateAnyRouteMatched();
@@ -429,7 +429,7 @@ static JLRoutesTests *testsInstance = nil;
     // fallback is on, so this should route
     [self route:@"namespaceTest2://user/view/joeldev"];
     JLValidateAnyRouteMatched();
-    JLValidateScheme(kJLRoutesGlobalNamespaceKey);
+    JLValidateScheme(kJLRoutesGlobalRoutesScheme);
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID" : @"joeldev"});
 }
@@ -491,7 +491,7 @@ static JLRoutesTests *testsInstance = nil;
     // this will get matched by our "/:" route in the global namespace - we just want to make sure it doesn't get matched by namespaceTest3
     [self route:@"namespaceTest3://test2"];
     JLValidateAnyRouteMatched();
-    JLValidateScheme(kJLRoutesGlobalNamespaceKey);
+    JLValidateScheme(kJLRoutesGlobalRoutesScheme);
 }
 
 - (void)testPercentEncoding
@@ -600,7 +600,11 @@ static JLRoutesTests *testsInstance = nil;
 - (void)testVariableEmptyFollowedByWildcard
 {
     [[JLRoutes routesForScheme:@"wildcardTests"] addRoute:@"list/:variable/detail/:variable2/*" handler:nil];
+    
     [self route:@"wildcardTests://list/variable/detail/"];
+    JLValidateNoLastMatch();
+    
+    [self route:@"wildcardTests://list/variable/detail/variable2"];
     JLValidateAnyRouteMatched();
 }
 

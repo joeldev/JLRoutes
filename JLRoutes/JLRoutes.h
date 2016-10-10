@@ -17,10 +17,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 FOUNDATION_EXTERN NSString *const kJLRoutePatternKey;
 FOUNDATION_EXTERN NSString *const kJLRouteURLKey;
-FOUNDATION_EXTERN NSString *const kJLRouteNamespaceKey;
+FOUNDATION_EXTERN NSString *const kJLRouteSchemeKey;
 FOUNDATION_EXTERN NSString *const kJLRouteWildcardComponentsKey;
-
-FOUNDATION_EXTERN NSString *const kJLRoutesGlobalNamespaceKey;
+FOUNDATION_EXTERN NSString *const kJLRoutesGlobalRoutesScheme;
 
 
 @interface JLRoutes : NSObject
@@ -104,13 +103,22 @@ FOUNDATION_EXTERN NSString *const kJLRoutesGlobalNamespaceKey;
 /// Enable or disable verbose logging. Defaults to NO.
 + (void)setVerboseLoggingEnabled:(BOOL)loggingEnabled;
 
+/// Returns current verbose logging enabled state.
++ (BOOL)isVerboseLoggingEnabled;
+
 /// Tells JLRoutes that it should manually replace '+' in parsed values to ' '. Defaults to YES.
 + (void)setShouldDecodePlusSymbols:(BOOL)shouldDecode;
+
+/// Returns current plus symbol decoding state.
++ (BOOL)shouldDecodePlusSymbols;
 
 @end
 
 
 #pragma mark - Deprecated
+
+FOUNDATION_EXTERN NSString *const kJLRouteNamespaceKey DEPRECATED_MSG_ATTRIBUTE("Use kJLRouteSchemeKey instead.");
+FOUNDATION_EXTERN NSString *const kJLRoutesGlobalNamespaceKey DEPRECATED_MSG_ATTRIBUTE("Use kJLRoutesGlobalRoutesScheme instead.");
 
 @interface JLRoutes (Deprecated)
 
