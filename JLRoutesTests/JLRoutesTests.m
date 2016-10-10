@@ -34,10 +34,10 @@ XCTAssertTrue(self.didRoute, @"Expected any route to match")
 XCTAssertFalse(self.didRoute, @"Expected not to route successfully")
 
 #define JLValidatePattern(pattern)\
-XCTAssertEqualObjects(self.lastMatch[kJLRoutePatternKey], pattern, @"Pattern did not match")
+XCTAssertEqualObjects(self.lastMatch[JLRoutePatternKey], pattern, @"Pattern did not match")
 
 #define JLValidateScheme(scheme)\
-XCTAssertEqualObjects(self.lastMatch[kJLRouteSchemeKey], scheme, @"Scheme did not match")
+XCTAssertEqualObjects(self.lastMatch[JLRouteSchemeKey], scheme, @"Scheme did not match")
 
 
 #pragma mark -
@@ -188,14 +188,14 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(1);
     NSArray *wildcardMatches = @[@"matches", @"with", @"extra", @"path", @"components"];
-    JLValidateParameter(@{kJLRouteWildcardComponentsKey: wildcardMatches});
+    JLValidateParameter(@{JLRouteWildcardComponentsKey: wildcardMatches});
     
     [self route:@"tests://route/matches/with/wildcard"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(2);
     JLValidateParameter(@{@"param": @"matches"});
     NSArray *parameterWildcardMatches = @[@"with", @"wildcard"];
-    JLValidateParameter(@{kJLRouteWildcardComponentsKey: parameterWildcardMatches});
+    JLValidateParameter(@{JLRouteWildcardComponentsKey: parameterWildcardMatches});
     
     [self route:@"tests://doesnt/exist/and/wont/match"];
     JLValidateNoLastMatch();
@@ -301,14 +301,14 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(1);
     NSArray *wildcardMatches = @[@"matches", @"with", @"extra", @"path", @"components"];
-    JLValidateParameter(@{kJLRouteWildcardComponentsKey: wildcardMatches});
+    JLValidateParameter(@{JLRouteWildcardComponentsKey: wildcardMatches});
     
     [self route:@"tests://route#/matches/with/wildcard"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(2);
     JLValidateParameter(@{@"param": @"matches"});
     NSArray *parameterWildcardMatches = @[@"with", @"wildcard"];
-    JLValidateParameter(@{kJLRouteWildcardComponentsKey: parameterWildcardMatches});
+    JLValidateParameter(@{JLRouteWildcardComponentsKey: parameterWildcardMatches});
     
     [self route:@"tests://doesnt/exist#/and/wont/match"];
     JLValidateNoLastMatch();
@@ -402,7 +402,7 @@ static JLRoutesTests *testsInstance = nil;
     // test that the same route can be handled differently for three different scheme namespaces
     [self route:@"tests://test"];
     JLValidateAnyRouteMatched();
-    JLValidateScheme(kJLRoutesGlobalRoutesScheme);
+    JLValidateScheme(JLRoutesGlobalRoutesScheme);
     
     [self route:@"namespaceTest1://test"];
     JLValidateAnyRouteMatched();
@@ -429,7 +429,7 @@ static JLRoutesTests *testsInstance = nil;
     // fallback is on, so this should route
     [self route:@"namespaceTest2://user/view/joeldev"];
     JLValidateAnyRouteMatched();
-    JLValidateScheme(kJLRoutesGlobalRoutesScheme);
+    JLValidateScheme(JLRoutesGlobalRoutesScheme);
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID" : @"joeldev"});
 }
@@ -491,7 +491,7 @@ static JLRoutesTests *testsInstance = nil;
     // this will get matched by our "/:" route in the global namespace - we just want to make sure it doesn't get matched by namespaceTest3
     [self route:@"namespaceTest3://test2"];
     JLValidateAnyRouteMatched();
-    JLValidateScheme(kJLRoutesGlobalRoutesScheme);
+    JLValidateScheme(JLRoutesGlobalRoutesScheme);
 }
 
 - (void)testPercentEncoding

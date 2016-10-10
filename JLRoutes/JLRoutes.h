@@ -15,11 +15,11 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-extern NSString *const kJLRoutePatternKey;
-extern NSString *const kJLRouteURLKey;
-extern NSString *const kJLRouteSchemeKey;
-extern NSString *const kJLRouteWildcardComponentsKey;
-extern NSString *const kJLRoutesGlobalRoutesScheme;
+extern NSString *const JLRoutePatternKey;
+extern NSString *const JLRouteURLKey;
+extern NSString *const JLRouteSchemeKey;
+extern NSString *const JLRouteWildcardComponentsKey;
+extern NSString *const JLRoutesGlobalRoutesScheme;
 
 
 @interface JLRoutes : NSObject
@@ -117,8 +117,14 @@ extern NSString *const kJLRoutesGlobalRoutesScheme;
 
 #pragma mark - Deprecated
 
-extern NSString *const kJLRouteNamespaceKey DEPRECATED_MSG_ATTRIBUTE("Use kJLRouteSchemeKey instead.");
-extern NSString *const kJLRoutesGlobalNamespaceKey DEPRECATED_MSG_ATTRIBUTE("Use kJLRoutesGlobalRoutesScheme instead.");
+extern NSString *const kJLRoutePatternKey               DEPRECATED_MSG_ATTRIBUTE("Use JLRoutePatternKey instead.");
+extern NSString *const kJLRouteURLKey                   DEPRECATED_MSG_ATTRIBUTE("Use JLRouteURLKey instead.");
+extern NSString *const kJLRouteSchemeKey                DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
+extern NSString *const kJLRouteWildcardComponentsKey    DEPRECATED_MSG_ATTRIBUTE("Use JLRouteWildcardComponentsKey instead.");
+extern NSString *const kJLRoutesGlobalRoutesScheme      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
+
+extern NSString *const kJLRouteNamespaceKey             DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
+extern NSString *const kJLRoutesGlobalNamespaceKey      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
 
 @interface JLRoutes (Deprecated)
 

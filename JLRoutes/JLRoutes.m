@@ -15,14 +15,11 @@
 #import "JLROptionalRouteParser.h"
 
 
-NSString *const kJLRoutePatternKey = @"JLRoutePattern";
-NSString *const kJLRouteURLKey = @"JLRouteURL";
-NSString *const kJLRouteSchemeKey = @"JLRouteScheme";
-NSString *const kJLRouteWildcardComponentsKey = @"JLRouteWildcardComponents";
-NSString *const kJLRoutesGlobalRoutesScheme = @"JLRoutesGlobalRoutesScheme";
-
-NSString *const kJLRouteNamespaceKey = @"JLRouteScheme"; // deprecated
-NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalRoutesScheme"; // deprecated
+NSString *const JLRoutePatternKey = @"JLRoutePattern";
+NSString *const JLRouteURLKey = @"JLRouteURL";
+NSString *const JLRouteSchemeKey = @"JLRouteScheme";
+NSString *const JLRouteWildcardComponentsKey = @"JLRouteWildcardComponents";
+NSString *const JLRoutesGlobalRoutesScheme = @"JLRoutesGlobalRoutesScheme";
 
 
 static NSMutableDictionary *routeControllersMap = nil;
@@ -72,7 +69,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 + (instancetype)globalRoutes
 {
-    return [self routesForScheme:kJLRoutesGlobalRoutesScheme];
+    return [self routesForScheme:JLRoutesGlobalRoutesScheme];
 }
 
 + (instancetype)routesForScheme:(NSString *)scheme
@@ -302,7 +299,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 - (BOOL)_isGlobalRoutesController
 {
-    return [self.scheme isEqualToString:kJLRoutesGlobalRoutesScheme];
+    return [self.scheme isEqualToString:JLRoutesGlobalRoutesScheme];
 }
 
 - (void)_verboseLog:(NSString *)format, ...
@@ -353,6 +350,16 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 
 #pragma mark - Deprecated
+
+// deprecated
+NSString *const kJLRoutePatternKey = @"JLRoutePattern";
+NSString *const kJLRouteURLKey = @"JLRouteURL";
+NSString *const kJLRouteSchemeKey = @"JLRouteScheme";
+NSString *const kJLRouteWildcardComponentsKey = @"JLRouteWildcardComponents";
+NSString *const kJLRoutesGlobalRoutesScheme = @"JLRoutesGlobalRoutesScheme";
+
+NSString *const kJLRouteNamespaceKey = @"JLRouteScheme"; // deprecated
+NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalRoutesScheme"; // deprecated
 
 @implementation JLRoutes (Deprecated)
 

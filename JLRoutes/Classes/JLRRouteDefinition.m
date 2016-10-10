@@ -85,7 +85,7 @@
             NSUInteger minRequiredParams = index;
             if (request.pathComponents.count >= minRequiredParams) {
                 // match: /a/b/c/* has to be matched by at least /a/b/c
-                routeParams[kJLRouteWildcardComponentsKey] = [request.pathComponents subarrayWithRange:NSMakeRange(index, request.pathComponents.count - index)];
+                routeParams[JLRouteWildcardComponentsKey] = [request.pathComponents subarrayWithRange:NSMakeRange(index, request.pathComponents.count - index)];
                 isMatch = YES;
             } else {
                 // not a match: /a/b/c/* cannot be matched by URL /a/b/
@@ -144,7 +144,7 @@
 
 - (NSDictionary *)baseMatchParametersForRequest:(JLRRouteRequest *)request
 {
-    return @{kJLRoutePatternKey: self.pattern ?: [NSNull null], kJLRouteURLKey: request.URL ?: [NSNull null], kJLRouteSchemeKey: self.scheme ?: [NSNull null]};
+    return @{JLRoutePatternKey: self.pattern ?: [NSNull null], JLRouteURLKey: request.URL ?: [NSNull null], JLRouteSchemeKey: self.scheme ?: [NSNull null]};
 }
 
 - (BOOL)callHandlerBlockWithParameters:(NSDictionary *)parameters
