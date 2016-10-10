@@ -32,12 +32,12 @@
         NSURLComponents *components = [NSURLComponents componentsWithString:[self.URL absoluteString]];
         if (components.host.length > 0 && ![components.host isEqualToString:@"localhost"]) {
             // convert the host to "/" so that the host is considered a path component
-            NSString *host = [components.host copy];
+            NSString *host = [components.percentEncodedHost copy];
             components.host = @"/";
-            components.path = [host stringByAppendingPathComponent:(components.path ?: @"")];
+            components.percentEncodedPath = [host stringByAppendingPathComponent:(components.percentEncodedPath ?: @"")];
         }
         
-        NSString *path = [components path];
+        NSString *path = [components percentEncodedPath];
         
         // handle fragment if needed
         if (components.fragment != nil) {

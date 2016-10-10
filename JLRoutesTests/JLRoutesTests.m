@@ -653,6 +653,20 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateNoLastMatch();
 }
 
+- (void)testPassingURLStringsAsParams
+{
+    [[JLRoutes globalRoutes] addRoute:@"/web/:URLString" handler:[[self class] defaultRouteHandler]];
+    [[JLRoutes globalRoutes] addRoute:@"/web" handler:[[self class] defaultRouteHandler]];
+    
+    [self route:@"tests://web/http%3A%2F%2Ffoobar.com%2Fbaz"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"URLString": @"http://foobar.com/baz"});
+    
+    [self route:@"tests://web?URLString=http%3A%2F%2Ffoobar.com%2Fbaz"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"URLString": @"http://foobar.com/baz"});
+}
+
 #pragma mark - Convenience Methods
 
 + (BOOL (^)(NSDictionary *))defaultRouteHandler
