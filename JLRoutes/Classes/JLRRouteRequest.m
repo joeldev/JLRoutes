@@ -39,10 +39,6 @@
         
         NSString *path = [components path];
         
-        if ([[URL absoluteString] isEqualToString:@"tests://post#/edit/123"]) {
-            NSLog(@"debug");
-        }
-        
         // handle fragment if needed
         if (components.fragment != nil) {
             BOOL fragmentContainsQueryParams = NO;
