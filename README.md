@@ -1,10 +1,11 @@
 JLRoutes
 ========
 
-[![Platform](https://img.shields.io/cocoapods/p/JLRoutes.svg?style=flat)](https://github.com/joeldev/JLRoutes)
+![Platform](https://img.shields.io/cocoapods/p/JLRoutes.svg?style=flat)
 [![CocoaPods Compatible](https://img.shields.io/cocoapods/v/JLRoutes.svg)](https://img.shields.io/cocoapods/v/JLRoutes.svg)
 [![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Build Status](https://travis-ci.org/joeldev/JLRoutes.svg?branch=master)](https://travis-ci.org/joeldev/JLRoutes)
+![Apps](https://img.shields.io/cocoapods/at/JLRoutes.svg?maxAge=2592000)
 
 ### What is it? ###
 JLRoutes is a URL routing library with a simple block-based API. It is designed to make it very easy to handle complex URL schemes in your application with minimal code.
