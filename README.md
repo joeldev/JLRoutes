@@ -1,6 +1,9 @@
 JLRoutes
 ========
 
+[![Platform](https://img.shields.io/cocoapods/p/JLRoutes.svg?style=flat)](https://github.com/joeldev/JLRoutes)
+[![CocoaPods Compatible](https://img.shields.io/cocoapods/v/JLRoutes.svg)](https://img.shields.io/cocoapods/v/JLRoutes.svg)
+[![Carthage Compatible](https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat)](https://github.com/Carthage/Carthage)
 [![Build Status](https://travis-ci.org/joeldev/JLRoutes.svg?branch=master)](https://travis-ci.org/joeldev/JLRoutes)
 
 ### What is it? ###
