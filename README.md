@@ -1,6 +1,7 @@
 JLRoutes
-[![Build Status](https://travis-ci.org/joeldev/JLRoutes.svg?branch=master)](https://travis-ci.org/joeldev/JLRoutes)
 ========
+
+[![Build Status](https://travis-ci.org/joeldev/JLRoutes.svg?branch=master)](https://travis-ci.org/joeldev/JLRoutes)
 
 ### What is it? ###
 JLRoutes is a URL routing library with a simple block-based API. It is designed to make it very easy to handle complex URL schemes in your application with minimal code.
@@ -161,9 +162,9 @@ For example, the following route would be triggered for any URL that started wit
 
 JLRoutes supports setting up routes with optional parameters. At the route registration moment, JLRoute will register multiple routes with all combinations of the route with the optional parameters and without the optional parameters. For example, for the route `/the(/foo/:a)(/bar/:b)`, it will register the following routes:
 
-- `/the/foo/:a/bar/:b
+- `/the/foo/:a/bar/:b`
 - `/the/foo/:a`
-- `/the/bar/:b
+- `/the/bar/:b`
 - `/the`
 
 
