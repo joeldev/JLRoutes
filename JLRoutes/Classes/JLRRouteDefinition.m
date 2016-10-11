@@ -129,7 +129,7 @@
 
 - (NSString *)variableValueForValue:(NSString *)value decodePlusSymbols:(BOOL)decodePlusSymbols
 {
-    NSString *var = [value stringByReplacingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSString *var = [value stringByRemovingPercentEncoding];
     
     if (var.length > 1 && [var characterAtIndex:var.length - 1] == '#') {
         var = [var substringToIndex:var.length - 1];
