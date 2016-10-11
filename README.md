@@ -135,18 +135,18 @@ and then try to route the URL `thing://global`, it would not match because that 
 [JLRoutes routesForScheme:@"thing"].shouldFallbackToGlobalRoutes = YES;
 ```
 
-This tells JLRoutes that if a URL cannot be routed within the `thing` scheme (aka, it starts with `thing:` but no appropriate route can be found), try to recover by looking for a matching route in the global routes scheme as well. After setting that property to `YES`, the URL 'thing://global` would be routed to the /global block.
+This tells JLRoutes that if a URL cannot be routed within the `thing` scheme (aka, it starts with `thing:` but no appropriate route can be found), try to recover by looking for a matching route in the global routes scheme as well. After setting that property to `YES`, the URL `thing://global` would be routed to the /global block.
 
 
 ### Wildcard routes ###
 
-JLRoutes supports setting up routes that will match an arbitrary number of path components at the end of the routed URL. An array containing the additional path components will be added to the parameters dictionary with the key `kJLRouteWildcardComponentsKey`.
+JLRoutes supports setting up routes that will match an arbitrary number of path components at the end of the routed URL. An array containing the additional path components will be added to the parameters dictionary with the key `JLRouteWildcardComponentsKey`.
 
 For example, the following route would be triggered for any URL that started with `/wildcard/`, but would be rejected by the handler if the next component wasn't `joker`.
 
 ```objc
 [[JLRoutes globalRoutes] addRoute:@"/wildcard/*" handler:^BOOL(NSDictionary *parameters) {
-  NSArray *pathComponents = parameters[kJLRouteWildcardComponentsKey];
+  NSArray *pathComponents = parameters[JLRouteWildcardComponentsKey];
   if ([pathComponents count] > 0 && [pathComponents[0] isEqualToString:@"joker"]) {
     // the route matched; do stuff
     return YES;
