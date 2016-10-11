@@ -76,7 +76,7 @@
         }
         
         if ([patternComponent hasPrefix:@":"]) {
-            // this is a variable
+            // this is a variable, set it in the params
             NSString *variableName = [self variableNameForValue:patternComponent];
             NSString *variableValue = [self variableValueForValue:URLComponent decodePlusSymbols:decodePlusSymbols];
             routeParams[variableName] = variableValue;

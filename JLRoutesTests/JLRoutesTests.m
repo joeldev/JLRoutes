@@ -160,11 +160,10 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID": @"joeldev"});
     
-    [self route:@"tests://user/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil#search=blarg&userID=otherEvilPerson" withParameters:@{@"evilThing": @"notEvil"}];
+    [self route:@"tests://user/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil#userID=otherEvilPerson" withParameters:@{@"evilThing": @"notEvil"}];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(3);
     JLValidateParameter(@{@"userID": @"joeldev"});
-    JLValidateParameter(@{@"search": @"blarg"});
     JLValidateParameter(@{@"evilThing": @"notEvil"});
     
     [self route:@"tests://post/edit/123"];
@@ -272,12 +271,11 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameter(@{@"search": @"evilSearch"});
     JLValidateParameter(@{@"evilThing": @"notEvil"});
     
-    [self route:@"tests://user?search=niceSearch&go=home#/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil" withParameters:@{@"evilThing": @"notEvil"}];
+    [self route:@"tests://user?search=niceSearch&go=home#/view/joeldev?userID=evilPerson&&evilThing=evil" withParameters:@{@"evilThing": @"notEvil"}];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(4);
     JLValidateParameter(@{@"userID": @"joeldev"});
     JLValidateParameter(@{@"go": @"home"});
-    JLValidateParameter(@{@"search": @"evilSearch"});
     JLValidateParameter(@{@"evilThing": @"notEvil"});
     
     [self route:@"tests://post#/edit/123"];
@@ -665,6 +663,16 @@ static JLRoutesTests *testsInstance = nil;
     [self route:@"tests://web?URLString=http%3A%2F%2Ffoobar.com%2Fbaz"];
     JLValidateAnyRouteMatched();
     JLValidateParameter(@{@"URLString": @"http://foobar.com/baz"});
+}
+
+- (void)testArrayQueryParams
+{
+    [[JLRoutes globalRoutes] addRoute:@"/test/foo" handler:[[self class] defaultRouteHandler]];
+    
+    [self route:@"tests://test/foo?key=1&key=2&key=3&text=hi&text=there"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter((@{@"key": @[@"1", @"2", @"3"]}));
+    JLValidateParameter((@{@"text": @[@"hi", @"there"]}));
 }
 
 #pragma mark - Convenience Methods

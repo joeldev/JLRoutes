@@ -84,8 +84,21 @@
             if (item.value == nil) {
                 continue;
             }
-            queryParams[item.name] = item.value;
+            
+            if (queryParams[item.name] == nil) {
+                // first time seeing a param with this name, set it
+                queryParams[item.name] = item.value;
+            } else if ([queryParams[item.name] isKindOfClass:[NSArray class]]) {
+                // already an array of these items, append it
+                NSArray *values = (NSArray *)(queryParams[item.name]);
+                queryParams[item.name] = [values arrayByAddingObject:item.value];
+            } else {
+                // existing non-array value for this key, create an array
+                id existingValue = queryParams[item.name];
+                queryParams[item.name] = @[existingValue, item.value];
+            }
         }
+        
         self.queryParams = [queryParams copy];
     }
     return self;
