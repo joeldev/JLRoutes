@@ -142,7 +142,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     NSInteger routeIndex = NSNotFound;
     NSInteger index = 0;
     
-    for (JLRRouteDefinition *route in self.routes) {
+    for (JLRRouteDefinition *route in [self.routes copy]) {
         if ([route.pattern isEqualToString:routePattern]) {
             routeIndex = index;
             break;
@@ -217,12 +217,11 @@ static BOOL shouldDecodePlusSymbols = YES;
     if (priority == 0 || self.routes.count == 0) {
         [self.routes addObject:route];
     } else {
-        NSArray *existingRoutes = self.routes;
         NSUInteger index = 0;
         BOOL addedRoute = NO;
         
         // search through existing routes looking for a lower priority route than this one
-        for (JLRRouteDefinition *existingRoute in existingRoutes) {
+        for (JLRRouteDefinition *existingRoute in [self.routes copy]) {
             if (existingRoute.priority < priority) {
                 // if found, add the route after it
                 [self.routes insertObject:route atIndex:index];
@@ -250,7 +249,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     BOOL didRoute = NO;
     JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL];
     
-    for (JLRRouteDefinition *route in self.routes) {
+    for (JLRRouteDefinition *route in [self.routes copy]) {
         // check each route for a matching response
         JLRRouteResponse *response = [route routeResponseForRequest:request decodePlusSymbols:shouldDecodePlusSymbols];
         if (!response.isMatch) {
