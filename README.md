@@ -16,7 +16,7 @@ JLRoutes is a URL routing library with a simple block-based API. It is designed 
 JLRoutes is available for installation using [CocoaPods](https://cocoapods.org/pods/JLRoutes) or Carthage (add `github "joeldev/JLRoutes"` to your `Cartfile`).
 
 ### Requirements ###
-* iOS 7.0+ or OS X 10.9+
+JLRoutes 2.x require iOS 8.0+ or macOS 10.10+. If you need to support iOS 7 or macOS 10.9, please use version 1.6.4 (which is the last 1.x release).
 
 ### Simple Example ###
 ```objc
