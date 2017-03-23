@@ -103,7 +103,7 @@
     if (isMatch) {
         // if it's a match, set up the param dictionary and create a valid match response
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
-        [params addEntriesFromDictionary:request.queryParams];
+        [params addEntriesFromDictionary:[request queryParamsDecodingPlusSymbols:decodePlusSymbols]];
         [params addEntriesFromDictionary:routeParams];
         [params addEntriesFromDictionary:[self baseMatchParametersForRequest:request]];
         response = [JLRRouteResponse validMatchResponseWithParameters:[params copy]];
@@ -135,9 +135,7 @@
         var = [var substringToIndex:var.length - 1];
     }
     
-    if (decodePlusSymbols) {
-        var = [var stringByReplacingOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, var.length)];
-    }
+    var = [JLRRouteRequest variableValueFrom:var decodePlusSymbols:decodePlusSymbols];
     
     return var;
 }

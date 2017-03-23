@@ -70,6 +70,7 @@ static JLRoutesTests *testsInstance = nil;
 {
     [super setUp];
     testsInstance = self;
+    [JLRoutes setShouldDecodePlusSymbols:YES];
 }
 
 - (void)tearDown
@@ -606,12 +607,42 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID": @"joel levin"});
     
+    [self route:@"tests://user/view/joel+levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel levin"});
+    
+    [self route:@"tests://user/view/test?name=joel+levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(2);
+    JLValidateParameter(@{@"name": @"joel levin"});
+    
+    [self route:@"tests://user/view/test?people=joel+levin&people=foo+bar"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(2);
+    JLValidateParameter((@{@"people": @[@"joel levin", @"foo bar"]}));
+    
     [JLRoutes setShouldDecodePlusSymbols:NO];
     
     [self route:@"tests://user/view/joel%2Blevin"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID": @"joel+levin"});
+    
+    [self route:@"tests://user/view/joel+levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(1);
+    JLValidateParameter(@{@"userID": @"joel+levin"});
+    
+    [self route:@"tests://user/view/test?name=joel+levin"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(2);
+    JLValidateParameter(@{@"name": @"joel+levin"});
+    
+    [self route:@"tests://user/view/test?people=joel+levin&people=foo+bar"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(2);
+    JLValidateParameter((@{@"people": @[@"joel+levin", @"foo+bar"]}));
 }
 
 - (void)testVariableEmptyFollowedByWildcard

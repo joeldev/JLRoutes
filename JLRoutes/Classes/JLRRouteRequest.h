@@ -23,6 +23,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (instancetype)initWithURL:(NSURL *)URL;
 
++ (NSString *)variableValueFrom:(NSString *)value decodePlusSymbols:(BOOL)decodePlusSymbols;
+
+- (NSDictionary *)queryParamsDecodingPlusSymbols:(BOOL)decodePlusSymbols;
+
 @end
 
 
