@@ -15,6 +15,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
+@class JLRRouteDefinition;
+
+
 extern NSString *const JLRoutePatternKey;
 extern NSString *const JLRouteURLKey;
 extern NSString *const JLRouteSchemeKey;
@@ -45,6 +48,9 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// Unregister all routes
 + (void)unregisterAllRouteSchemes;
 
+/// All registered routes, keyed by scheme
++ (NSDictionary <NSString *, JLRRouteDefinition *> *)allRoutes;
+
 
 #pragma mark - Registering Routes
 
@@ -67,6 +73,9 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 
 /// Registers a routePattern with default priority (0) using dictionary-style subscripting.
 - (void)setObject:(nullable id)handlerBlock forKeyedSubscript:(NSString *)routePatten;
+
+/// Return all registered routes in the receiving scheme namespace.
+- (NSArray <JLRRouteDefinition *> *)routes;
 
 
 #pragma mark - Routing URLs

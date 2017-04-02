@@ -29,7 +29,7 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 @interface JLRoutes ()
 
-@property (nonatomic, strong) NSMutableArray *routes;
+@property (nonatomic, strong) NSMutableArray *mutableRoutes;
 @property (nonatomic, strong) NSString *scheme;
 
 @end
@@ -42,26 +42,26 @@ static BOOL shouldDecodePlusSymbols = YES;
 - (instancetype)init
 {
     if ((self = [super init])) {
-        self.routes = [NSMutableArray array];
+        self.mutableRoutes = [NSMutableArray array];
     }
     return self;
 }
 
 - (NSString *)description
 {
-    return [self.routes description];
+    return [self.mutableRoutes description];
 }
 
-+ (NSString *)allRoutes
++ (NSDictionary <NSString *, JLRRouteDefinition *> *)allRoutes;
 {
-    NSMutableString *descriptionString = [NSMutableString stringWithString:@"\n"];
+    NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
-    for (NSString *routesNamespace in routeControllersMap) {
-        JLRoutes *routesController = routeControllersMap[routesNamespace];
-        [descriptionString appendFormat:@"\"%@\":\n%@\n\n", routesController.scheme, routesController.routes];
+    for (NSString *namespace in [routeControllersMap copy]) {
+        JLRoutes *routesController = routeControllersMap[namespace];
+        dictionary[namespace] = routesController.mutableRoutes;
     }
     
-    return descriptionString;
+    return [dictionary copy];
 }
 
 
@@ -142,7 +142,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     NSInteger routeIndex = NSNotFound;
     NSInteger index = 0;
     
-    for (JLRRouteDefinition *route in [self.routes copy]) {
+    for (JLRRouteDefinition *route in [self.mutableRoutes copy]) {
         if ([route.pattern isEqualToString:routePattern]) {
             routeIndex = index;
             break;
@@ -151,13 +151,13 @@ static BOOL shouldDecodePlusSymbols = YES;
     }
     
     if (routeIndex != NSNotFound) {
-        [self.routes removeObjectAtIndex:(NSUInteger)routeIndex];
+        [self.mutableRoutes removeObjectAtIndex:(NSUInteger)routeIndex];
     }
 }
 
 - (void)removeAllRoutes
 {
-    [self.routes removeAllObjects];
+    [self.mutableRoutes removeAllObjects];
 }
 
 - (void)setObject:(id)handlerBlock forKeyedSubscript:(NSString *)routePatten
@@ -165,6 +165,10 @@ static BOOL shouldDecodePlusSymbols = YES;
     [self addRoute:routePatten handler:handlerBlock];
 }
 
+- (NSArray <JLRRouteDefinition *> *)routes;
+{
+    return [self.mutableRoutes copy];
+}
 
 #pragma mark - Routing URLs
 
@@ -214,17 +218,17 @@ static BOOL shouldDecodePlusSymbols = YES;
 {
     JLRRouteDefinition *route = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:routePattern priority:priority handlerBlock:handlerBlock];
     
-    if (priority == 0 || self.routes.count == 0) {
-        [self.routes addObject:route];
+    if (priority == 0 || self.mutableRoutes.count == 0) {
+        [self.mutableRoutes addObject:route];
     } else {
         NSUInteger index = 0;
         BOOL addedRoute = NO;
         
         // search through existing routes looking for a lower priority route than this one
-        for (JLRRouteDefinition *existingRoute in [self.routes copy]) {
+        for (JLRRouteDefinition *existingRoute in [self.mutableRoutes copy]) {
             if (existingRoute.priority < priority) {
                 // if found, add the route after it
-                [self.routes insertObject:route atIndex:index];
+                [self.mutableRoutes insertObject:route atIndex:index];
                 addedRoute = YES;
                 break;
             }
@@ -233,7 +237,7 @@ static BOOL shouldDecodePlusSymbols = YES;
         
         // if we weren't able to find a lower priority route, this is the new lowest priority route (or same priority as self.routes.lastObject) and should just be added
         if (!addedRoute) {
-            [self.routes addObject:route];
+            [self.mutableRoutes addObject:route];
         }
     }
 }
@@ -249,7 +253,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     BOOL didRoute = NO;
     JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL];
     
-    for (JLRRouteDefinition *route in [self.routes copy]) {
+    for (JLRRouteDefinition *route in [self.mutableRoutes copy]) {
         // check each route for a matching response
         JLRRouteResponse *response = [route routeResponseForRequest:request decodePlusSymbols:shouldDecodePlusSymbols];
         if (!response.isMatch) {
