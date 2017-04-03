@@ -31,7 +31,7 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 @property (nonatomic, assign) BOOL shouldFallbackToGlobalRoutes;
 
 /// Called any time routeURL returns NO. Respects shouldFallbackToGlobalRoutes.
-@property (nonatomic, copy) void (^__nullable unmatchedURLHandler)(JLRoutes *routes, NSURL *__nullable URL, NSDictionary<NSString *, id> *__nullable parameters);
+@property (nonatomic, copy, nullable) void (^unmatchedURLHandler)(JLRoutes *routes, NSURL *__nullable URL, NSDictionary<NSString *, id> *__nullable parameters);
 
 
 #pragma mark - Routing Schemes
