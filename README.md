@@ -19,7 +19,7 @@ JLRoutes is available for installation using [CocoaPods](https://cocoapods.org/p
 JLRoutes 2.x require iOS 8.0+ or macOS 10.10+. If you need to support iOS 7 or macOS 10.9, please use version 1.6.4 (which is the last 1.x release).
 
 ### Documentation ###
-Documentation is [available](http://cocoadocs.org/docsets/JLRoutes/) on [CocoaDocs.org](http://cocoadocs.org)
+Documentation is available [here](http://cocoadocs.org/docsets/JLRoutes/).
 
 ### Getting Started ###
 ```objc
@@ -164,8 +164,7 @@ For example, the following route would be triggered for any URL that started wit
 }];
 ```
 
-
-### Optional routes ###
+### Optional Routes ###
 
 JLRoutes supports setting up routes with optional parameters. At the route registration moment, JLRoute will register multiple routes with all combinations of the route with the optional parameters and without the optional parameters. For example, for the route `/the(/foo/:a)(/bar/:b)`, it will register the following routes:
 
@@ -174,6 +173,17 @@ JLRoutes supports setting up routes with optional parameters. At the route regis
 - `/the/bar/:b`
 - `/the`
 
+### Querying Routes ###
+
+There are multiple ways to query routes for programmatic uses (such as powering a debug UI). There's a method to get the full set of routes across all schemes and another to get just the specific list of routes for a given scheme. One note, you'll have to import `JLRRouteDefinition.h` as it is forward-declared.
+
+```objc
+/// All registered routes, keyed by scheme
++ (NSDictionary <NSString *, NSArray <JLRRouteDefinition *> *> *)allRoutes;
+
+/// Return all registered routes in the receiving scheme namespace.
+- (NSArray <JLRRouteDefinition *> *)routes;
+```
 
 ### License ###
 BSD 3-clause. See the [LICENSE](LICENSE) file for details.
