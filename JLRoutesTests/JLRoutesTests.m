@@ -12,6 +12,7 @@
 
 #import <XCTest/XCTest.h>
 #import "JLRoutes.h"
+#import "JLRRouteDefinition.h"
 
 
 #define JLValidateParameterCount(expectedCount)\
@@ -80,6 +81,58 @@ static JLRoutesTests *testsInstance = nil;
 }
 
 #pragma mark - Tests
+
+- (void)testRoutesArray
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/global1" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/global2" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/global3" handler:defaultHandler];
+    
+    NSArray <JLRRouteDefinition *> *globalRoutes = [[JLRoutes globalRoutes] routes];
+    
+    XCTAssertEqual(globalRoutes.count, 3UL);
+    XCTAssertEqualObjects(globalRoutes[0].pattern, @"/global1");
+    XCTAssertEqualObjects(globalRoutes[1].pattern, @"/global2");
+    XCTAssertEqualObjects(globalRoutes[2].pattern, @"/global3");
+    
+    [[JLRoutes routesForScheme:@"scheme"] addRoute:@"/scheme1" handler:defaultHandler];
+    [[JLRoutes routesForScheme:@"scheme"] addRoute:@"/scheme2" handler:defaultHandler];
+    
+    NSArray <JLRRouteDefinition *> *schemeRoutes = [[JLRoutes routesForScheme:@"scheme"] routes];
+    
+    XCTAssertEqual(schemeRoutes.count, 2UL);
+    XCTAssertEqualObjects(schemeRoutes[0].pattern, @"/scheme1");
+    XCTAssertEqualObjects(schemeRoutes[1].pattern, @"/scheme2");
+    
+    NSArray <JLRRouteDefinition *> *nonexistant = [[JLRoutes routesForScheme:@"foo"] routes];
+    XCTAssertEqual(nonexistant.count, 0UL);
+}
+
+- (void)testAllRoutes
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/global1" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/global2" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/global3" handler:defaultHandler];
+    [[JLRoutes routesForScheme:@"scheme"] addRoute:@"/scheme1" handler:defaultHandler];
+    [[JLRoutes routesForScheme:@"scheme"] addRoute:@"/scheme2" handler:defaultHandler];
+    
+    NSDictionary <NSString *, NSArray <JLRRouteDefinition *> *> *allRoutes = [JLRoutes allRoutes];
+    
+    NSArray <JLRRouteDefinition *> *globalRoutes = allRoutes[JLRoutesGlobalRoutesScheme];
+    XCTAssertEqual(globalRoutes.count, 3UL);
+    XCTAssertEqualObjects(globalRoutes[0].pattern, @"/global1");
+    XCTAssertEqualObjects(globalRoutes[1].pattern, @"/global2");
+    XCTAssertEqualObjects(globalRoutes[2].pattern, @"/global3");
+    
+    NSArray <JLRRouteDefinition *> *schemeRoutes = allRoutes[@"scheme"];
+    XCTAssertEqual(schemeRoutes.count, 2UL);
+    XCTAssertEqualObjects(schemeRoutes[0].pattern, @"/scheme1");
+    XCTAssertEqualObjects(schemeRoutes[1].pattern, @"/scheme2");
+}
 
 - (void)testBasicRouting
 {

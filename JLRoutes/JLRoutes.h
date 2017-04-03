@@ -49,7 +49,7 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 + (void)unregisterAllRouteSchemes;
 
 /// All registered routes, keyed by scheme
-+ (NSDictionary <NSString *, JLRRouteDefinition *> *)allRoutes;
++ (NSDictionary <NSString *, NSArray <JLRRouteDefinition *> *> *)allRoutes;
 
 
 #pragma mark - Registering Routes

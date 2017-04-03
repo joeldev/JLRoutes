@@ -52,13 +52,13 @@ static BOOL shouldDecodePlusSymbols = YES;
     return [self.mutableRoutes description];
 }
 
-+ (NSDictionary <NSString *, JLRRouteDefinition *> *)allRoutes;
++ (NSDictionary <NSString *, NSArray <JLRRouteDefinition *> *> *)allRoutes;
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
     for (NSString *namespace in [routeControllersMap copy]) {
         JLRoutes *routesController = routeControllersMap[namespace];
-        dictionary[namespace] = routesController.mutableRoutes;
+        dictionary[namespace] = [routesController.mutableRoutes copy];
     }
     
     return [dictionary copy];
