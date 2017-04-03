@@ -50,7 +50,7 @@
     return routes;
 }
 
-+ (NSArray <NSString *> *)_optionalComponentsForPattern:(NSString *)routePattern baseRoute:(NSString **)outBaseRoute;
++ (NSArray <NSString *> *)_optionalComponentsForPattern:(NSString *)routePattern baseRoute:(NSString *__autoreleasing *)outBaseRoute;
 {
     if (routePattern.length == 0) {
         return @[];
