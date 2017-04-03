@@ -185,6 +185,10 @@ There are multiple ways to query routes for programmatic uses (such as powering 
 - (NSArray <JLRRouteDefinition *> *)routes;
 ```
 
+### Custom Route Parsing ###
+
+It is possible to control how routes are parsed by subclassing `JLRRouteDefinition` and using the `addRoute:` method to add instances of your custom subclass.
+
 ### License ###
 BSD 3-clause. See the [LICENSE](LICENSE) file for details.
 
