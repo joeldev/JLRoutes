@@ -54,6 +54,9 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 
 #pragma mark - Registering Routes
 
+/// Add a route by directly inserted the route definition. This may be a subclass of JLRRouteDefinition to provide customized routing logic.
+- (void)addRoute:(JLRRouteDefinition *)routeDefinition;
+
 /// Registers a routePattern with default priority (0) in the receiving scheme namespace.
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock;
 

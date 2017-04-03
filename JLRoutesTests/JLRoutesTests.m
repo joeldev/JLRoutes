@@ -759,6 +759,19 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameter((@{@"text": @[@"hi", @"there"]}));
 }
 
+- (void)testAddingCustomRouteDefinition
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    JLRRouteDefinition *customRoute = [[JLRRouteDefinition alloc] initWithScheme:JLRoutesGlobalRoutesScheme pattern:@"/test" priority:0 handlerBlock:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:customRoute];
+    
+    [self route:@"tests://test"];
+    
+    JLValidateAnyRouteMatched();
+    JLValidateScheme(JLRoutesGlobalRoutesScheme);
+}
+
 #pragma mark - Convenience Methods
 
 + (BOOL (^)(NSDictionary *))defaultRouteHandler

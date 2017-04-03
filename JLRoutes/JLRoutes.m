@@ -105,6 +105,11 @@ static BOOL shouldDecodePlusSymbols = YES;
 
 #pragma mark - Registering Routes
 
+- (void)addRoute:(JLRRouteDefinition *)routeDefinition
+{
+    [self _registerRoute:routeDefinition];
+}
+
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlock
 {
     [self addRoute:routePattern priority:0 handler:handlerBlock];
@@ -120,17 +125,19 @@ static BOOL shouldDecodePlusSymbols = YES;
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlock
 {
     NSArray <NSString *> *optionalRoutePatterns = [JLROptionalRouteParser expandOptionalRoutePatternsForPattern:routePattern];
+    JLRRouteDefinition *route = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:routePattern priority:priority handlerBlock:handlerBlock];
     
     if (optionalRoutePatterns.count > 0) {
         // there are optional params, parse and add them
-        for (NSString *route in optionalRoutePatterns) {
+        for (NSString *pattern in optionalRoutePatterns) {
             [self _verboseLog:@"Automatically created optional route: %@", route];
-            [self _registerRoute:route priority:priority handler:handlerBlock];
+            JLRRouteDefinition *optionalRoute = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:pattern priority:priority handlerBlock:handlerBlock];
+            [self _registerRoute:optionalRoute];
         }
         return;
     }
     
-    [self _registerRoute:routePattern priority:priority handler:handlerBlock];
+    [self _registerRoute:route];
 }
 
 - (void)removeRoute:(NSString *)routePattern
@@ -214,11 +221,9 @@ static BOOL shouldDecodePlusSymbols = YES;
     return routeControllersMap[URL.scheme] ?: [JLRoutes globalRoutes];
 }
 
-- (void)_registerRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary *parameters))handlerBlock
+- (void)_registerRoute:(JLRRouteDefinition *)route
 {
-    JLRRouteDefinition *route = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:routePattern priority:priority handlerBlock:handlerBlock];
-    
-    if (priority == 0 || self.mutableRoutes.count == 0) {
+    if (route.priority == 0 || self.mutableRoutes.count == 0) {
         [self.mutableRoutes addObject:route];
     } else {
         NSUInteger index = 0;
@@ -226,7 +231,7 @@ static BOOL shouldDecodePlusSymbols = YES;
         
         // search through existing routes looking for a lower priority route than this one
         for (JLRRouteDefinition *existingRoute in [self.mutableRoutes copy]) {
-            if (existingRoute.priority < priority) {
+            if (existingRoute.priority < route.priority) {
                 // if found, add the route after it
                 [self.mutableRoutes insertObject:route atIndex:index];
                 addedRoute = YES;
