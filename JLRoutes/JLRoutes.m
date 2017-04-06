@@ -23,6 +23,8 @@ NSString *const JLRoutesGlobalRoutesScheme = @"JLRoutesGlobalRoutesScheme";
 
 
 static NSMutableDictionary *routeControllersMap = nil;
+
+// global options
 static BOOL verboseLoggingEnabled = NO;
 static BOOL shouldDecodePlusSymbols = YES;
 

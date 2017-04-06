@@ -141,18 +141,18 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// @name Configuring Global Options
 ///----------------------------------
 
-#pragma mark - Congfiguring Global Options
+#pragma mark - Configuring Global Options
 
-/// Enable or disable verbose logging. Defaults to NO.
+/// Configures verbose logging. Defaults to NO.
 + (void)setVerboseLoggingEnabled:(BOOL)loggingEnabled;
 
-/// Returns current verbose logging enabled state.
+/// Returns current verbose logging enabled state. Defaults to NO.
 + (BOOL)isVerboseLoggingEnabled;
 
-/// Tells JLRoutes that it should manually replace '+' in parsed values to ' '. Defaults to YES.
+/// Configures if '+' should be replaced with spaces in parsed values. Defaults to YES.
 + (void)setShouldDecodePlusSymbols:(BOOL)shouldDecode;
 
-/// Returns current plus symbol decoding state.
+/// Returns if '+' should be replaced with spaces in parsed values. Defaults to YES.
 + (BOOL)shouldDecodePlusSymbols;
 
 @end
