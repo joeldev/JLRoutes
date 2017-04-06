@@ -17,6 +17,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
+/// JLRRouteDefinition is the model object representing a registered route.
+
 @interface JLRRouteDefinition : NSObject
 
 @property (nonatomic, strong, readonly) NSString *scheme;

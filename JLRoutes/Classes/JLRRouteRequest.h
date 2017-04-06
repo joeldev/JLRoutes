@@ -15,6 +15,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
+/// JLRRouteRequest is an individual request to route a given URL.
+/// It gets parsed into path components and query parameters.
+
 @interface JLRRouteRequest : NSObject
 
 @property (nonatomic, strong, readonly) NSURL *URL;

@@ -15,6 +15,9 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
+/// JLRRouteResponse is the response from attempting to route a `JLRRouteRequest`.
+/// The `match` property can be checked to see if this response was a match or not.
+
 @interface JLRRouteResponse : NSObject
 
 @property (nonatomic, assign, readonly, getter=isMatch) BOOL match;

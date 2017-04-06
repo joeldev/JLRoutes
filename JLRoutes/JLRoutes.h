@@ -18,12 +18,25 @@ NS_ASSUME_NONNULL_BEGIN
 @class JLRRouteDefinition;
 
 
+/// The matching route pattern, passed in the handler parameters.
 extern NSString *const JLRoutePatternKey;
+
+/// The original URL that was routed, passed in the handler parameters.
 extern NSString *const JLRouteURLKey;
+
+/// The matching route scheme, passed in the handler parameters.
 extern NSString *const JLRouteSchemeKey;
+
+/// The wildcard components (if present) of the matching route, passed in the handler parameters.
 extern NSString *const JLRouteWildcardComponentsKey;
+
+/// The global routes namespace.
+/// @see JLRoutes +globalRoutes
 extern NSString *const JLRoutesGlobalRoutesScheme;
 
+
+/// The JLRoutes class is the main entry-point into the JLRoutes framework.
+/// Used for accessing schemes, managing routes, and routing URLs.
 
 @interface JLRoutes : NSObject
 
@@ -34,9 +47,13 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 @property (nonatomic, copy, nullable) void (^unmatchedURLHandler)(JLRoutes *routes, NSURL *__nullable URL, NSDictionary<NSString *, id> *__nullable parameters);
 
 
+///-------------------------------
+/// @name Routing Schemes
+///-------------------------------
+
 #pragma mark - Routing Schemes
 
-/// Returns the global routing scheme (this is used by the +addRoute methods by default)
+/// Returns the global routing scheme
 + (instancetype)globalRoutes;
 
 /// Returns a routing namespace for the given scheme
@@ -49,7 +66,11 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 + (void)unregisterAllRouteSchemes;
 
 
-#pragma mark - Registering Routes
+///-------------------------------
+/// @name Managing Routes
+///-------------------------------
+
+#pragma mark - Managing Routes
 
 /// Add a route by directly inserted the route definition. This may be a subclass of JLRRouteDefinition to provide customized routing logic.
 - (void)addRoute:(JLRRouteDefinition *)routeDefinition;
@@ -81,6 +102,10 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 + (NSDictionary <NSString *, NSArray <JLRRouteDefinition *> *> *)allRoutes;
 
 
+///-------------------------------
+/// @name Routing URLs
+///-------------------------------
+
 #pragma mark - Routing URLs
 
 /// Returns whether a route will match a given URL in any routes scheme, but does not call any blocks.
@@ -108,9 +133,15 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 @end
 
 
-#pragma mark - Global Options
+/// Global settings to use for parsing and routing.
 
 @interface JLRoutes (GlobalOptions)
+
+///----------------------------------
+/// @name Configuring Global Options
+///----------------------------------
+
+#pragma mark - Congfiguring Global Options
 
 /// Enable or disable verbose logging. Defaults to NO.
 + (void)setVerboseLoggingEnabled:(BOOL)loggingEnabled;
@@ -129,19 +160,34 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 
 #pragma mark - Deprecated
 
+/// @see JLRoutePatternKey
 extern NSString *const kJLRoutePatternKey               DEPRECATED_MSG_ATTRIBUTE("Use JLRoutePatternKey instead.");
+
+/// @see JLRouteURLKey
 extern NSString *const kJLRouteURLKey                   DEPRECATED_MSG_ATTRIBUTE("Use JLRouteURLKey instead.");
+
+/// @see JLRouteSchemeKey
 extern NSString *const kJLRouteSchemeKey                DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
+
+/// @see JLRouteWildcardComponentsKey
 extern NSString *const kJLRouteWildcardComponentsKey    DEPRECATED_MSG_ATTRIBUTE("Use JLRouteWildcardComponentsKey instead.");
+
+/// @see JLRoutesGlobalRoutesScheme
 extern NSString *const kJLRoutesGlobalRoutesScheme      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
 
+/// @see JLRouteSchemeKey
 extern NSString *const kJLRouteNamespaceKey             DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
+
+/// @see JLRoutesGlobalRoutesScheme
 extern NSString *const kJLRoutesGlobalNamespaceKey      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
 
-@interface JLRoutes (Deprecated)
 
-// All the class method conveniences have been deprecated. They make the API/header confusing and are unncessary.
-// If you're using these, please switch to calling the matching instance method on +globalRoutes instead for the same behavior.
+/// Deprecated
+///
+/// All the class method conveniences listed here have been deprecated.
+/// If you're using these, please switch to calling the matching instance method on +globalRoutes instead for the same behavior.
+
+@interface JLRoutes (Deprecated)
 
 + (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
 + (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");

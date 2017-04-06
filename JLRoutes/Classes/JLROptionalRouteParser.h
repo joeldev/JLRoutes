@@ -15,6 +15,8 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
+/// JLROptionalRouteParser is a utility class for expanding out all possible patterns from a route pattern containing optional segments.
+
 @interface JLROptionalRouteParser : NSObject
 
 + (NSArray <NSString *> *)expandOptionalRoutePatternsForPattern:(NSString *)routePattern;
