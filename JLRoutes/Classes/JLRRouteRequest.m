@@ -30,7 +30,8 @@
         self.URL = URL;
         
         NSURLComponents *components = [NSURLComponents componentsWithString:[self.URL absoluteString]];
-        if (components.host.length > 0 && ![components.host isEqualToString:@"localhost"]) {
+        
+        if (components.host.length > 0 && ![components.host isEqualToString:@"localhost"] && [components.host rangeOfString:@"."].location == NSNotFound) {
             // convert the host to "/" so that the host is considered a path component
             NSString *host = [components.percentEncodedHost copy];
             components.host = @"/";

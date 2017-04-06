@@ -70,7 +70,10 @@ static JLRoutesTests *testsInstance = nil;
 - (void)setUp
 {
     [super setUp];
+    
     testsInstance = self;
+    
+    // reset settings
     [JLRoutes setShouldDecodePlusSymbols:YES];
 }
 
@@ -770,6 +773,21 @@ static JLRoutesTests *testsInstance = nil;
     
     JLValidateAnyRouteMatched();
     JLValidateScheme(JLRoutesGlobalRoutesScheme);
+}
+
+- (void)testShouldTreatHostAsPathComponent
+{
+    [[JLRoutes globalRoutes] addRoute:@"/sign_in" handler:[[self class] defaultRouteHandler]];
+    [[JLRoutes globalRoutes] addRoute:@"/path/:pathid" handler:[[self class] defaultRouteHandler]];
+    
+    [self route:@"https://www.mydomain.com/sign_in"];
+    JLValidateAnyRouteMatched();
+    JLValidatePattern(@"/sign_in");
+    
+    [self route:@"https://www.mydomain.com/path/3"];
+    JLValidateAnyRouteMatched();
+    JLValidatePattern(@"/path/:pathid");
+    JLValidateParameter((@{@"pathid": @"3"}));
 }
 
 #pragma mark - Convenience Methods
