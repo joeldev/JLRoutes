@@ -1,6 +1,6 @@
 language: objective-c
 osx_image: xcode8.2
-script: xcodebuild test -scheme 'JLRoutes-iOS' -configuration Debug -destination "id=AD8E8C76-910E-437D-88C2-4D6F6EBE3355" -destination "id=808A0798-21A1-4579-B15E-DA3CC5782582" -destination "id=3907EC2E-F6D7-4D05-A226-25056C2C4683"
+script: xcodebuild test -scheme 'JLRoutes-iOS' -configuration Debug -destination "platform=iOS Simulator,name=iPhone 6,OS=8.4" -destination "platform=iOS Simulator,name=iPhone 6,OS=9.3" -destination "platform=iOS Simulator,name=iPhone 6,OS=10.2"
  GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES
 after_success:
   - bash <(curl -s https://codecov.io/bash)
