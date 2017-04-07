@@ -35,8 +35,8 @@ extern NSString *const JLRouteWildcardComponentsKey;
 extern NSString *const JLRoutesGlobalRoutesScheme;
 
 
-/// The JLRoutes class is the main entry-point into the JLRoutes framework.
-/// Used for accessing schemes, managing routes, and routing URLs.
+
+/// The JLRoutes class is the main entry-point into the JLRoutes framework. Used for accessing schemes, managing routes, and routing URLs.
 
 @interface JLRoutes : NSObject
 
@@ -160,34 +160,35 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 
 #pragma mark - Deprecated
 
-/// @see JLRoutePatternKey
+/// Deprecated, use JLRoutePatternKey instead.
 extern NSString *const kJLRoutePatternKey               DEPRECATED_MSG_ATTRIBUTE("Use JLRoutePatternKey instead.");
 
-/// @see JLRouteURLKey
+/// Deprecated, use JLRouteURLKey instead.
 extern NSString *const kJLRouteURLKey                   DEPRECATED_MSG_ATTRIBUTE("Use JLRouteURLKey instead.");
 
-/// @see JLRouteSchemeKey
+/// Deprecated, use JLRouteSchemeKey instead.
 extern NSString *const kJLRouteSchemeKey                DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
 
-/// @see JLRouteWildcardComponentsKey
+/// Deprecated, use JLRouteWildcardComponentsKey instead.
 extern NSString *const kJLRouteWildcardComponentsKey    DEPRECATED_MSG_ATTRIBUTE("Use JLRouteWildcardComponentsKey instead.");
 
-/// @see JLRoutesGlobalRoutesScheme
+/// Deprecated, use JLRoutesGlobalRoutesScheme instead.
 extern NSString *const kJLRoutesGlobalRoutesScheme      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
 
-/// @see JLRouteSchemeKey
+/// Deprecated, use JLRouteSchemeKey instead.
 extern NSString *const kJLRouteNamespaceKey             DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
 
-/// @see JLRoutesGlobalRoutesScheme
+/// Deprecated, use JLRoutesGlobalRoutesScheme instead.
 extern NSString *const kJLRoutesGlobalNamespaceKey      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
 
 
-/// Deprecated
-///
-/// All the class method conveniences listed here have been deprecated.
-/// If you're using these, please switch to calling the matching instance method on +globalRoutes instead for the same behavior.
-
 @interface JLRoutes (Deprecated)
+
+/* Deprecated
+ 
+ All the class method conveniences listed here have been deprecated.
+ If you're using these, please switch to calling the matching instance method on +globalRoutes instead for the same behavior.
+ */
 
 + (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
 + (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
