@@ -133,7 +133,7 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 @end
 
 
-/// Global settings to use for parsing and routing.
+// Global settings to use for parsing and routing.
 
 @interface JLRoutes (GlobalOptions)
 
@@ -188,12 +188,12 @@ extern NSString *const kJLRouteNamespaceKey             DEPRECATED_MSG_ATTRIBUTE
 extern NSString *const kJLRoutesGlobalNamespaceKey      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
 
 
-/// Deprecated
-///
-/// All the class method conveniences listed here have been deprecated.
-/// If you're using these, please switch to calling the matching instance method on +globalRoutes instead for the same behavior.
-
 @interface JLRoutes (Deprecated)
+
+// Deprecated
+//
+// All the class method conveniences listed here have been deprecated.
+// If you're using these, please switch to calling the matching instance method on +globalRoutes instead for the same behavior.
 
 + (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
 + (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
