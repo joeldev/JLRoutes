@@ -426,8 +426,6 @@ static JLRoutesTests *testsInstance = nil;
     
     [self route:@"priorityTest://stuff/bar/baz"];
     JLValidateAnyRouteMatched();
-    
-    [[JLRoutes routesForScheme:@"priorityTest"] removeAllRoutes];
 }
 
 - (void)testBlockReturnValue
@@ -649,8 +647,6 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID": @"joel]levin"});
-    
-    [JLRoutes setShouldDecodePlusSymbols:YES];
 }
 
 - (void)testDecodePlusSymbols
