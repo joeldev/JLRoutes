@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
   s.source       = { :git => "https://github.com/joeldev/JLRoutes.git", :tag => "2.0.4" }
 
   s.source_files = 'JLRoutes', 'JLRoutes/*.{h,m}', 'JLRoutes/Classes/*.{h,m}'
-  s.private_header_files ='JLRoutes/Classes/JLROptionalRouteParser.h'
+  s.private_header_files ='JLRoutes/Classes/JLRParsingUtilities.h'
 
   s.framework  = 'Foundation'
   s.requires_arc = true

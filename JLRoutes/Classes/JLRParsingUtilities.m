@@ -10,7 +10,7 @@
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#import "JLROptionalRouteParser.h"
+#import "JLRParsingUtilities.h"
 
 
 @interface NSArray (Combinations)
@@ -20,7 +20,43 @@
 @end
 
 
-@implementation JLROptionalRouteParser
+@implementation JLRParsingUtilities
+
++ (NSString *)variableValueFrom:(NSString *)value decodePlusSymbols:(BOOL)decodePlusSymbols
+{
+    if (!decodePlusSymbols) {
+        return value;
+    }
+    return [value stringByReplacingOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, value.length)];
+}
+
++ (NSDictionary *)queryParams:(NSDictionary *)queryParams decodePlusSymbols:(BOOL)decodePlusSymbols
+{
+    if (!decodePlusSymbols) {
+        return queryParams;
+    }
+    
+    NSMutableDictionary *updatedQueryParams = [NSMutableDictionary dictionary];
+    
+    for (NSString *name in queryParams) {
+        id value = queryParams[name];
+        
+        if ([value isKindOfClass:[NSArray class]]) {
+            NSMutableArray *variables = [NSMutableArray array];
+            for (NSString *arrayValue in (NSArray *)value) {
+                [variables addObject:[self variableValueFrom:arrayValue decodePlusSymbols:YES]];
+            }
+            updatedQueryParams[name] = [variables copy];
+        } else if ([value isKindOfClass:[NSString class]]) {
+            NSString *variable = [self variableValueFrom:value decodePlusSymbols:YES];
+            updatedQueryParams[name] = variable;
+        } else {
+            NSAssert(NO, @"Unexpected query parameter type: %@", NSStringFromClass([value class]));
+        }
+    }
+    
+    return [updatedQueryParams copy];
+}
 
 + (NSArray <NSString *> *)expandOptionalRoutePatternsForPattern:(NSString *)routePattern
 {

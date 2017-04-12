@@ -28,9 +28,12 @@ Documentation is available [here](http://cocoadocs.org/docsets/JLRoutes/).
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   // ...
-  [[JLRoutes globalRoutes] addRoute:@"/user/view/:userID" handler:^BOOL(NSDictionary *parameters) {
+  JLRoutes *routes = [JLRoutes globalRoutes];
+  [routes addRoute:@"/user/view/:userID" handler:^BOOL(NSDictionary *parameters) {
     NSString *userID = parameters[@"userID"]; // defined in the route by specifying ":userID"
+
     // present UI for viewing user with ID 'userID'
+
     return YES; // return YES to say we have handled the route
   }];
   // ...
@@ -41,6 +44,13 @@ Documentation is available [here](http://cocoadocs.org/docsets/JLRoutes/).
 {
   return [JLRoutes routeURL:url];
 }
+```
+
+Routes can also be registered with subscripting syntax:
+```objc
+JLRoutes.globalRoutes[@"/route/:param"] = ^BOOL(NSDictionary *parameters) {
+  // ...
+};
 ```
 
 After having set that route up, at any point something (including a different application) could call this to fire the handler block:

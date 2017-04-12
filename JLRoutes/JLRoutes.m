@@ -12,7 +12,7 @@
 
 #import "JLRoutes.h"
 #import "JLRRouteDefinition.h"
-#import "JLROptionalRouteParser.h"
+#import "JLRParsingUtilities.h"
 
 
 NSString *const JLRoutePatternKey = @"JLRoutePattern";
@@ -127,7 +127,7 @@ static BOOL alwaysTreatsHostAsPathComponent = NO;
 
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlock
 {
-    NSArray <NSString *> *optionalRoutePatterns = [JLROptionalRouteParser expandOptionalRoutePatternsForPattern:routePattern];
+    NSArray <NSString *> *optionalRoutePatterns = [JLRParsingUtilities expandOptionalRoutePatternsForPattern:routePattern];
     JLRRouteDefinition *route = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:routePattern priority:priority handlerBlock:handlerBlock];
     
     if (optionalRoutePatterns.count > 0) {

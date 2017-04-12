@@ -109,17 +109,17 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 ///-------------------------------
 
 
-/// Returns whether a route will match a given URL in any routes scheme, but does not call any blocks.
+/// Returns YES if the provided URL will successfully match against any registered route, NO if not.
 + (BOOL)canRouteURL:(nullable NSURL *)URL;
 
-/// Returns whether a route will match a given URL in a specific scheme, but does not call any blocks.
+/// Returns YES if the provided URL will successfully match against any registered route for the current scheme, NO if not.
 - (BOOL)canRouteURL:(nullable NSURL *)URL;
 
-/// Routes a URL in any routes scheme, calling handler blocks for patterns that match the URL until one returns YES.
+/// Routes a URL, calling handler blocks for patterns that match the URL until one returns YES.
 /// If no matching route is found, the unmatchedURLHandler will be called (if set).
 + (BOOL)routeURL:(nullable NSURL *)URL;
 
-/// Routes a URL in a specific scheme, calling handler blocks for patterns that match the URL until one returns YES.
+/// Routes a URL within a particular scheme, calling handler blocks for patterns that match the URL until one returns YES.
 /// If no matching route is found, the unmatchedURLHandler will be called (if set).
 - (BOOL)routeURL:(nullable NSURL *)URL;
 

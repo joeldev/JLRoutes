@@ -13,10 +13,10 @@
 		5D33681D16C6DC9300F983AA /* JLRoutes.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D33681C16C6DC9300F983AA /* JLRoutes.m */; };
 		5D3CB0721C73DA2700870B55 /* JLRoutesTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 5D3CB0711C73DA2700870B55 /* JLRoutesTests.m */; };
 		5D3CB0741C73DA2700870B55 /* libJLRoutes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D33681216C6DC9300F983AA /* libJLRoutes.a */; };
-		5DA69C5C1DAB4C3A007C8E9C /* JLROptionalRouteParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C541DAB4C3A007C8E9C /* JLROptionalRouteParser.h */; };
-		5DA69C5D1DAB4C3A007C8E9C /* JLROptionalRouteParser.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C541DAB4C3A007C8E9C /* JLROptionalRouteParser.h */; };
-		5DA69C5E1DAB4C3A007C8E9C /* JLROptionalRouteParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C551DAB4C3A007C8E9C /* JLROptionalRouteParser.m */; };
-		5DA69C5F1DAB4C3A007C8E9C /* JLROptionalRouteParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C551DAB4C3A007C8E9C /* JLROptionalRouteParser.m */; };
+		5DA69C5C1DAB4C3A007C8E9C /* JLRParsingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C541DAB4C3A007C8E9C /* JLRParsingUtilities.h */; };
+		5DA69C5D1DAB4C3A007C8E9C /* JLRParsingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C541DAB4C3A007C8E9C /* JLRParsingUtilities.h */; };
+		5DA69C5E1DAB4C3A007C8E9C /* JLRParsingUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C551DAB4C3A007C8E9C /* JLRParsingUtilities.m */; };
+		5DA69C5F1DAB4C3A007C8E9C /* JLRParsingUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C551DAB4C3A007C8E9C /* JLRParsingUtilities.m */; };
 		5DA69C601DAB4C3A007C8E9C /* JLRRouteDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C561DAB4C3A007C8E9C /* JLRRouteDefinition.h */; };
 		5DA69C611DAB4C3A007C8E9C /* JLRRouteDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C561DAB4C3A007C8E9C /* JLRRouteDefinition.h */; };
 		5DA69C621DAB4C3A007C8E9C /* JLRRouteDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C571DAB4C3A007C8E9C /* JLRRouteDefinition.m */; };
@@ -53,8 +53,8 @@
 		5D3CB06F1C73DA2700870B55 /* JLRoutesTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = JLRoutesTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D3CB0711C73DA2700870B55 /* JLRoutesTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = JLRoutesTests.m; sourceTree = "<group>"; };
 		5D3CB0731C73DA2700870B55 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		5DA69C541DAB4C3A007C8E9C /* JLROptionalRouteParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLROptionalRouteParser.h; sourceTree = "<group>"; };
-		5DA69C551DAB4C3A007C8E9C /* JLROptionalRouteParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLROptionalRouteParser.m; sourceTree = "<group>"; };
+		5DA69C541DAB4C3A007C8E9C /* JLRParsingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLRParsingUtilities.h; sourceTree = "<group>"; };
+		5DA69C551DAB4C3A007C8E9C /* JLRParsingUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRParsingUtilities.m; sourceTree = "<group>"; };
 		5DA69C561DAB4C3A007C8E9C /* JLRRouteDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLRRouteDefinition.h; sourceTree = "<group>"; };
 		5DA69C571DAB4C3A007C8E9C /* JLRRouteDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRRouteDefinition.m; sourceTree = "<group>"; };
 		5DA69C581DAB4C3A007C8E9C /* JLRRouteRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLRRouteRequest.h; sourceTree = "<group>"; };
@@ -148,8 +148,8 @@
 				5DA69C591DAB4C3A007C8E9C /* JLRRouteRequest.m */,
 				5DA69C5A1DAB4C3A007C8E9C /* JLRRouteResponse.h */,
 				5DA69C5B1DAB4C3A007C8E9C /* JLRRouteResponse.m */,
-				5DA69C541DAB4C3A007C8E9C /* JLROptionalRouteParser.h */,
-				5DA69C551DAB4C3A007C8E9C /* JLROptionalRouteParser.m */,
+				5DA69C541DAB4C3A007C8E9C /* JLRParsingUtilities.h */,
+				5DA69C551DAB4C3A007C8E9C /* JLRParsingUtilities.m */,
 			);
 			path = Classes;
 			sourceTree = "<group>";
@@ -162,7 +162,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DA69C691DAB4C3A007C8E9C /* JLRRouteResponse.h in Headers */,
-				5DA69C5D1DAB4C3A007C8E9C /* JLROptionalRouteParser.h in Headers */,
+				5DA69C5D1DAB4C3A007C8E9C /* JLRParsingUtilities.h in Headers */,
 				5DA69C611DAB4C3A007C8E9C /* JLRRouteDefinition.h in Headers */,
 				5C5AD9B51B45C07300ED25A3 /* JLRoutes.h in Headers */,
 				5DA69C651DAB4C3A007C8E9C /* JLRRouteRequest.h in Headers */,
@@ -174,7 +174,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5DA69C681DAB4C3A007C8E9C /* JLRRouteResponse.h in Headers */,
-				5DA69C5C1DAB4C3A007C8E9C /* JLROptionalRouteParser.h in Headers */,
+				5DA69C5C1DAB4C3A007C8E9C /* JLRParsingUtilities.h in Headers */,
 				5DA69C601DAB4C3A007C8E9C /* JLRRouteDefinition.h in Headers */,
 				D0C20A3017061066007746A6 /* JLRoutes.h in Headers */,
 				5DA69C641DAB4C3A007C8E9C /* JLRRouteRequest.h in Headers */,
@@ -299,7 +299,7 @@
 				5DA69C6B1DAB4C3A007C8E9C /* JLRRouteResponse.m in Sources */,
 				5DA69C671DAB4C3A007C8E9C /* JLRRouteRequest.m in Sources */,
 				5C5AD9B61B45C07800ED25A3 /* JLRoutes.m in Sources */,
-				5DA69C5F1DAB4C3A007C8E9C /* JLROptionalRouteParser.m in Sources */,
+				5DA69C5F1DAB4C3A007C8E9C /* JLRParsingUtilities.m in Sources */,
 				5DA69C631DAB4C3A007C8E9C /* JLRRouteDefinition.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -311,7 +311,7 @@
 				5DA69C6A1DAB4C3A007C8E9C /* JLRRouteResponse.m in Sources */,
 				5DA69C661DAB4C3A007C8E9C /* JLRRouteRequest.m in Sources */,
 				5D33681D16C6DC9300F983AA /* JLRoutes.m in Sources */,
-				5DA69C5E1DAB4C3A007C8E9C /* JLROptionalRouteParser.m in Sources */,
+				5DA69C5E1DAB4C3A007C8E9C /* JLRParsingUtilities.m in Sources */,
 				5DA69C621DAB4C3A007C8E9C /* JLRRouteDefinition.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

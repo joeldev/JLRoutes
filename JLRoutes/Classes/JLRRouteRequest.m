@@ -105,42 +105,6 @@
     return self;
 }
 
-+ (NSString *)variableValueFrom:(NSString *)value decodePlusSymbols:(BOOL)decodePlusSymbols;
-{
-    if (!decodePlusSymbols) {
-        return value;
-    }
-    return [value stringByReplacingOccurrencesOfString:@"+" withString:@" " options:NSLiteralSearch range:NSMakeRange(0, value.length)];
-}
-
-- (NSDictionary *)queryParamsDecodingPlusSymbols:(BOOL)decodePlusSymbols;
-{
-    if (!decodePlusSymbols) {
-        return self.queryParams;
-    }
-    
-    NSMutableDictionary *updatedQueryParams = [NSMutableDictionary dictionary];
-    
-    for (NSString *name in self.queryParams) {
-        id value = self.queryParams[name];
-        
-        if ([value isKindOfClass:[NSArray class]]) {
-            NSMutableArray *variables = [NSMutableArray array];
-            for (NSString *arrayValue in (NSArray *)value) {
-                [variables addObject:[[self class] variableValueFrom:arrayValue decodePlusSymbols:decodePlusSymbols]];
-            }
-            updatedQueryParams[name] = [variables copy];
-        } else if ([value isKindOfClass:[NSString class]]) {
-            NSString *variable = [[self class] variableValueFrom:value decodePlusSymbols:decodePlusSymbols];
-            updatedQueryParams[name] = variable;
-        } else {
-            NSAssert(NO, @"Unexpected query parameter type: %@", NSStringFromClass([value class]));
-        }
-    }
-    
-    return [updatedQueryParams copy];
-}
-
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@ %p> - URL: %@", NSStringFromClass([self class]), self, [self.URL absoluteString]];

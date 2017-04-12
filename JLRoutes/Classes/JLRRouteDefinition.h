@@ -47,12 +47,22 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  Creates a new route definition. The created definition can be directly added to an instance of JLRoutes.
  
+ This is the designated initializer.
+ 
  @param scheme The URL scheme this route applies for, or JLRoutesGlobalRoutesScheme if global.
  @param pattern The full route pattern ('/foo/:bar')
  @param priority The route priority, or 0 if default.
  @param handlerBlock The handler block to call when a successful match is found.
+ 
+ @returns The newly initialized route definition.
  */
-- (instancetype)initWithScheme:(NSString *)scheme pattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock;
+- (instancetype)initWithScheme:(NSString *)scheme pattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock NS_DESIGNATED_INITIALIZER;
+
+/// Unavailable, use initWithScheme:pattern:priority:handlerBlock: instead.
+- (instancetype)init NS_UNAVAILABLE;
+
+/// Unavailable, use initWithScheme:pattern:priority:handlerBlock: instead.
++ (instancetype)new NS_UNAVAILABLE;
 
 
 ///-------------------------------
@@ -65,6 +75,8 @@ NS_ASSUME_NONNULL_BEGIN
  
  @param request The JLRRouteRequest to create a response for.
  @param decodePlusSymbols The global plus symbol decoding option value.
+ 
+ @returns An JLRRouteResponse instance representing the result of attempting to match request to thie route definition.
  */
 - (JLRRouteResponse *)routeResponseForRequest:(JLRRouteRequest *)request decodePlusSymbols:(BOOL)decodePlusSymbols;
 
@@ -73,6 +85,8 @@ NS_ASSUME_NONNULL_BEGIN
  Invoke handlerBlock with the given parameters. This may be overriden by subclasses.
  
  @param parameters The parameters to pass to handlerBlock.
+ 
+ @returns The value returned by calling handlerBlock (YES if it is considered handled and NO if not).
  */
 - (BOOL)callHandlerBlockWithParameters:(NSDictionary *)parameters;
 

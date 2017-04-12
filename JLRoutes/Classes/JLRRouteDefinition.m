@@ -12,6 +12,7 @@
 
 #import "JLRRouteDefinition.h"
 #import "JLRoutes.h"
+#import "JLRParsingUtilities.h"
 
 
 @interface JLRRouteDefinition ()
@@ -103,7 +104,7 @@
     if (isMatch) {
         // if it's a match, set up the param dictionary and create a valid match response
         NSMutableDictionary *params = [NSMutableDictionary dictionary];
-        [params addEntriesFromDictionary:[request queryParamsDecodingPlusSymbols:decodePlusSymbols]];
+        [params addEntriesFromDictionary:[JLRParsingUtilities queryParams:request.queryParams decodePlusSymbols:decodePlusSymbols]];
         [params addEntriesFromDictionary:routeParams];
         [params addEntriesFromDictionary:[self baseMatchParametersForRequest:request]];
         response = [JLRRouteResponse validMatchResponseWithParameters:[params copy]];
@@ -117,10 +118,12 @@
     NSString *name = [value substringFromIndex:1];
     
     if (name.length > 1 && [name characterAtIndex:0] == ':') {
+        // Strip off the ':' in front of param names
         name = [name substringFromIndex:1];
     }
     
     if (name.length > 1 && [name characterAtIndex:name.length - 1] == '#') {
+        // Strip of trailing fragment
         name = [name substringToIndex:name.length - 1];
     }
     
@@ -132,10 +135,11 @@
     NSString *var = [value stringByRemovingPercentEncoding];
     
     if (var.length > 1 && [var characterAtIndex:var.length - 1] == '#') {
+        // Strip of trailing fragment
         var = [var substringToIndex:var.length - 1];
     }
     
-    var = [JLRRouteRequest variableValueFrom:var decodePlusSymbols:decodePlusSymbols];
+    var = [JLRParsingUtilities variableValueFrom:var decodePlusSymbols:decodePlusSymbols];
     
     return var;
 }

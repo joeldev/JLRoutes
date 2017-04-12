@@ -15,20 +15,43 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/// JLRRouteRequest is an individual request to route a given URL.
-/// It gets parsed into path components and query parameters.
+/**
+ JLRRouteRequest is a model representing a request to route a URL.
+ It gets parsed into path components and query parameters, which are then used by JLRRouteDefinition to attempt a match.
+ */
 
 @interface JLRRouteRequest : NSObject
 
+/// The URL being routed.
 @property (nonatomic, strong, readonly) NSURL *URL;
+
+/// The URL's path components.
 @property (nonatomic, strong, readonly) NSArray *pathComponents;
+
+/// The URL's query parameters.
 @property (nonatomic, strong, readonly) NSDictionary *queryParams;
 
-- (instancetype)initWithURL:(NSURL *)URL alwaysTreatsHostAsPathComponent:(BOOL)alwaysTreatsHostAsPathComponent;
 
-+ (NSString *)variableValueFrom:(NSString *)value decodePlusSymbols:(BOOL)decodePlusSymbols;
+///-------------------------------
+/// @name Creating Route Requests
+///-------------------------------
 
-- (NSDictionary *)queryParamsDecodingPlusSymbols:(BOOL)decodePlusSymbols;
+
+/**
+ Creates a new route request.
+ 
+ @param URL The URL to route.
+ @param alwaysTreatsHostAsPathComponent The global option for if to treat the URL host as a path component or not.
+ 
+ @returns The newly initialized route request.
+ */
+- (instancetype)initWithURL:(NSURL *)URL alwaysTreatsHostAsPathComponent:(BOOL)alwaysTreatsHostAsPathComponent NS_DESIGNATED_INITIALIZER;
+
+/// Unavailable, use initWithURL:alwaysTreatsHostAsPathComponent: instead.
+- (instancetype)init NS_UNAVAILABLE;
+
+/// Unavailable, use initWithURL:alwaysTreatsHostAsPathComponent: instead.
++ (instancetype)new NS_UNAVAILABLE;
 
 @end
 
