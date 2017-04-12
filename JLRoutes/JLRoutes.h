@@ -133,7 +133,7 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 @end
 
 
-/// Global settings to use for parsing and routing.
+// Global settings to use for parsing and routing.
 
 @interface JLRoutes (GlobalOptions)
 
@@ -154,6 +154,12 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 
 /// Returns if '+' should be replaced with spaces in parsed values. Defaults to YES.
 + (BOOL)shouldDecodePlusSymbols;
+
+/// Configures if URL host is always considered to be a path component. Defaults to NO.
++ (void)setAlwaysTreatsHostAsPathComponent:(BOOL)treatsHostAsPathComponent;
+
+/// Returns if URL host is always considered to be a path component. Defaults to NO.
++ (BOOL)alwaysTreatsHostAsPathComponent;
 
 @end
 

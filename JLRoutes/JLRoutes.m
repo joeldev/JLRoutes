@@ -27,6 +27,7 @@ static NSMutableDictionary *routeControllersMap = nil;
 // global options
 static BOOL verboseLoggingEnabled = NO;
 static BOOL shouldDecodePlusSymbols = YES;
+static BOOL alwaysTreatsHostAsPathComponent = NO;
 
 
 @interface JLRoutes ()
@@ -258,7 +259,7 @@ static BOOL shouldDecodePlusSymbols = YES;
     [self _verboseLog:@"Trying to route URL %@", URL];
     
     BOOL didRoute = NO;
-    JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL];
+    JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL alwaysTreatsHostAsPathComponent:alwaysTreatsHostAsPathComponent];
     
     for (JLRRouteDefinition *route in [self.mutableRoutes copy]) {
         // check each route for a matching response
@@ -354,6 +355,16 @@ static BOOL shouldDecodePlusSymbols = YES;
 + (BOOL)shouldDecodePlusSymbols
 {
     return shouldDecodePlusSymbols;
+}
+
++ (void)setAlwaysTreatsHostAsPathComponent:(BOOL)treatsHostAsPathComponent
+{
+    alwaysTreatsHostAsPathComponent = treatsHostAsPathComponent;
+}
+
++ (BOOL)alwaysTreatsHostAsPathComponent
+{
+    return alwaysTreatsHostAsPathComponent;
 }
 
 @end

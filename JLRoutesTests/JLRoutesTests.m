@@ -75,6 +75,7 @@ static JLRoutesTests *testsInstance = nil;
     
     // reset settings
     [JLRoutes setShouldDecodePlusSymbols:YES];
+    [JLRoutes setAlwaysTreatsHostAsPathComponent:NO];
 }
 
 - (void)tearDown
@@ -425,8 +426,6 @@ static JLRoutesTests *testsInstance = nil;
     
     [self route:@"priorityTest://stuff/bar/baz"];
     JLValidateAnyRouteMatched();
-    
-    [[JLRoutes routesForScheme:@"priorityTest"] removeAllRoutes];
 }
 
 - (void)testBlockReturnValue
@@ -648,8 +647,6 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID": @"joel]levin"});
-    
-    [JLRoutes setShouldDecodePlusSymbols:YES];
 }
 
 - (void)testDecodePlusSymbols
@@ -775,10 +772,14 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateScheme(JLRoutesGlobalRoutesScheme);
 }
 
-- (void)testShouldTreatHostAsPathComponent
+- (void)testTreatsHostAsPathComponent
 {
-    [[JLRoutes globalRoutes] addRoute:@"/sign_in" handler:[[self class] defaultRouteHandler]];
-    [[JLRoutes globalRoutes] addRoute:@"/path/:pathid" handler:[[self class] defaultRouteHandler]];
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/sign_in" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/path/:pathid" handler:defaultHandler];
+    
+    [JLRoutes setAlwaysTreatsHostAsPathComponent:NO];
     
     [self route:@"https://www.mydomain.com/sign_in"];
     JLValidateAnyRouteMatched();
@@ -787,6 +788,26 @@ static JLRoutesTests *testsInstance = nil;
     [self route:@"https://www.mydomain.com/path/3"];
     JLValidateAnyRouteMatched();
     JLValidatePattern(@"/path/:pathid");
+    JLValidateParameter((@{@"pathid": @"3"}));
+    
+    [JLRoutes setAlwaysTreatsHostAsPathComponent:YES];
+    
+    [self route:@"https://www.mydomain2.com/sign_in"];
+    JLValidateNoLastMatch();
+    
+    [self route:@"https://www.mydomain2.com/path/3"];
+    JLValidateNoLastMatch();
+    
+    [[JLRoutes globalRoutes] addRoute:@"/www.mydomain2.com/sign_in" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/www.mydomain2.com/path/:pathid" handler:defaultHandler];
+    
+    [self route:@"https://www.mydomain2.com/sign_in"];
+    JLValidateAnyRouteMatched();
+    JLValidatePattern(@"/www.mydomain2.com/sign_in");
+    
+    [self route:@"https://www.mydomain2.com/path/3"];
+    JLValidateAnyRouteMatched();
+    JLValidatePattern(@"/www.mydomain2.com/path/:pathid");
     JLValidateParameter((@{@"pathid": @"3"}));
 }
 
