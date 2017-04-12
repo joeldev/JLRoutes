@@ -16,10 +16,10 @@
 
 @interface JLRRouteDefinition ()
 
-@property (nonatomic, strong) NSString *pattern;
-@property (nonatomic, strong) NSString *scheme;
+@property (nonatomic, copy) NSString *pattern;
+@property (nonatomic, copy) NSString *scheme;
 @property (nonatomic, assign) NSUInteger priority;
-@property (nonatomic, strong) BOOL (^handlerBlock)(NSDictionary *parameters);
+@property (nonatomic, copy) BOOL (^handlerBlock)(NSDictionary *parameters);
 
 @property (nonatomic, strong) NSArray *patternComponents;
 

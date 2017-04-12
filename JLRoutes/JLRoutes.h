@@ -36,7 +36,9 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 
 
 
-/// The JLRoutes class is the main entry-point into the JLRoutes framework. Used for accessing schemes, managing routes, and routing URLs.
+/**
+ The JLRoutes class is the main entry-point into the JLRoutes framework. Used for accessing schemes, managing routes, and routing URLs.
+ */
 
 @interface JLRoutes : NSObject
 
@@ -51,7 +53,6 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// @name Routing Schemes
 ///-------------------------------
 
-#pragma mark - Routing Schemes
 
 /// Returns the global routing scheme
 + (instancetype)globalRoutes;
@@ -70,7 +71,6 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// @name Managing Routes
 ///-------------------------------
 
-#pragma mark - Managing Routes
 
 /// Add a route by directly inserted the route definition. This may be a subclass of JLRRouteDefinition to provide customized routing logic.
 - (void)addRoute:(JLRRouteDefinition *)routeDefinition;
@@ -96,9 +96,11 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 - (void)setObject:(nullable id)handlerBlock forKeyedSubscript:(NSString *)routePatten;
 
 /// Return all registered routes in the receiving scheme namespace.
+/// @see allRoutes
 - (NSArray <JLRRouteDefinition *> *)routes;
 
 /// All registered routes, keyed by scheme
+/// @see routes
 + (NSDictionary <NSString *, NSArray <JLRRouteDefinition *> *> *)allRoutes;
 
 
@@ -106,7 +108,6 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// @name Routing URLs
 ///-------------------------------
 
-#pragma mark - Routing URLs
 
 /// Returns whether a route will match a given URL in any routes scheme, but does not call any blocks.
 + (BOOL)canRouteURL:(nullable NSURL *)URL;
@@ -141,8 +142,6 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// @name Configuring Global Options
 ///----------------------------------
 
-#pragma mark - Configuring Global Options
-
 /// Configures verbose logging. Defaults to NO.
 + (void)setVerboseLoggingEnabled:(BOOL)loggingEnabled;
 
@@ -162,6 +161,7 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 + (BOOL)alwaysTreatsHostAsPathComponent;
 
 @end
+
 
 
 #pragma mark - Deprecated
@@ -190,21 +190,29 @@ extern NSString *const kJLRoutesGlobalNamespaceKey      DEPRECATED_MSG_ATTRIBUTE
 
 @interface JLRoutes (Deprecated)
 
-/* Deprecated
- 
- All the class method conveniences listed here have been deprecated.
- If you're using these, please switch to calling the matching instance method on +globalRoutes instead for the same behavior.
- */
+///----------------------------------
+/// @name Deprecated Methods
+///----------------------------------
 
+/// Use the matching instance method on +globalRoutes instead.
 + (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
+
+/// Use the matching instance method on +globalRoutes instead.
 + (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
+
+/// Use the matching instance method on +globalRoutes instead.
 + (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
+
+/// Use the matching instance method on +globalRoutes instead.
 + (void)removeRoute:(NSString *)routePattern DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
+
+/// Use the matching instance method on +globalRoutes instead.
 + (void)removeAllRoutes DEPRECATED_MSG_ATTRIBUTE("Use the matching instance method on +globalRoutes instead.");
+
+/// Use +canRouteURL: instead.
 + (BOOL)canRouteURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, id> *)parameters DEPRECATED_MSG_ATTRIBUTE("Use +canRouteURL: instead.");
 
-// Other deprecations
-
+/// Use +canRouteURL: instead.
 - (BOOL)canRouteURL:(nullable NSURL *)URL withParameters:(nullable NSDictionary<NSString *, id> *)parameters DEPRECATED_MSG_ATTRIBUTE("Use -canRouteURL: instead.");
 
 @end

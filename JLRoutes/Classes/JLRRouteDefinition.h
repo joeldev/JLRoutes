@@ -17,18 +17,63 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/// JLRRouteDefinition is the model object representing a registered route.
+/**
+ JLRRouteDefinition is a model object representing a registered route, including the URL scheme, route pattern, and priority.
+ 
+ This class can be subclassed to customize route parsing behavior by overriding -routeResponseForRequest:decodePlusSymbols:.
+ -callHandlerBlockWithParameters can also be overriden to customize the parameters passed to the handlerBlock.
+ */
 
 @interface JLRRouteDefinition : NSObject
 
-@property (nonatomic, strong, readonly) NSString *scheme;
-@property (nonatomic, strong, readonly) NSString *pattern;
+/// The URL scheme for which this route applies, or JLRoutesGlobalRoutesScheme if global.
+@property (nonatomic, copy, readonly) NSString *scheme;
+
+/// The route pattern.
+@property (nonatomic, copy, readonly) NSString *pattern;
+
+/// The priority of this route pattern.
 @property (nonatomic, assign, readonly) NSUInteger priority;
 
+/// The handler block to invoke when a match is found.
+@property (nonatomic, copy, readonly) BOOL (^handlerBlock)(NSDictionary *parameters);
+
+
+///---------------------------------
+/// @name Creating Route Definitions
+///---------------------------------
+
+
+/**
+ Creates a new route definition. The created definition can be directly added to an instance of JLRoutes.
+ 
+ @param scheme The URL scheme this route applies for, or JLRoutesGlobalRoutesScheme if global.
+ @param pattern The full route pattern ('/foo/:bar')
+ @param priority The route priority, or 0 if default.
+ @param handlerBlock The handler block to call when a successful match is found.
+ */
 - (instancetype)initWithScheme:(NSString *)scheme pattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock;
 
+
+///-------------------------------
+/// @name Matching Route Requests
+///-------------------------------
+
+
+/**
+ Creates and returns a JLRRouteResponse for the provided JLRRouteRequest. The response specifies if there was a match or not.
+ 
+ @param request The JLRRouteRequest to create a response for.
+ @param decodePlusSymbols The global plus symbol decoding option value.
+ */
 - (JLRRouteResponse *)routeResponseForRequest:(JLRRouteRequest *)request decodePlusSymbols:(BOOL)decodePlusSymbols;
 
+
+/**
+ Invoke handlerBlock with the given parameters. This may be overriden by subclasses.
+ 
+ @param parameters The parameters to pass to handlerBlock.
+ */
 - (BOOL)callHandlerBlockWithParameters:(NSDictionary *)parameters;
 
 @end
