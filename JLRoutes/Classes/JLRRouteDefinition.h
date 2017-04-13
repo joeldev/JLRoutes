@@ -20,7 +20,7 @@ NS_ASSUME_NONNULL_BEGIN
 /**
  JLRRouteDefinition is a model object representing a registered route, including the URL scheme, route pattern, and priority.
  
- This class can be subclassed to customize route parsing behavior by overriding -routeResponseForRequest:decodePlusSymbols:.
+ This class can be subclassed to customize route parsing behavior by overriding -routeResponseForRequest:.
  -callHandlerBlockWithParameters can also be overriden to customize the parameters passed to the handlerBlock.
  */
 

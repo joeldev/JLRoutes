@@ -160,6 +160,12 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// Returns if URL host is always considered to be a path component. Defaults to NO.
 + (BOOL)alwaysTreatsHostAsPathComponent;
 
+/// Configures the default class to use when creating route definitions. Defaults to JLRRouteDefinition.
++ (void)setDefaultRouteDefinitionClass:(Class)routeDefinitionClass;
+
+/// Returns the default class to use when creating route definitions. Defaults to JLRRouteDefinition.
++ (Class)defaultRouteDefinitionClass;
+
 @end
 
 

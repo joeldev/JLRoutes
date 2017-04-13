@@ -22,12 +22,14 @@ NSString *const JLRouteWildcardComponentsKey = @"JLRouteWildcardComponents";
 NSString *const JLRoutesGlobalRoutesScheme = @"JLRoutesGlobalRoutesScheme";
 
 
-static NSMutableDictionary *routeControllersMap = nil;
+static NSMutableDictionary *JLRGlobal_routeControllersMap = nil;
 
-// global options
-static BOOL verboseLoggingEnabled = NO;
-static BOOL shouldDecodePlusSymbols = YES;
-static BOOL alwaysTreatsHostAsPathComponent = NO;
+
+// global options (configured in +initialize)
+static BOOL JLRGlobal_verboseLoggingEnabled;
+static BOOL JLRGlobal_shouldDecodePlusSymbols;
+static BOOL JLRGlobal_alwaysTreatsHostAsPathComponent;
+static Class JLRGlobal_routeDefinitionClass;
 
 
 @interface JLRoutes ()
@@ -41,6 +43,17 @@ static BOOL alwaysTreatsHostAsPathComponent = NO;
 #pragma mark -
 
 @implementation JLRoutes
+
++ (void)initialize
+{
+    if (self == [JLRoutes class]) {
+        // Set default global options
+        JLRGlobal_verboseLoggingEnabled = NO;
+        JLRGlobal_shouldDecodePlusSymbols = YES;
+        JLRGlobal_alwaysTreatsHostAsPathComponent = NO;
+        JLRGlobal_routeDefinitionClass = [JLRRouteDefinition class];
+    }
+}
 
 - (instancetype)init
 {
@@ -59,8 +72,8 @@ static BOOL alwaysTreatsHostAsPathComponent = NO;
 {
     NSMutableDictionary *dictionary = [NSMutableDictionary dictionary];
     
-    for (NSString *namespace in [routeControllersMap copy]) {
-        JLRoutes *routesController = routeControllersMap[namespace];
+    for (NSString *namespace in [JLRGlobal_routeControllersMap copy]) {
+        JLRoutes *routesController = JLRGlobal_routeControllersMap[namespace];
         dictionary[namespace] = [routesController.mutableRoutes copy];
     }
     
@@ -81,28 +94,28 @@ static BOOL alwaysTreatsHostAsPathComponent = NO;
     
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
-        routeControllersMap = [[NSMutableDictionary alloc] init];
+        JLRGlobal_routeControllersMap = [[NSMutableDictionary alloc] init];
     });
     
-    if (!routeControllersMap[scheme]) {
+    if (!JLRGlobal_routeControllersMap[scheme]) {
         routesController = [[self alloc] init];
         routesController.scheme = scheme;
-        routeControllersMap[scheme] = routesController;
+        JLRGlobal_routeControllersMap[scheme] = routesController;
     }
     
-    routesController = routeControllersMap[scheme];
+    routesController = JLRGlobal_routeControllersMap[scheme];
     
     return routesController;
 }
 
 + (void)unregisterRouteScheme:(NSString *)scheme
 {
-    [routeControllersMap removeObjectForKey:scheme];
+    [JLRGlobal_routeControllersMap removeObjectForKey:scheme];
 }
 
 + (void)unregisterAllRouteSchemes
 {
-    [routeControllersMap removeAllObjects];
+    [JLRGlobal_routeControllersMap removeAllObjects];
 }
 
 
@@ -128,12 +141,12 @@ static BOOL alwaysTreatsHostAsPathComponent = NO;
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlock
 {
     NSArray <NSString *> *optionalRoutePatterns = [JLRParsingUtilities expandOptionalRoutePatternsForPattern:routePattern];
-    JLRRouteDefinition *route = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:routePattern priority:priority handlerBlock:handlerBlock];
+    JLRRouteDefinition *route = [[JLRGlobal_routeDefinitionClass alloc] initWithScheme:self.scheme pattern:routePattern priority:priority handlerBlock:handlerBlock];
     
     if (optionalRoutePatterns.count > 0) {
         // there are optional params, parse and add them
         for (NSString *pattern in optionalRoutePatterns) {
-            JLRRouteDefinition *optionalRoute = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:pattern priority:priority handlerBlock:handlerBlock];
+            JLRRouteDefinition *optionalRoute = [[JLRGlobal_routeDefinitionClass alloc] initWithScheme:self.scheme pattern:pattern priority:priority handlerBlock:handlerBlock];
             [self _registerRoute:optionalRoute];
             [self _verboseLog:@"Automatically created optional route: %@", optionalRoute];
         }
@@ -221,7 +234,7 @@ static BOOL alwaysTreatsHostAsPathComponent = NO;
         return nil;
     }
     
-    return routeControllersMap[URL.scheme] ?: [JLRoutes globalRoutes];
+    return JLRGlobal_routeControllersMap[URL.scheme] ?: [JLRoutes globalRoutes];
 }
 
 - (void)_registerRoute:(JLRRouteDefinition *)route
@@ -259,7 +272,7 @@ static BOOL alwaysTreatsHostAsPathComponent = NO;
     [self _verboseLog:@"Trying to route URL %@", URL];
     
     BOOL didRoute = NO;
-    JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL alwaysTreatsHostAsPathComponent:alwaysTreatsHostAsPathComponent];
+    JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL alwaysTreatsHostAsPathComponent:JLRGlobal_alwaysTreatsHostAsPathComponent];
     
     for (JLRRouteDefinition *route in [self.mutableRoutes copy]) {
         // check each route for a matching response
@@ -315,7 +328,7 @@ static BOOL alwaysTreatsHostAsPathComponent = NO;
 
 - (void)_verboseLog:(NSString *)format, ...
 {
-    if (!verboseLoggingEnabled || format.length == 0) {
+    if (!JLRGlobal_verboseLoggingEnabled || format.length == 0) {
         return;
     }
     
@@ -339,32 +352,43 @@ static BOOL alwaysTreatsHostAsPathComponent = NO;
 
 + (void)setVerboseLoggingEnabled:(BOOL)loggingEnabled
 {
-    verboseLoggingEnabled = loggingEnabled;
+    JLRGlobal_verboseLoggingEnabled = loggingEnabled;
 }
 
 + (BOOL)isVerboseLoggingEnabled
 {
-    return verboseLoggingEnabled;
+    return JLRGlobal_verboseLoggingEnabled;
 }
 
 + (void)setShouldDecodePlusSymbols:(BOOL)shouldDecode
 {
-    shouldDecodePlusSymbols = shouldDecode;
+    JLRGlobal_shouldDecodePlusSymbols = shouldDecode;
 }
 
 + (BOOL)shouldDecodePlusSymbols
 {
-    return shouldDecodePlusSymbols;
+    return JLRGlobal_shouldDecodePlusSymbols;
 }
 
 + (void)setAlwaysTreatsHostAsPathComponent:(BOOL)treatsHostAsPathComponent
 {
-    alwaysTreatsHostAsPathComponent = treatsHostAsPathComponent;
+    JLRGlobal_alwaysTreatsHostAsPathComponent = treatsHostAsPathComponent;
 }
 
 + (BOOL)alwaysTreatsHostAsPathComponent
 {
-    return alwaysTreatsHostAsPathComponent;
+    return JLRGlobal_alwaysTreatsHostAsPathComponent;
+}
+
++ (void)setDefaultRouteDefinitionClass:(Class)routeDefinitionClass
+{
+    NSParameterAssert([routeDefinitionClass isSubclassOfClass:[JLRRouteDefinition class]]);
+    JLRGlobal_routeDefinitionClass = routeDefinitionClass;
+}
+
++ (Class)defaultRouteDefinitionClass
+{
+    return JLRGlobal_routeDefinitionClass;
 }
 
 @end
