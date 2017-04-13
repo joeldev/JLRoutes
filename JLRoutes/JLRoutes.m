@@ -263,7 +263,7 @@ static BOOL alwaysTreatsHostAsPathComponent = NO;
     
     for (JLRRouteDefinition *route in [self.mutableRoutes copy]) {
         // check each route for a matching response
-        JLRRouteResponse *response = [route routeResponseForRequest:request decodePlusSymbols:shouldDecodePlusSymbols];
+        JLRRouteResponse *response = [route routeResponseForRequest:request];
         if (!response.isMatch) {
             continue;
         }
