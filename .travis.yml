@@ -1,4 +1,6 @@
 language: objective-c
 osx_image: xcode8.3
+branches:
+  only:
+    master
 script: travis_retry xcodebuild test -scheme 'JLRoutes-iOS' -configuration Debug -destination "platform=iOS Simulator,name=iPhone 6,OS=8.4" -destination "platform=iOS Simulator,name=iPhone 6,OS=9.3" -destination "platform=iOS Simulator,name=iPhone 6,OS=latest"
- GCC_INSTRUMENT_PROGRAM_FLOW_ARCS=YES GCC_GENERATE_TEST_COVERAGE_FILES=YES
