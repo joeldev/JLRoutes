@@ -272,7 +272,7 @@ static Class JLRGlobal_routeDefinitionClass;
     [self _verboseLog:@"Trying to route URL %@", URL];
     
     BOOL didRoute = NO;
-    JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL alwaysTreatsHostAsPathComponent:JLRGlobal_alwaysTreatsHostAsPathComponent];
+    JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL decodePlusSymbols:JLRGlobal_shouldDecodePlusSymbols treatsHostAsPathComponent:JLRGlobal_alwaysTreatsHostAsPathComponent];
     
     for (JLRRouteDefinition *route in [self.mutableRoutes copy]) {
         // check each route for a matching response

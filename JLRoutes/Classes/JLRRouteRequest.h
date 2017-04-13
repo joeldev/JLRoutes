@@ -31,6 +31,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// The URL's query parameters.
 @property (nonatomic, strong, readonly) NSDictionary *queryParams;
 
+/// If this request indicates that plus symbols should be decoded automatically or not.
+@property (nonatomic, assign, readonly) BOOL decodePlusSymbols;
+
 
 ///-------------------------------
 /// @name Creating Route Requests
@@ -41,11 +44,12 @@ NS_ASSUME_NONNULL_BEGIN
  Creates a new route request.
  
  @param URL The URL to route.
- @param alwaysTreatsHostAsPathComponent The global option for if to treat the URL host as a path component or not.
+ @param decodePlusSymbols The global decoding plus symbols option value.
+ @param treatsHostAsPathComponent The global option for if to treat the URL host as a path component or not.
  
  @returns The newly initialized route request.
  */
-- (instancetype)initWithURL:(NSURL *)URL alwaysTreatsHostAsPathComponent:(BOOL)alwaysTreatsHostAsPathComponent NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)URL decodePlusSymbols:(BOOL)decodePlusSymbols treatsHostAsPathComponent:(BOOL)treatsHostAsPathComponent NS_DESIGNATED_INITIALIZER;
 
 /// Unavailable, use initWithURL:alwaysTreatsHostAsPathComponent: instead.
 - (instancetype)init NS_UNAVAILABLE;
