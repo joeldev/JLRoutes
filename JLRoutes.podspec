@@ -10,7 +10,6 @@ Pod::Spec.new do |s|
   s.requires_arc = true
 
   s.source_files = 'JLRoutes', 'JLRoutes/*.{h,m}', 'JLRoutes/Classes/*.{h,m}'
-  s.private_header_files ='JLRoutes/**/JLRParsingUtilities.h'
 
   s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.10'
