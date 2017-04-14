@@ -41,6 +41,9 @@ NS_ASSUME_NONNULL_BEGIN
 /// The handler block to invoke when a match is found.
 @property (nonatomic, copy, readonly) BOOL (^handlerBlock)(NSDictionary *parameters);
 
+/// Check for route definition equality.
+- (BOOL)isEqualToRouteDefinition:(JLRRouteDefinition *)routeDefinition;
+
 
 ///----------------------------------
 /// @name Creating Route Definitions
@@ -65,19 +68,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Unavailable, use initWithScheme:pattern:priority:handlerBlock: instead.
 + (instancetype)new NS_UNAVAILABLE;
-
-
-///----------------------------------
-/// @name Comparing Route Definitions
-///----------------------------------
-
-
-/**
- Checks for equality with another route definition object.
- 
- @returns YES if routeDefinition is equal to self, NO if not.
- */
-- (BOOL)isEqualToRouteDefinition:(JLRRouteDefinition *)routeDefinition;
 
 
 ///----------------------------------

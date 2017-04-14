@@ -19,13 +19,16 @@ NS_ASSUME_NONNULL_BEGIN
  JLRRouteResponse is the response from attempting to route a JLRRouteRequest.
  */
 
-@interface JLRRouteResponse : NSObject
+@interface JLRRouteResponse : NSObject <NSCopying>
 
 /// Indicates if the response is a match or not.
 @property (nonatomic, assign, readonly, getter=isMatch) BOOL match;
 
 /// The match parameters (or nil for an invalid response).
-@property (nonatomic, strong, readonly, nullable) NSDictionary *parameters;
+@property (nonatomic, copy, readonly, nullable) NSDictionary *parameters;
+
+/// Check for route response equality
+- (BOOL)isEqualToRouteResponse:(JLRRouteResponse *)response;
 
 
 ///-------------------------------

@@ -16,7 +16,7 @@
 @interface JLRRouteResponse ()
 
 @property (nonatomic, assign, getter=isMatch) BOOL match;
-@property (nonatomic, strong) NSDictionary *parameters;
+@property (nonatomic, copy) NSDictionary *parameters;
 
 @end
 
@@ -41,6 +41,45 @@
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@ %p> - match: %@, params: %@", NSStringFromClass([self class]), self, (self.match ? @"YES" : @"NO"), self.parameters];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (object == self) {
+        return YES;
+    }
+    
+    if ([object isKindOfClass:[self class]]) {
+        return [self isEqualToRouteResponse:(JLRRouteResponse *)object];
+    } else {
+        return [super isEqual:object];
+    }
+}
+
+- (BOOL)isEqualToRouteResponse:(JLRRouteResponse *)response
+{
+    if (self.isMatch != response.isMatch) {
+        return NO;
+    }
+    
+    if (!((self.parameters == nil && response.parameters == nil) || [self.parameters isEqualToDictionary:response.parameters])) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (NSUInteger)hash
+{
+    return @(self.match).hash ^ self.parameters.hash;
+}
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    JLRRouteResponse *copy = [[[self class] alloc] init];
+    copy.match = self.isMatch;
+    copy.parameters = self.parameters;
+    return copy;
 }
 
 @end
