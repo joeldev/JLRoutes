@@ -20,7 +20,7 @@
 @property (nonatomic, copy) NSString *pattern;
 @property (nonatomic, copy) NSString *scheme;
 @property (nonatomic, assign) NSUInteger priority;
-@property (nonatomic, strong) NSArray *patternPathComponents;
+@property (nonatomic, copy) NSArray *patternPathComponents;
 @property (nonatomic, copy) BOOL (^handlerBlock)(NSDictionary *parameters);
 
 @end
@@ -28,10 +28,9 @@
 
 @implementation JLRRouteDefinition
 
-- (instancetype)initWithScheme:(NSString *)scheme pattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock
+- (instancetype)initWithPattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock
 {
     if ((self = [super init])) {
-        self.scheme = scheme;
         self.pattern = pattern;
         self.priority = priority;
         self.handlerBlock = handlerBlock;
@@ -80,6 +79,12 @@
     }
     
     return self.handlerBlock(parameters);
+}
+
+- (void)didBecomeRegisteredForScheme:(NSString *)scheme
+{
+    NSAssert(self.scheme == nil, @"Route definitions should not be added to multiple schemes.");
+    self.scheme = scheme;
 }
 
 #pragma mark - Parsing Route Variables

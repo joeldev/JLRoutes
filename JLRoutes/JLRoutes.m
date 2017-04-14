@@ -141,12 +141,12 @@ static Class JLRGlobal_routeDefinitionClass;
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlock
 {
     NSArray <NSString *> *optionalRoutePatterns = [JLRParsingUtilities expandOptionalRoutePatternsForPattern:routePattern];
-    JLRRouteDefinition *route = [[JLRGlobal_routeDefinitionClass alloc] initWithScheme:self.scheme pattern:routePattern priority:priority handlerBlock:handlerBlock];
+    JLRRouteDefinition *route = [[JLRGlobal_routeDefinitionClass alloc] initWithPattern:routePattern priority:priority handlerBlock:handlerBlock];
     
     if (optionalRoutePatterns.count > 0) {
         // there are optional params, parse and add them
         for (NSString *pattern in optionalRoutePatterns) {
-            JLRRouteDefinition *optionalRoute = [[JLRGlobal_routeDefinitionClass alloc] initWithScheme:self.scheme pattern:pattern priority:priority handlerBlock:handlerBlock];
+            JLRRouteDefinition *optionalRoute = [[JLRGlobal_routeDefinitionClass alloc] initWithPattern:pattern priority:priority handlerBlock:handlerBlock];
             [self _registerRoute:optionalRoute];
             [self _verboseLog:@"Automatically created optional route: %@", optionalRoute];
         }
@@ -261,6 +261,8 @@ static Class JLRGlobal_routeDefinitionClass;
             [self.mutableRoutes addObject:route];
         }
     }
+    
+    [route didBecomeRegisteredForScheme:self.scheme];
 }
 
 - (BOOL)_routeURL:(NSURL *)URL withParameters:(NSDictionary *)parameters executeRouteBlock:(BOOL)executeRouteBlock

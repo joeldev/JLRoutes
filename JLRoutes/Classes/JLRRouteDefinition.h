@@ -36,15 +36,15 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, assign, readonly) NSUInteger priority;
 
 /// The route pattern path components.
-@property (nonatomic, strong, readonly) NSArray <NSString *> *patternPathComponents;
+@property (nonatomic, copy, readonly) NSArray <NSString *> *patternPathComponents;
 
 /// The handler block to invoke when a match is found.
 @property (nonatomic, copy, readonly) BOOL (^handlerBlock)(NSDictionary *parameters);
 
 
-///---------------------------------
+///----------------------------------
 /// @name Creating Route Definitions
-///---------------------------------
+///----------------------------------
 
 
 /**
@@ -52,20 +52,32 @@ NS_ASSUME_NONNULL_BEGIN
  
  This is the designated initializer.
  
- @param scheme The URL scheme this route applies for, or JLRoutesGlobalRoutesScheme if global.
  @param pattern The full route pattern ('/foo/:bar')
  @param priority The route priority, or 0 if default.
  @param handlerBlock The handler block to call when a successful match is found.
  
  @returns The newly initialized route definition.
  */
-- (instancetype)initWithScheme:(NSString *)scheme pattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithPattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock NS_DESIGNATED_INITIALIZER;
 
 /// Unavailable, use initWithScheme:pattern:priority:handlerBlock: instead.
 - (instancetype)init NS_UNAVAILABLE;
 
 /// Unavailable, use initWithScheme:pattern:priority:handlerBlock: instead.
 + (instancetype)new NS_UNAVAILABLE;
+
+
+///----------------------------------
+/// @name Responding To Registration
+///----------------------------------
+
+
+/**
+ Called when the route has been registered for the given scheme.
+ 
+ @param scheme The scheme this route has become active for.
+ */
+- (void)didBecomeRegisteredForScheme:(NSString *)scheme;
 
 
 ///-------------------------------
@@ -93,9 +105,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (BOOL)callHandlerBlockWithParameters:(NSDictionary *)parameters;
 
 
-///---------------------------------------
+///---------------------------------
 /// @name Creating Match Parameters
-///---------------------------------------
+///---------------------------------
 
 
 /**
@@ -122,9 +134,9 @@ NS_ASSUME_NONNULL_BEGIN
 - (NSDictionary *)defaultMatchParametersForRequest:(JLRRouteRequest *)request;
 
 
-///---------------------------------------
+///-------------------------------
 /// @name Parsing Route Variables
-///---------------------------------------
+///-------------------------------
 
 
 /**

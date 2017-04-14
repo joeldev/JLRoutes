@@ -819,7 +819,7 @@ static JLRoutesTests *testsInstance = nil;
 {
     id defaultHandler = [[self class] defaultRouteHandler];
     
-    JLRRouteDefinition *customRoute = [[JLRRouteDefinition alloc] initWithScheme:JLRoutesGlobalRoutesScheme pattern:@"/test" priority:0 handlerBlock:defaultHandler];
+    JLRRouteDefinition *customRoute = [[JLRRouteDefinition alloc] initWithPattern:@"/test" priority:0 handlerBlock:defaultHandler];
     [[JLRoutes globalRoutes] addRoute:customRoute];
     
     [self route:@"tests://test"];
