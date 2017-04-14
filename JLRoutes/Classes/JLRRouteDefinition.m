@@ -199,4 +199,11 @@
     return @{JLRoutePatternKey: self.pattern ?: [NSNull null], JLRouteURLKey: request.URL ?: [NSNull null], JLRouteSchemeKey: self.scheme ?: [NSNull null]};
 }
 
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
+{
+    return [[[self class] alloc] initWithPattern:self.pattern priority:self.priority handlerBlock:self.handlerBlock];
+}
+
 @end

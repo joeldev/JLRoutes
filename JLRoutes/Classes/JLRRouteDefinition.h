@@ -24,7 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
  -callHandlerBlockWithParameters can also be overriden to customize the parameters passed to the handlerBlock.
  */
 
-@interface JLRRouteDefinition : NSObject
+@interface JLRRouteDefinition : NSObject <NSCopying>
 
 /// The URL scheme for which this route applies, or JLRoutesGlobalRoutesScheme if global.
 @property (nonatomic, copy, readonly) NSString *scheme;
