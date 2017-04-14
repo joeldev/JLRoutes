@@ -99,7 +99,7 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// @see allRoutes
 - (NSArray <JLRRouteDefinition *> *)routes;
 
-/// All registered routes, keyed by scheme
+/// Return all registered routes across all schemes, keyed by scheme
 /// @see routes
 + (NSDictionary <NSString *, NSArray <JLRRouteDefinition *> *> *)allRoutes;
 
@@ -172,25 +172,12 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 
 #pragma mark - Deprecated
 
-/// Deprecated, use JLRoutePatternKey instead.
 extern NSString *const kJLRoutePatternKey               DEPRECATED_MSG_ATTRIBUTE("Use JLRoutePatternKey instead.");
-
-/// Deprecated, use JLRouteURLKey instead.
 extern NSString *const kJLRouteURLKey                   DEPRECATED_MSG_ATTRIBUTE("Use JLRouteURLKey instead.");
-
-/// Deprecated, use JLRouteSchemeKey instead.
 extern NSString *const kJLRouteSchemeKey                DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
-
-/// Deprecated, use JLRouteWildcardComponentsKey instead.
 extern NSString *const kJLRouteWildcardComponentsKey    DEPRECATED_MSG_ATTRIBUTE("Use JLRouteWildcardComponentsKey instead.");
-
-/// Deprecated, use JLRoutesGlobalRoutesScheme instead.
 extern NSString *const kJLRoutesGlobalRoutesScheme      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
-
-/// Deprecated, use JLRouteSchemeKey instead.
 extern NSString *const kJLRouteNamespaceKey             DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
-
-/// Deprecated, use JLRoutesGlobalRoutesScheme instead.
 extern NSString *const kJLRoutesGlobalNamespaceKey      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
 
 
