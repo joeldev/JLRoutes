@@ -75,7 +75,7 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// Add a route by directly inserted the route definition. This may be a subclass of JLRRouteDefinition to provide customized routing logic.
 - (void)addRoute:(JLRRouteDefinition *)routeDefinition;
 
-/// Registers a routePattern with default priority (0) in the receiving scheme namespace.
+/// Registers a routePattern with default priority (0) in the receiving scheme.
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock;
 
 /// Registers a routePattern in the global scheme namespace with a handlerBlock to call when the route pattern is matched by a URL.
@@ -83,19 +83,22 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// a block returns NO, JLRoutes will continue trying to find a matching route.
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock;
 
-/// Registers multiple routePatterns for one handler with default priority (0) in the receiving scheme namespace.
+/// Registers multiple routePatterns for one handler with default priority (0) in the receiving scheme.
 - (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock;
 
-/// Removes a routePattern from the receiving scheme namespace.
-- (void)removeRoute:(NSString *)routePattern;
+/// Removes the route from the receiving scheme.
+- (void)removeRoute:(JLRRouteDefinition *)routeDefinition;
 
-/// Removes all routes from the receiving scheme namespace.
+/// Removes the first route matching routePattern from the receiving scheme.
+- (void)removeRouteWithPattern:(NSString *)routePattern;
+
+/// Removes all routes from the receiving scheme.
 - (void)removeAllRoutes;
 
 /// Registers a routePattern with default priority (0) using dictionary-style subscripting.
 - (void)setObject:(nullable id)handlerBlock forKeyedSubscript:(NSString *)routePatten;
 
-/// Return all registered routes in the receiving scheme namespace.
+/// Return all registered routes in the receiving scheme.
 /// @see allRoutes
 - (NSArray <JLRRouteDefinition *> *)routes;
 

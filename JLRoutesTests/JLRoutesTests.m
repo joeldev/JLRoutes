@@ -532,7 +532,7 @@ static JLRoutesTests *testsInstance = nil;
     [self route:@"namespaceTest3://test1"];
     JLValidateAnyRouteMatched();
     
-    [[JLRoutes routesForScheme:@"namespaceTest3"] removeRoute:@"test1"];
+    [[JLRoutes routesForScheme:@"namespaceTest3"] removeRouteWithPattern:@"/test1"];
     [self route:@"namespaceTest3://test1"];
     JLValidateNoLastMatch();
     
@@ -826,6 +826,12 @@ static JLRoutesTests *testsInstance = nil;
     
     JLValidateAnyRouteMatched();
     JLValidateScheme(JLRoutesGlobalRoutesScheme);
+    
+    [[JLRoutes globalRoutes] removeRoute:customRoute];
+    
+    [self route:@"tests://test"];
+    
+    JLValidateNoLastMatch();
 }
 
 - (void)testTreatsHostAsPathComponent
@@ -865,6 +871,24 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
     JLValidatePattern(@"/www.mydomain2.com/path/:pathid");
     JLValidateParameter((@{@"pathid": @"3"}));
+}
+
+- (void)testRouteDefinitionEquality
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    JLRRouteDefinition *routeA = [[JLRRouteDefinition alloc] initWithPattern:@"/foo" priority:0 handlerBlock:defaultHandler];
+    JLRRouteDefinition *routeB = [routeA copy];
+    
+    XCTAssertTrue([routeA isEqual:routeB]);
+    
+    [routeB didBecomeRegisteredForScheme:@"scheme"];
+    
+    XCTAssertFalse([routeA isEqual:routeB]);
+    
+    JLRRouteDefinition *routeC = [[JLRRouteDefinition alloc] initWithPattern:@"/foo/bar" priority:0 handlerBlock:defaultHandler];
+    
+    XCTAssertFalse([routeA isEqual:routeC]);
 }
 
 #pragma mark - Convenience Methods

@@ -156,12 +156,13 @@ static Class JLRGlobal_routeDefinitionClass;
     [self _registerRoute:route];
 }
 
-- (void)removeRoute:(NSString *)routePattern
+- (void)removeRoute:(JLRRouteDefinition *)routeDefinition
 {
-    if (![routePattern hasPrefix:@"/"]) {
-        routePattern = [NSString stringWithFormat:@"/%@", routePattern];
-    }
-    
+    [self.mutableRoutes removeObject:routeDefinition];
+}
+
+- (void)removeRouteWithPattern:(NSString *)routePattern
+{   
     NSInteger routeIndex = NSNotFound;
     NSInteger index = 0;
     
@@ -426,7 +427,7 @@ NSString *const kJLRoutesGlobalNamespaceKey = @"JLRoutesGlobalRoutesScheme";
 
 + (void)removeRoute:(NSString *)routePattern
 {
-    [[self globalRoutes] removeRoute:routePattern];
+    [[self globalRoutes] removeRouteWithPattern:routePattern];
 }
 
 + (void)removeAllRoutes

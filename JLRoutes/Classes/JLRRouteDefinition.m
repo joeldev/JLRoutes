@@ -30,6 +30,8 @@
 
 - (instancetype)initWithPattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock
 {
+    NSParameterAssert(pattern != nil);
+    
     if ((self = [super init])) {
         self.pattern = pattern;
         self.priority = priority;
@@ -47,6 +49,45 @@
 - (NSString *)description
 {
     return [NSString stringWithFormat:@"<%@ %p> - %@ (priority: %@)", NSStringFromClass([self class]), self, self.pattern, @(self.priority)];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (object == self) {
+        return YES;
+    }
+    
+    if ([object isKindOfClass:[JLRRouteDefinition class]]) {
+        return [self isEqualToRouteDefinition:(JLRRouteDefinition *)object];
+    } else {
+        return [super isEqual:object];
+    }
+}
+
+- (BOOL)isEqualToRouteDefinition:(JLRRouteDefinition *)routeDefinition
+{
+    if (!((self.pattern == nil && routeDefinition.pattern == nil) || [self.pattern isEqualToString:routeDefinition.pattern])) {
+        return NO;
+    }
+    
+    if (!((self.scheme == nil && routeDefinition.scheme == nil) || [self.scheme isEqualToString:routeDefinition.scheme])) {
+        return NO;
+    }
+    
+    if (!((self.patternPathComponents == nil && routeDefinition.patternPathComponents == nil) || [self.patternPathComponents isEqualToArray:routeDefinition.patternPathComponents])) {
+        return NO;
+    }
+    
+    if (self.priority != routeDefinition.priority) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (NSUInteger)hash
+{
+    return self.pattern.hash ^ @(self.priority).hash ^ self.scheme.hash ^ self.patternPathComponents.hash;
 }
 
 #pragma mark - Main API
@@ -203,7 +244,9 @@
 
 - (id)copyWithZone:(NSZone *)zone
 {
-    return [[[self class] alloc] initWithPattern:self.pattern priority:self.priority handlerBlock:self.handlerBlock];
+    JLRRouteDefinition *copy = [[[self class] alloc] initWithPattern:self.pattern priority:self.priority handlerBlock:self.handlerBlock];
+    copy.scheme = self.scheme;
+    return copy;
 }
 
 @end

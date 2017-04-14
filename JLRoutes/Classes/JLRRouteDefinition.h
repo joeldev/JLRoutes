@@ -68,6 +68,19 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 ///----------------------------------
+/// @name Comparing Route Definitions
+///----------------------------------
+
+
+/**
+ Checks for equality with another route definition object.
+ 
+ @returns YES if routeDefinition is equal to self, NO if not.
+ */
+- (BOOL)isEqualToRouteDefinition:(JLRRouteDefinition *)routeDefinition;
+
+
+///----------------------------------
 /// @name Responding To Registration
 ///----------------------------------
 
