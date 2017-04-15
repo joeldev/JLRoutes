@@ -68,7 +68,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 
 /**
- Classes conforming to the JLRRouteHandlerTarget protocol can be used as a target for the methods in this class.
+ Classes conforming to the JLRRouteHandlerTarget protocol can be used as a route handler target.
  */
 
 @protocol JLRRouteHandlerTarget <NSObject>
