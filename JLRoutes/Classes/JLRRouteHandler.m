@@ -17,22 +17,22 @@
 
 + (BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlockForWeakTarget:(__weak id <JLRRouteHandlerTarget>)weakTarget
 {
+    NSParameterAssert([weakTarget respondsToSelector:@selector(handleRouteWithParameters:)]);
+    
     return ^BOOL(NSDictionary<NSString *, id> *parameters) {
         return [weakTarget handleRouteWithParameters:parameters];
     };
 }
 
-+ (BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlockForTargetClass:(Class)targetClass completion:(void (^)(id <JLRRouteHandlerTarget> createdObject))completionHandler
++ (BOOL (^)(NSDictionary<NSString *, id> *parameters))handlerBlockForTargetClass:(Class)targetClass completion:(BOOL (^)(id <JLRRouteHandlerTarget> createdObject))completionHandler
 {
     NSParameterAssert([targetClass conformsToProtocol:@protocol(JLRRouteHandlerTarget)]);
+    NSParameterAssert([targetClass instancesRespondToSelector:@selector(initWithRouteParameters:)]);
+    NSParameterAssert(completionHandler != nil); // we want to force external ownership of the newly created object by handing it back.
     
     return ^BOOL(NSDictionary<NSString *, id> *parameters) {
-        id <JLRRouteHandlerTarget> createdObject = [[targetClass alloc] init];
-        BOOL didHandle = [createdObject handleRouteWithParameters:parameters];
-        
-        completionHandler(createdObject); // declared nonnull, as we want to force external ownership of createdObject.
-        
-        return didHandle;
+        id <JLRRouteHandlerTarget> createdObject = [[targetClass alloc] initWithRouteParameters:parameters];
+        return completionHandler(createdObject);
     };
 }
 

@@ -46,6 +46,9 @@ XCTAssertEqualObjects(self.lastMatch[JLRouteSchemeKey], scheme, @"Scheme did not
 
 
 @interface JLRMockTargetObject : NSObject <JLRRouteHandlerTarget>
+
+@property (nonatomic, copy) NSDictionary *routeParams;
+
 @end
 
 
@@ -924,6 +927,7 @@ static JLRoutesTests *testsInstance = nil;
     
     [self route:@"/test"];
     JLValidateAnyRouteMatched();
+    XCTAssertEqualObjects(testsInstance.lastMatch, object.routeParams);
     
     object = nil; // ensure that the object is not retained by handler block
     
@@ -933,15 +937,17 @@ static JLRoutesTests *testsInstance = nil;
 
 - (void)testHandlerBlockForTargetClass
 {
-    __block id<JLRRouteHandlerTarget> createdObject = nil;
-    id handlerBlock = [JLRRouteHandler handlerBlockForTargetClass:[JLRMockTargetObject class] completion:^(id<JLRRouteHandlerTarget> object) {
-        createdObject = object;
+    __block JLRMockTargetObject *createdObject = nil;
+    id handlerBlock = [JLRRouteHandler handlerBlockForTargetClass:[JLRMockTargetObject class] completion:^BOOL (id<JLRRouteHandlerTarget> object) {
+        createdObject = (JLRMockTargetObject *)object;
+        return YES;
     }];
     
     [[JLRoutes globalRoutes] addRoute:@"/test" handler:handlerBlock];
     
     [self route:@"/test"];
     JLValidateAnyRouteMatched();
+    XCTAssertEqualObjects(testsInstance.lastMatch, createdObject.routeParams);
     
     XCTAssertNotNil(createdObject);
 }
@@ -978,8 +984,17 @@ static JLRoutesTests *testsInstance = nil;
 
 @implementation JLRMockTargetObject
 
+- (instancetype)initWithRouteParameters:(NSDictionary<NSString *,id> *)parameters
+{
+    self = [super init];
+    self.routeParams = parameters;
+    testsInstance.lastMatch = parameters;
+    return self;
+}
+
 - (BOOL)handleRouteWithParameters:(NSDictionary<NSString *, id> *)parameters
 {
+    self.routeParams = parameters;
     testsInstance.lastMatch = parameters;
     return YES;
 }

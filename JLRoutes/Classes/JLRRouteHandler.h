@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
  will be used and owned by the calling application.
  */
 
-+ (BOOL (^__nonnull)(NSDictionary<NSString *, id> *parameters))handlerBlockForTargetClass:(Class)targetClass completion:(void (^)(id <JLRRouteHandlerTarget> createdObject))completionHandler;
++ (BOOL (^__nonnull)(NSDictionary<NSString *, id> *parameters))handlerBlockForTargetClass:(Class)targetClass completion:(BOOL (^)(id <JLRRouteHandlerTarget> createdObject))completionHandler;
 
 @end
 
@@ -76,6 +76,19 @@ NS_ASSUME_NONNULL_BEGIN
  */
 
 @protocol JLRRouteHandlerTarget <NSObject>
+
+@optional
+
+/**
+ Initialize an instance of the conforming class by passing matched route parameters from a JLRoutes route.
+ 
+ @param parameters The match parameters passed to use when initializing the object. These are passed from a JLRoutes handler block.
+ 
+ @returns An initialized instance of the conforming class.
+ */
+
+- (instancetype)initWithRouteParameters:(NSDictionary <NSString *, id> *)parameters;
+
 
 /**
  Called for a successful route match.
