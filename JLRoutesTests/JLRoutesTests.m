@@ -13,6 +13,7 @@
 #import <XCTest/XCTest.h>
 #import "JLRoutes.h"
 #import "JLRRouteDefinition.h"
+#import "JLRRouteHandler.h"
 
 
 #define JLValidateParameterCount(expectedCount)\
@@ -42,6 +43,10 @@ XCTAssertEqualObjects(self.lastMatch[JLRouteSchemeKey], scheme, @"Scheme did not
 
 
 #pragma mark -
+
+
+@interface JLRMockTargetObject : NSObject <JLRRouteHandlerTarget>
+@end
 
 
 @interface JLRoutesTests : XCTestCase
@@ -894,6 +899,37 @@ static JLRoutesTests *testsInstance = nil;
     XCTAssertFalse([routeA isEqual:routeC]);
 }
 
+- (void)testHandlerBlockForWeakTarget
+{
+    JLRMockTargetObject *object = [[JLRMockTargetObject alloc] init];
+    id handlerBlock = [JLRRouteHandler handlerBlockForWeakTarget:object];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/test" handler:handlerBlock];
+    
+    [self route:@"/test"];
+    JLValidateAnyRouteMatched();
+    
+    object = nil; // ensure that the object is not retained by handler block
+    
+    [self route:@"/test"];
+    JLValidateNoLastMatch();
+}
+
+- (void)testHandlerBlockForTargetClass
+{
+    __block id<JLRRouteHandlerTarget> createdObject = nil;
+    id handlerBlock = [JLRRouteHandler handlerBlockForTargetClass:[JLRMockTargetObject class] completion:^(id<JLRRouteHandlerTarget> object) {
+        createdObject = object;
+    }];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/test" handler:handlerBlock];
+    
+    [self route:@"/test"];
+    JLValidateAnyRouteMatched();
+    
+    XCTAssertNotNil(createdObject);
+}
+
 #pragma mark - Convenience Methods
 
 + (BOOL (^)(NSDictionary *))defaultRouteHandler
@@ -922,3 +958,15 @@ static JLRoutesTests *testsInstance = nil;
 }
 
 @end
+
+
+@implementation JLRMockTargetObject
+
+- (BOOL)handleRouteWithParameters:(NSDictionary<NSString *, id> *)parameters
+{
+    testsInstance.lastMatch = parameters;
+    return YES;
+}
+
+@end
+
