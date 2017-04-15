@@ -15,18 +15,18 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
-/**
- JLRRouteRequest is a model representing a request to route a URL.
- It gets parsed into path components and query parameters, which are then used by JLRRouteDefinition to attempt a match.
- */
-
-
+/// Options bitmask generated from JLRoutes global options methods.
 typedef NS_OPTIONS(NSUInteger, JLRRouteRequestOptions) {
     JLRRouteRequestOptionsNone = 0,
     JLRRouteRequestOptionDecodePlusSymbols = 1 << 0,
     JLRRouteRequestOptionTreatHostAsPathComponent = 1 << 1
 };
 
+
+/**
+ JLRRouteRequest is a model representing a request to route a URL.
+ It gets parsed into path components and query parameters, which are then used by JLRRouteDefinition to attempt a match.
+ */
 
 @interface JLRRouteRequest : NSObject
 
