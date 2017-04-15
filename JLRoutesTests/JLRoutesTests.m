@@ -49,6 +49,10 @@ XCTAssertEqualObjects(self.lastMatch[JLRouteSchemeKey], scheme, @"Scheme did not
 @end
 
 
+@interface JLRMockRouteDefinition : JLRRouteDefinition
+@end
+
+
 @interface JLRoutesTests : XCTestCase
 
 @property (assign) BOOL didRoute;
@@ -81,6 +85,7 @@ static JLRoutesTests *testsInstance = nil;
     // reset settings
     [JLRoutes setShouldDecodePlusSymbols:YES];
     [JLRoutes setAlwaysTreatsHostAsPathComponent:NO];
+    [JLRoutes setDefaultRouteDefinitionClass:[JLRRouteDefinition class]];
 }
 
 - (void)tearDown
@@ -827,7 +832,7 @@ static JLRoutesTests *testsInstance = nil;
 {
     id defaultHandler = [[self class] defaultRouteHandler];
     
-    JLRRouteDefinition *customRoute = [[JLRRouteDefinition alloc] initWithPattern:@"/test" priority:0 handlerBlock:defaultHandler];
+    JLRMockRouteDefinition *customRoute = [[JLRMockRouteDefinition alloc] initWithPattern:@"/test" priority:0 handlerBlock:defaultHandler];
     [[JLRoutes globalRoutes] addRoute:customRoute];
     
     [self route:@"tests://test"];
@@ -840,6 +845,17 @@ static JLRoutesTests *testsInstance = nil;
     [self route:@"tests://test"];
     
     JLValidateNoLastMatch();
+}
+
+- (void)testChangeDefaultRouteDefinitionClass
+{
+    [JLRoutes setDefaultRouteDefinitionClass:[JLRMockRouteDefinition class]];
+    
+    id defaultHandler = [[self class] defaultRouteHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/foo" handler:defaultHandler];
+    
+    JLRRouteDefinition *route = [JLRoutes globalRoutes].routes.firstObject;
+    XCTAssert([route isKindOfClass:[JLRMockRouteDefinition class]]);
 }
 
 - (void)testTreatsHostAsPathComponent
@@ -967,6 +983,11 @@ static JLRoutesTests *testsInstance = nil;
     testsInstance.lastMatch = parameters;
     return YES;
 }
+
+@end
+
+
+@implementation JLRMockRouteDefinition
 
 @end
 
