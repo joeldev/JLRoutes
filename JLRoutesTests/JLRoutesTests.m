@@ -138,7 +138,7 @@ static JLRoutesTests *testsInstance = nil;
     XCTAssertEqualObjects(schemeRoutes[1].pattern, @"/scheme2");
 }
 
-- (void)testBasicRouting
+- (void)testRouting
 {
     id defaultHandler = [[self class] defaultRouteHandler];
     
@@ -218,12 +218,6 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID": @"joeldev"});
     
-    [self route:@"tests://user/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil#userID=otherEvilPerson" withParameters:@{@"evilThing": @"notEvil"}];
-    JLValidateAnyRouteMatched();
-    JLValidateParameterCount(3);
-    JLValidateParameter(@{@"userID": @"joeldev"});
-    JLValidateParameter(@{@"evilThing": @"notEvil"});
-    
     [self route:@"tests://post/edit/123"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(3);
@@ -281,7 +275,21 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameter(@{@"moreOptionalParam": @"mightExistToo"});
 }
 
-- (void)testBasicFragmentRouting
+- (void)testRoutingWithParameters
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/foo/:routeParam" handler:defaultHandler];
+    
+    [self route:@"/foo/bar" withParameters:@{@"stringParam": @"stringValue", @"nonStringParam": @(123)}];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(3);
+    JLValidateParameter(@{@"routeParam": @"bar"});
+    JLValidateParameter(@{@"stringParam": @"stringValue"});
+    JLValidateParameter(@{@"nonStringParam": @(123)});
+}
+
+- (void)testFragmentRouting
 {
     id defaultHandler = [[self class] defaultRouteHandler];
     
@@ -322,19 +330,17 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID": @"joeldev"});
     
-    [self route:@"tests://user#/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil" withParameters:@{@"evilThing": @"notEvil"}];
+    [self route:@"tests://user#/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(3);
     JLValidateParameter(@{@"userID": @"joeldev"});
     JLValidateParameter(@{@"search": @"evilSearch"});
-    JLValidateParameter(@{@"evilThing": @"notEvil"});
     
-    [self route:@"tests://user?search=niceSearch&go=home#/view/joeldev?userID=evilPerson&&evilThing=evil" withParameters:@{@"evilThing": @"notEvil"}];
+    [self route:@"tests://user?search=niceSearch&go=home#/view/joeldev?userID=evilPerson&&evilThing=evil"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(4);
     JLValidateParameter(@{@"userID": @"joeldev"});
     JLValidateParameter(@{@"go": @"home"});
-    JLValidateParameter(@{@"evilThing": @"notEvil"});
     
     [self route:@"tests://post#/edit/123"];
     JLValidateAnyRouteMatched();
@@ -388,7 +394,7 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameter(@{@"moreOptionalParam": @"mightExistToo"});
 }
 
-- (void)testMultiple
+- (void)testMultipleRoutePatterns
 {
     [[JLRoutes globalRoutes] addRoutes:@[@"/multiple1", @"/multiple2"] handler:[[self class] defaultRouteHandler]];
     
@@ -445,7 +451,7 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
 }
 
-- (void)testNamespaces
+- (void)testSchemes
 {
     id defaultHandler = [[self class] defaultRouteHandler];
     
@@ -503,10 +509,7 @@ static JLRoutesTests *testsInstance = nil;
 
 - (void)testSubscripting
 {
-    JLRoutes.globalRoutes[@"/subscripting"] = ^BOOL(NSDictionary *parameters) {
-        testsInstance.lastMatch = parameters;
-        return YES;
-    };
+    JLRoutes.globalRoutes[@"/subscripting"] = [[self class] defaultRouteHandler];
     
     NSURL *shouldHaveRouteURL = [NSURL URLWithString:@"subscripting"];
     

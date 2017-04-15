@@ -37,6 +37,8 @@ static Class JLRGlobal_routeDefinitionClass;
 @property (nonatomic, strong) NSMutableArray *mutableRoutes;
 @property (nonatomic, strong) NSString *scheme;
 
+- (JLRRouteRequestOptions)_routeRequestOptions;
+
 @end
 
 
@@ -275,7 +277,9 @@ static Class JLRGlobal_routeDefinitionClass;
     [self _verboseLog:@"Trying to route URL %@", URL];
     
     BOOL didRoute = NO;
-    JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL decodePlusSymbols:JLRGlobal_shouldDecodePlusSymbols treatsHostAsPathComponent:JLRGlobal_alwaysTreatsHostAsPathComponent];
+    
+    JLRRouteRequestOptions options = [self _routeRequestOptions];
+    JLRRouteRequest *request = [[JLRRouteRequest alloc] initWithURL:URL options:options additionalParameters:parameters];
     
     for (JLRRouteDefinition *route in [self.mutableRoutes copy]) {
         // check each route for a matching response
@@ -291,16 +295,13 @@ static Class JLRGlobal_routeDefinitionClass;
             return YES;
         }
         
-        // configure the final parameters
-        NSMutableDictionary *finalParameters = [NSMutableDictionary dictionary];
-        [finalParameters addEntriesFromDictionary:response.parameters];
-        [finalParameters addEntriesFromDictionary:parameters];
-        [self _verboseLog:@"Final parameters are %@", finalParameters];
+        [self _verboseLog:@"Match parameters are %@", response.parameters];
         
-        didRoute = [route callHandlerBlockWithParameters:finalParameters];
+        // Call the handler block
+        didRoute = [route callHandlerBlockWithParameters:response.parameters];
         
         if (didRoute) {
-            // if it was routed successfully, we're done
+            // if it was routed successfully, we're done - otherwise, continue trying to route
             break;
         }
     }
@@ -344,6 +345,20 @@ static Class JLRGlobal_routeDefinitionClass;
     
     va_end(argsList);
     NSLog(@"[JLRoutes]: %@", formattedLogMessage);
+}
+
+- (JLRRouteRequestOptions)_routeRequestOptions
+{
+    JLRRouteRequestOptions options = JLRRouteRequestOptionsNone;
+    
+    if (JLRGlobal_shouldDecodePlusSymbols) {
+        options |= JLRRouteRequestOptionDecodePlusSymbols;
+    }
+    if (JLRGlobal_alwaysTreatsHostAsPathComponent) {
+        options |= JLRRouteRequestOptionTreatHostAsPathComponent;
+    }
+    
+    return options;
 }
 
 @end

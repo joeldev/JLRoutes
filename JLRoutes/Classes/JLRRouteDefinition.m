@@ -156,7 +156,8 @@
             NSString *variableValue = [self routeVariableValueForValue:URLComponent];
             
             // Consult the parsing utilities as well to do any other standard variable transformations
-            variableValue = [JLRParsingUtilities variableValueFrom:variableValue decodePlusSymbols:request.decodePlusSymbols];
+            BOOL decodePlusSymbols = ((request.options & JLRRouteRequestOptionDecodePlusSymbols) == JLRRouteRequestOptionDecodePlusSymbols);
+            variableValue = [JLRParsingUtilities variableValueFrom:variableValue decodePlusSymbols:decodePlusSymbols];
             
             routeVariables[variableName] = variableValue;
         } else if (isPatternComponentWildcard) {
@@ -223,11 +224,17 @@
 {
     NSMutableDictionary *matchParams = [NSMutableDictionary dictionary];
     
-    // First, add the parsed query parameters ('?a=b&c=d'). Also includes fragment.
-    [matchParams addEntriesFromDictionary:[JLRParsingUtilities queryParams:request.queryParams decodePlusSymbols:request.decodePlusSymbols]];
+    // Add the parsed query parameters ('?a=b&c=d'). Also includes fragment.
+    BOOL decodePlusSymbols = ((request.options & JLRRouteRequestOptionDecodePlusSymbols) == JLRRouteRequestOptionDecodePlusSymbols);
+    [matchParams addEntriesFromDictionary:[JLRParsingUtilities queryParams:request.queryParams decodePlusSymbols:decodePlusSymbols]];
     
-    // Next, add the actual parsed route variables (the items in the route prefixed with ':')
+    // Add the actual parsed route variables (the items in the route prefixed with ':').
     [matchParams addEntriesFromDictionary:routeVariables];
+    
+    // Add the additional parameters, if any were specified in the request.
+    if (request.additionalParameters != nil) {
+        [matchParams addEntriesFromDictionary:request.additionalParameters];
+    }
     
     // Finally, add the base parameters. This is done last so that these cannot be overriden by using the same key in your route or query.
     [matchParams addEntriesFromDictionary:[self defaultMatchParametersForRequest:request]];

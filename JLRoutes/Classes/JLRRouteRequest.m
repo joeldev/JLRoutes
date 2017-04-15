@@ -15,21 +15,25 @@
 
 @interface JLRRouteRequest ()
 
-@property (nonatomic, strong) NSURL *URL;
+@property (nonatomic, copy) NSURL *URL;
 @property (nonatomic, strong) NSArray *pathComponents;
 @property (nonatomic, strong) NSDictionary *queryParams;
-@property (nonatomic, assign) BOOL decodePlusSymbols;
+@property (nonatomic, assign) JLRRouteRequestOptions options;
+@property (nonatomic, copy) NSDictionary *additionalParameters;
 
 @end
 
 
 @implementation JLRRouteRequest
 
-- (instancetype)initWithURL:(NSURL *)URL decodePlusSymbols:(BOOL)decodePlusSymbols treatsHostAsPathComponent:(BOOL)treatsHostAsPathComponent
+- (instancetype)initWithURL:(NSURL *)URL options:(JLRRouteRequestOptions)options additionalParameters:(nullable NSDictionary *)additionalParameters
 {
     if ((self = [super init])) {
         self.URL = URL;
-        self.decodePlusSymbols = decodePlusSymbols;
+        self.options = options;
+        self.additionalParameters = additionalParameters;
+        
+        BOOL treatsHostAsPathComponent = ((options & JLRRouteRequestOptionTreatHostAsPathComponent) == JLRRouteRequestOptionTreatHostAsPathComponent);
         
         NSURLComponents *components = [NSURLComponents componentsWithString:[self.URL absoluteString]];
         

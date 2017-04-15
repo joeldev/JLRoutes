@@ -20,10 +20,18 @@ NS_ASSUME_NONNULL_BEGIN
  It gets parsed into path components and query parameters, which are then used by JLRRouteDefinition to attempt a match.
  */
 
+
+typedef NS_OPTIONS(NSUInteger, JLRRouteRequestOptions) {
+    JLRRouteRequestOptionsNone = 0,
+    JLRRouteRequestOptionDecodePlusSymbols = 1 << 0,
+    JLRRouteRequestOptionTreatHostAsPathComponent = 1 << 1
+};
+
+
 @interface JLRRouteRequest : NSObject
 
 /// The URL being routed.
-@property (nonatomic, strong, readonly) NSURL *URL;
+@property (nonatomic, copy, readonly) NSURL *URL;
 
 /// The URL's path components.
 @property (nonatomic, strong, readonly) NSArray *pathComponents;
@@ -31,8 +39,11 @@ NS_ASSUME_NONNULL_BEGIN
 /// The URL's query parameters.
 @property (nonatomic, strong, readonly) NSDictionary *queryParams;
 
-/// If this request indicates that plus symbols should be decoded automatically or not.
-@property (nonatomic, assign, readonly) BOOL decodePlusSymbols;
+/// Route request options, generally configured from the framework global options.
+@property (nonatomic, assign, readonly) JLRRouteRequestOptions options;
+
+/// Additional parameters to pass through as part of the match parameters dictionary.
+@property (nonatomic, copy, nullable, readonly) NSDictionary *additionalParameters;
 
 
 ///-------------------------------
@@ -49,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
  
  @returns The newly initialized route request.
  */
-- (instancetype)initWithURL:(NSURL *)URL decodePlusSymbols:(BOOL)decodePlusSymbols treatsHostAsPathComponent:(BOOL)treatsHostAsPathComponent NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)URL options:(JLRRouteRequestOptions)options additionalParameters:(nullable NSDictionary *)additionalParameters NS_DESIGNATED_INITIALIZER;
 
 /// Unavailable, use initWithURL:alwaysTreatsHostAsPathComponent: instead.
 - (instancetype)init NS_UNAVAILABLE;
