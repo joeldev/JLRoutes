@@ -17,8 +17,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Options bitmask generated from JLRoutes global options methods.
 typedef NS_OPTIONS(NSUInteger, JLRRouteRequestOptions) {
+    /// No options specified.
     JLRRouteRequestOptionsNone = 0,
+    
+    /// If present, decoding plus symbols is enabled.
     JLRRouteRequestOptionDecodePlusSymbols = 1 << 0,
+    
+    /// If present, treating URL hosts as path components is enabled.
     JLRRouteRequestOptionTreatHostAsPathComponent = 1 << 1
 };
 
@@ -55,17 +60,17 @@ typedef NS_OPTIONS(NSUInteger, JLRRouteRequestOptions) {
  Creates a new route request.
  
  @param URL The URL to route.
- @param decodePlusSymbols The global decoding plus symbols option value.
- @param treatsHostAsPathComponent The global option for if to treat the URL host as a path component or not.
+ @param options Options bitmask specifying parsing behavior.
+ @param additionalParameters Additional parameters to include in any match dictionary created against this request.
  
  @returns The newly initialized route request.
  */
 - (instancetype)initWithURL:(NSURL *)URL options:(JLRRouteRequestOptions)options additionalParameters:(nullable NSDictionary *)additionalParameters NS_DESIGNATED_INITIALIZER;
 
-/// Unavailable, use initWithURL:alwaysTreatsHostAsPathComponent: instead.
+/// Unavailable, use initWithURL:options:additionalParameters: instead.
 - (instancetype)init NS_UNAVAILABLE;
 
-/// Unavailable, use initWithURL:alwaysTreatsHostAsPathComponent: instead.
+/// Unavailable, use initWithURL:options:additionalParameters: instead.
 + (instancetype)new NS_UNAVAILABLE;
 
 @end
