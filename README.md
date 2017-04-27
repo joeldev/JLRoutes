@@ -27,8 +27,8 @@ Documentation is available [here](http://cocoadocs.org/docsets/JLRoutes/).
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  // ...
   JLRoutes *routes = [JLRoutes globalRoutes];
+  
   [routes addRoute:@"/user/view/:userID" handler:^BOOL(NSDictionary *parameters) {
     NSString *userID = parameters[@"userID"]; // defined in the route by specifying ":userID"
 
@@ -36,7 +36,7 @@ Documentation is available [here](http://cocoadocs.org/docsets/JLRoutes/).
 
     return YES; // return YES to say we have handled the route
   }];
-  // ...
+  
   return YES;
 }
 
@@ -76,13 +76,13 @@ The JLRouteScheme key refers to the scheme that the matched route lives in. [Rea
 
 See JLRoutes.h for the list of constants.
 
-### Handler Block ###
+### Handler Block Chaining ###
 
-As you may have noticed, the handler block is expected to return a boolean for if it has handled the route or not. If the block returns `NO`, JLRoutes will behave as if that route is not a match and it will continue looking for a match. A route is considered to be a match if the pattern string matches **and** the block returns `YES`.
+The handler block is expected to return a boolean for if it has handled the route or not. If the block returns `NO`, JLRoutes will behave as if that route is not a match and it will continue looking for a match. A route is considered to be a match if the pattern string matches **and** the block returns `YES`.
 
 It is also important to note that if you pass nil for the handler block, an internal handler block will be created that simply returns `YES`.
 
-### More Complex Example ###
+### Example ###
 
 ```objc
 [[JLRoutes globalRoutes] addRoute:@"/:object/:action/:primaryKey" handler:^BOOL(NSDictionary *parameters) {
@@ -155,7 +155,7 @@ and then try to route the URL `thing://global`, it would not match because that 
 This tells JLRoutes that if a URL cannot be routed within the `thing` scheme (aka, it starts with `thing:` but no appropriate route can be found), try to recover by looking for a matching route in the global routes scheme as well. After setting that property to `YES`, the URL `thing://global` would be routed to the /global block.
 
 
-### Wildcard routes ###
+### Wildcards ###
 
 JLRoutes supports setting up routes that will match an arbitrary number of path components at the end of the routed URL. An array containing the additional path components will be added to the parameters dictionary with the key `JLRouteWildcardComponentsKey`.
 
