@@ -28,7 +28,7 @@ Documentation is available [here](http://cocoadocs.org/docsets/JLRoutes/).
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   JLRoutes *routes = [JLRoutes globalRoutes];
-  
+
   [routes addRoute:@"/user/view/:userID" handler:^BOOL(NSDictionary *parameters) {
     NSString *userID = parameters[@"userID"]; // defined in the route by specifying ":userID"
 
@@ -36,7 +36,7 @@ Documentation is available [here](http://cocoadocs.org/docsets/JLRoutes/).
 
     return YES; // return YES to say we have handled the route
   }];
-  
+
   return YES;
 }
 
@@ -56,7 +56,7 @@ JLRoutes.globalRoutes[@"/route/:param"] = ^BOOL(NSDictionary *parameters) {
 After having set that route up, at any point something (including a different application) could call this to fire the handler block:
 ```objc
 NSURL *viewUserURL = [NSURL URLWithString:@"myapp://user/view/joeldev"];
-[[UIApplication sharedApplication] openURL:viewUserURL];
+[[UIApplication sharedApplication] openURL:viewUserURL options:nil completionHandler:nil];
 ```
 
 In this example, the userID object in the parameters dictionary passed to the block would have the key/value pair `"userID": "joeldev"`, which could then be used to present a UI or do whatever else is needed.
@@ -98,7 +98,7 @@ This route would match things like `/user/view/joeldev` or `/post/edit/123`. Let
 
 ```objc
 NSURL *editPost = [NSURL URLWithString:@"myapp://post/edit/123?debug=true&foo=bar"];
-[[UIApplication sharedApplication] openURL:editPost];
+[[UIApplication sharedApplication] openURL:editPost options:nil completionHandler:nil];
 ```
 
 The parameters dictionary that the handler block receives would contain the following key/value pairs:
