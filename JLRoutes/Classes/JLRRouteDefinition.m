@@ -67,21 +67,23 @@
     
     for (NSString *patternComponent in self.patternComponents) {
         NSString *URLComponent = nil;
+        BOOL isPatternComponentWildcard = [patternComponent isEqualToString:@"*"];
         
-        // figure out which URLComponent it is, taking wildcards into account
         if (index < [request.pathComponents count]) {
             URLComponent = request.pathComponents[index];
-        } else if ([patternComponent isEqualToString:@"*"]) {
-            // match /foo by /foo/*
-            URLComponent = [request.pathComponents lastObject];
+        } else if (!isPatternComponentWildcard) {
+            // URLComponent is not a wildcard and index is >= request.pathComponents.count, so bail
+            isMatch = NO;
+            break;
         }
         
         if ([patternComponent hasPrefix:@":"]) {
             // this is a variable, set it in the params
+            NSAssert(URLComponent != nil, @"URLComponent cannot be nil");
             NSString *variableName = [self variableNameForValue:patternComponent];
-            NSString *variableValue = [self variableValueForValue:URLComponent decodePlusSymbols:decodePlusSymbols];
+            NSString *variableValue = [self variableValueForValue:(NSString *)URLComponent decodePlusSymbols:decodePlusSymbols];
             routeParams[variableName] = variableValue;
-        } else if ([patternComponent isEqualToString:@"*"]) {
+        } else if (isPatternComponentWildcard) {
             // match wildcards
             NSUInteger minRequiredParams = index;
             if (request.pathComponents.count >= minRequiredParams) {
