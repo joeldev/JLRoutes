@@ -709,9 +709,11 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
 }
 
-- (void)testMultipleOptionalRoutes
+- (void)testOptionalRoutesAtEnd
 {
     [[JLRoutes globalRoutes] addRoute:@"/path/:thing(/new)(/anotherpath/:anotherthing)" handler:[[self class] defaultRouteHandler]];
+    
+    XCTAssert([[JLRoutes globalRoutes] routes].count == 4);
     
     [self route:@"foo://path/abc/new/anotherpath/def"];
     JLValidateAnyRouteMatched();
@@ -733,6 +735,60 @@ static JLRoutesTests *testsInstance = nil;
     
     [self route:@"foo://path/zzz/anotherpath"];
     JLValidateNoLastMatch();
+}
+
+- (void)testOptionalRoutesAtStart
+{
+    [[JLRoutes globalRoutes] addRoute:@"/(rest/)(app/):object/:id" handler:[[self class] defaultRouteHandler]];
+    
+    XCTAssert([[JLRoutes globalRoutes] routes].count == 4);
+    
+    [self route:@"foo://rest/app/aaa/bbb"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"object": @"aaa"});
+    JLValidateParameter(@{@"id": @"bbb"});
+    
+    [self route:@"foo://app/aaa/bbb"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"object": @"aaa"});
+    JLValidateParameter(@{@"id": @"bbb"});
+    
+    [self route:@"foo://rest/aaa/bbb"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"object": @"aaa"});
+    JLValidateParameter(@{@"id": @"bbb"});
+    
+    [self route:@"foo://aaa/bbb"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"object": @"aaa"});
+    JLValidateParameter(@{@"id": @"bbb"});
+}
+
+- (void)testOptionalRoutesInterleaved
+{
+    [[JLRoutes globalRoutes] addRoute:@"/(rest/):object/(app/):id" handler:[[self class] defaultRouteHandler]];
+    
+    XCTAssert([[JLRoutes globalRoutes] routes].count == 4);
+    
+    [self route:@"foo://rest/aaa/app/bbb"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"object": @"aaa"});
+    JLValidateParameter(@{@"id": @"bbb"});
+    
+    [self route:@"foo://aaa/app/bbb"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"object": @"aaa"});
+    JLValidateParameter(@{@"id": @"bbb"});
+    
+    [self route:@"foo://rest/aaa/bbb"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"object": @"aaa"});
+    JLValidateParameter(@{@"id": @"bbb"});
+    
+    [self route:@"foo://aaa/bbb"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameter(@{@"object": @"aaa"});
+    JLValidateParameter(@{@"id": @"bbb"});
 }
 
 - (void)testPassingURLStringsAsParams
