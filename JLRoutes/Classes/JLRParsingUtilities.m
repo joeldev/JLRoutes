@@ -13,9 +13,63 @@
 #import "JLRParsingUtilities.h"
 
 
-@interface NSArray (Combinations)
+@interface NSArray (JLRoutes_Utilities)
 
 - (NSArray<NSArray *> *)JLRoutes_allOrderedCombinations;
+- (NSArray *)JLRoutes_filter:(BOOL (^)(id object))filterBlock;
+- (NSArray *)JLRoutes_map:(id (^)(id object))mapBlock;
+
+@end
+
+
+@interface NSString (JLRoutes_Utilities)
+
+- (NSArray <NSString *> *)JLRoutes_trimmedPathComponents;
+
+@end
+
+
+#pragma mark - Parsing Utility Methods
+
+
+@interface JLRParsingUtilities_RouteSubpath : NSObject
+
+@property (nonatomic, strong) NSArray <NSString *> *subpathComponents;
+@property (nonatomic, assign) BOOL isOptionalSubpath;
+
+@end
+
+
+@implementation JLRParsingUtilities_RouteSubpath
+
+- (NSString *)description
+{
+    NSString *type = self.isOptionalSubpath ? @"OPTIONAL" : @"REQUIRED";
+    return [NSString stringWithFormat:@"%@ - %@: %@", [super description], type, [self.subpathComponents componentsJoinedByString:@"/"]];
+}
+
+- (BOOL)isEqual:(id)object
+{
+    if (![object isKindOfClass:[self class]]) {
+        return NO;
+    }
+    
+    JLRParsingUtilities_RouteSubpath *otherSubpath = (JLRParsingUtilities_RouteSubpath *)object;
+    if (![self.subpathComponents isEqual:otherSubpath.subpathComponents]) {
+        return NO;
+    }
+    
+    if (self.isOptionalSubpath != otherSubpath.isOptionalSubpath) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (NSUInteger)hash
+{
+    return self.subpathComponents.hash ^ self.isOptionalSubpath;
+}
 
 @end
 
@@ -73,93 +127,102 @@
      /path/:thing/a
      /path/:thing/b
      /path/:thing/c
+     
      */
     
     if ([routePattern rangeOfString:@"("].location == NSNotFound) {
         return @[];
     }
     
-    NSString *baseRoute = nil;
-    NSArray *components = [self _optionalComponentsForPattern:routePattern baseRoute:&baseRoute];
-    NSArray *routes = [self _routesForOptionalComponents:components baseRoute:baseRoute];
-    
-    return routes;
-}
-
-+ (NSArray <NSString *> *)_optionalComponentsForPattern:(NSString *)routePattern baseRoute:(NSString *__autoreleasing *)outBaseRoute;
-{
-    if (routePattern.length == 0) {
+    // First, parse the route pattern into subpath objects.
+    NSArray <JLRParsingUtilities_RouteSubpath *> *subpaths = [self _routeSubpathsForPattern:routePattern];
+    if (subpaths.count == 0) {
         return @[];
     }
     
-    NSMutableArray *optionalComponents = [NSMutableArray array];
+    // Next, etract out the required subpaths.
+    NSSet <JLRParsingUtilities_RouteSubpath *> *requiredSubpaths = [NSSet setWithArray:[subpaths JLRoutes_filter:^BOOL(JLRParsingUtilities_RouteSubpath *subpath) {
+        return !subpath.isOptionalSubpath;
+    }]];
+    
+    // Then, expand the subpath permutations into possible route patterns.
+    NSArray <NSArray <JLRParsingUtilities_RouteSubpath *> *> *allSubpathCombinations = [subpaths JLRoutes_allOrderedCombinations];
+    
+    // Finally, we need to filter out any possible route patterns that don't actually satisfy the rules of the route.
+    // What this means in practice is throwing out any that do not contain all required subpaths (since those are explicitly not optional).
+    NSArray <NSArray <JLRParsingUtilities_RouteSubpath *> *> *validSubpathCombinations = [allSubpathCombinations JLRoutes_filter:^BOOL(NSArray <JLRParsingUtilities_RouteSubpath *> *possibleRouteSubpaths) {
+        return [requiredSubpaths isSubsetOfSet:[NSSet setWithArray:possibleRouteSubpaths]];
+    }];
+    
+    // Once we have a filtered list of valid subpaths, we just need to convert them back into string routes that can we registered.
+    NSArray <NSString *> *validSubpathRouteStrings = [validSubpathCombinations JLRoutes_map:^id(NSArray <JLRParsingUtilities_RouteSubpath *> *subpaths) {
+        NSString *routePattern = @"/";
+        for (JLRParsingUtilities_RouteSubpath *subpath in subpaths) {
+            NSString *subpathString = [subpath.subpathComponents componentsJoinedByString:@"/"];
+            routePattern = [routePattern stringByAppendingPathComponent:subpathString];
+        }
+        return routePattern;
+    }];
+    
+    // Before returning, sort them by length so that the longest and most specific routes are registered first before the less specific shorter ones.
+    validSubpathRouteStrings = [validSubpathRouteStrings sortedArrayUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"length" ascending:NO selector:@selector(compare:)]]];
+    
+    return validSubpathRouteStrings;
+}
+
++ (NSArray <JLRParsingUtilities_RouteSubpath *> *)_routeSubpathsForPattern:(NSString *)routePattern
+{
+    NSMutableArray <JLRParsingUtilities_RouteSubpath *> *subpaths = [NSMutableArray array];
     
     NSScanner *scanner = [NSScanner scannerWithString:routePattern];
-    NSString *nonOptionalRouteSubpath = nil;
-    
-    BOOL parsedBaseRoute = NO;
-    BOOL parseError = NO;
-    
-    // first, we need to parse the string and find the array of optional params.
-    // aka, take (/a)(/b)(/c) and turn it into ["/a", "/b", "/c"]
-    while ([scanner scanUpToString:@"(" intoString:&nonOptionalRouteSubpath]) {
-        if ([scanner isAtEnd]) {
+    while (![scanner isAtEnd]) {
+        NSString *preOptionalSubpath = nil;
+        BOOL didScan = [scanner scanUpToString:@"(" intoString:&preOptionalSubpath];
+        if (!didScan) {
+            unichar currentChar = [routePattern characterAtIndex:scanner.scanLocation];
+            NSAssert(currentChar == '(', @"Unexpected character: %@", [NSString stringWithCharacters:&currentChar length:1]);
+        }
+        
+        if (!scanner.isAtEnd) {
+            // otherwise, advance past the ( character
+            scanner.scanLocation = scanner.scanLocation + 1;
+        }
+        
+        if (preOptionalSubpath.length > 0 && ![preOptionalSubpath isEqualToString:@")"] && ![preOptionalSubpath isEqualToString:@"/"]) {
+            // content before the start of an optional subpath
+            JLRParsingUtilities_RouteSubpath *subpath = [[JLRParsingUtilities_RouteSubpath alloc] init];
+            subpath.subpathComponents = [preOptionalSubpath JLRoutes_trimmedPathComponents];
+            [subpaths addObject:subpath];
+        }
+        
+        if (scanner.isAtEnd) {
             break;
         }
         
-        if (nonOptionalRouteSubpath.length > 0 && outBaseRoute != NULL && !parsedBaseRoute) {
-            // the first 'non optional subpath' is always the base route
-            *outBaseRoute = nonOptionalRouteSubpath;
-            parsedBaseRoute = YES;
-        }
+        NSString *optionalSubpath = nil;
+        didScan = [scanner scanUpToString:@")" intoString:&optionalSubpath];
+        NSAssert(didScan, @"Could not find closing parenthesis");
         
         scanner.scanLocation = scanner.scanLocation + 1;
         
-        NSString *component = nil;
-        if (![scanner scanUpToString:@")" intoString:&component]) {
-            parseError = YES;
-            break;
+        if (optionalSubpath.length > 0) {
+            JLRParsingUtilities_RouteSubpath *subpath = [[JLRParsingUtilities_RouteSubpath alloc] init];
+            subpath.isOptionalSubpath = YES;
+            subpath.subpathComponents = [optionalSubpath JLRoutes_trimmedPathComponents];
+            [subpaths addObject:subpath];
         }
-        
-        [optionalComponents addObject:component];
     }
     
-    if (parseError) {
-        NSLog(@"[JLRoutes]: Parse error, unsupported route: %@", routePattern);
-        return @[];
-    }
-    
-    return [optionalComponents copy];
-}
-
-+ (NSArray <NSString *> *)_routesForOptionalComponents:(NSArray <NSString *> *)optionalComponents baseRoute:(NSString *)baseRoute
-{
-    if (optionalComponents.count == 0 || baseRoute.length == 0) {
-        return @[];
-    }
-    
-    NSMutableArray *routes = [NSMutableArray array];
-    
-    // generate all possible combinations of the components that could exist (taking order into account)
-    // aka, "/path/:thing/(/a)(/b)(/c)" should never generate a route for "/path/:thing/(/b)(/a)"
-    NSArray *combinations = [optionalComponents JLRoutes_allOrderedCombinations];
-    
-    // generate the actual final route path strings
-    for (NSArray *components in combinations) {
-        NSString *path = [components componentsJoinedByString:@""];
-        [routes addObject:[baseRoute stringByAppendingString:path]];
-    }
-    
-    // sort them so that the longest routes are first (since they are the most selective)
-    [routes sortUsingSelector:@selector(length)];
-    
-    return [routes copy];
+    return [subpaths copy];
 }
 
 @end
 
 
-@implementation NSArray (JLRoutes)
+#pragma mark - Categories
+
+
+@implementation NSArray (JLRoutes_Utilities)
 
 - (NSArray<NSArray *> *)JLRoutes_allOrderedCombinations
 {
@@ -180,4 +243,43 @@
     return [NSArray arrayWithArray:combinations];
 }
 
+- (NSArray *)JLRoutes_filter:(BOOL (^)(id object))filterBlock
+{
+    NSParameterAssert(filterBlock != nil);
+    NSMutableArray *filteredArray = [NSMutableArray array];
+    
+    for (id object in self) {
+        if (filterBlock(object)) {
+            [filteredArray addObject:object];
+        }
+    }
+    
+    return [filteredArray copy];
+}
+
+- (NSArray *)JLRoutes_map:(id (^)(id object))mapBlock
+{
+    NSParameterAssert(mapBlock != nil);
+    NSMutableArray *mappedArray = [NSMutableArray array];
+    
+    for (id object in self) {
+        id mappedObject = mapBlock(object);
+        [mappedArray addObject:mappedObject];
+    }
+    
+    return [mappedArray copy];
+}
+
 @end
+
+
+@implementation NSString (JLRoutes_Utilities)
+
+- (NSArray <NSString *> *)JLRoutes_trimmedPathComponents
+{
+    // Trims leading and trailing slashes and then separates by slash
+    return [[self stringByTrimmingCharactersInSet:[NSCharacterSet characterSetWithCharactersInString:@"/"]] componentsSeparatedByString:@"/"];
+}
+
+@end
+

@@ -133,9 +133,9 @@ static BOOL alwaysTreatsHostAsPathComponent = NO;
     if (optionalRoutePatterns.count > 0) {
         // there are optional params, parse and add them
         for (NSString *pattern in optionalRoutePatterns) {
-            [self _verboseLog:@"Automatically created optional route: %@", route];
             JLRRouteDefinition *optionalRoute = [[JLRRouteDefinition alloc] initWithScheme:self.scheme pattern:pattern priority:priority handlerBlock:handlerBlock];
             [self _registerRoute:optionalRoute];
+            [self _verboseLog:@"Automatically created optional route: %@", optionalRoute];
         }
         return;
     }
