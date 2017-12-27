@@ -1,6 +1,6 @@
 language: objective-c
-osx_image: xcode8.3
+osx_image: xcode9.2
 branches:
   only:
     master
-script: travis_retry xcodebuild test -scheme 'JLRoutes-iOS' -configuration Debug -destination "platform=iOS Simulator,name=iPhone 6,OS=8.4" -destination "platform=iOS Simulator,name=iPhone 6,OS=9.3" -destination "platform=iOS Simulator,name=iPhone 6,OS=latest"
+script: travis_retry xcodebuild test -scheme 'JLRoutes-iOS' -configuration Debug -destination "platform=iOS Simulator,name=iPhone 6,OS=8.4" -destination "platform=iOS Simulator,name=iPhone 6,OS=9.3" -destination "platform=iOS Simulator,name=iPhone 6,OS=10.3.1" -destination "platform=iOS Simulator,name=iPhone 6,OS=latest"
