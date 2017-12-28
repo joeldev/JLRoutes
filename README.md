@@ -215,6 +215,69 @@ There are multiple ways to query routes for programmatic uses (such as powering 
 - (NSArray <JLRRouteDefinition *> *)routes;
 ```
 
+### Handler Block Helper ###
+
+`JLRRouteHandler` is a helper class for creating handler blocks intended to be passed to an addRoute: call.
+
+This is specifically useful for cases in which you want a separate object or class to be the handler for a deeplink route. An example might be a view controller that you want to instantiate and present in response to a deeplink being opened.
+
+In order to take advantage of this helper, your target class must conform to the `JLRRouteHandlerTarget` protocol. For example:
+
+```objc
+@interface MyTargetViewController : UIViewController <JLRRouteHandlerTarget>
+
+@end
+
+
+@implementation MyTargetViewController
+
+- (instancetype)initWithRouteParameters:(NSDictionary <NSString *, id> *)parameters
+{
+  self = [super init];
+
+  _parameters = [parameters copy]; // hold on to do something with later on
+
+  return self;
+}
+
+- (void)viewDidLoad
+{
+  [super viewDidLoad];
+  // do something interesting with self.parameters, initialize views, etc...
+}
+
+@end
+```
+
+To hook this up via `JLRRouteHandler`, you could do something like this:
+
+```objc
+id handlerBlock = [JLRRouteHandler handlerBlockForTargetClass:[MyTargetViewController class] completion:^BOOL (MyTargetViewController *viewController) {
+  // Push the created view controller onto the nav controller
+  [self.navigationController pushViewController:viewController animated:YES];
+  return YES;
+}];
+
+[[JLRoutes globalRoutes] addRoute:@"/some/route" handler:handlerBlock];
+```
+
+There's also a `JLRRouteHandler` convenience method for easily routing to an existing instance of an object vs creating a new instance. For example:
+
+```objc
+MyTargetViewController *rootController = ...; // some object that exists and conforms to JLRRouteHandlerTarget.
+id handlerBlock = [JLRRouteHandler handlerBlockForWeakTarget:rootController];
+
+[[JLRoutes globalRoutes] addRoute:@"/some/route" handler:handlerBlock];
+```
+
+When the route is matched, it will call a method on the target object:
+
+```
+- (BOOL)handleRouteWithParameters:(NSDictionary<NSString *, id> *)parameters;
+```
+
+These two mechanisms (weak target and class target) provide a few other ways to organize deep link handlers without writing boilerplate code for each handler or otherwise having to solve that for each app that integrates JLRoutes.
+
 ### Custom Route Parsing ###
 
 It is possible to control how routes are parsed by subclassing `JLRRouteDefinition` and using the `addRoute:` method to add instances of your custom subclass.
