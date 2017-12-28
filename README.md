@@ -226,6 +226,8 @@ In order to take advantage of this helper, your target class must conform to the
 ```objc
 @interface MyTargetViewController : UIViewController <JLRRouteHandlerTarget>
 
+@property (nonatomic, copy) NSDictionary <NSString *, id> *parameters;
+
 @end
 
 
@@ -272,7 +274,7 @@ id handlerBlock = [JLRRouteHandler handlerBlockForWeakTarget:rootController];
 
 When the route is matched, it will call a method on the target object:
 
-```
+```objc
 - (BOOL)handleRouteWithParameters:(NSDictionary<NSString *, id> *)parameters;
 ```
 
