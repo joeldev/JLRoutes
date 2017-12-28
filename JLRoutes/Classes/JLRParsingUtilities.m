@@ -179,8 +179,7 @@
         NSString *preOptionalSubpath = nil;
         BOOL didScan = [scanner scanUpToString:@"(" intoString:&preOptionalSubpath];
         if (!didScan) {
-            unichar currentChar = [routePattern characterAtIndex:scanner.scanLocation];
-            NSAssert(currentChar == '(', @"Unexpected character: %@", [NSString stringWithCharacters:&currentChar length:1]);
+            NSAssert([routePattern characterAtIndex:scanner.scanLocation] == '(', @"Unexpected character: %c", [routePattern characterAtIndex:scanner.scanLocation]);
         }
         
         if (!scanner.isAtEnd) {
