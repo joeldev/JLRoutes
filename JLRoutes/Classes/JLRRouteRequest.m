@@ -15,23 +15,29 @@
 
 @interface JLRRouteRequest ()
 
-@property (nonatomic, strong) NSURL *URL;
+@property (nonatomic, copy) NSURL *URL;
 @property (nonatomic, strong) NSArray *pathComponents;
 @property (nonatomic, strong) NSDictionary *queryParams;
+@property (nonatomic, assign) JLRRouteRequestOptions options;
+@property (nonatomic, copy) NSDictionary *additionalParameters;
 
 @end
 
 
 @implementation JLRRouteRequest
 
-- (instancetype)initWithURL:(NSURL *)URL alwaysTreatsHostAsPathComponent:(BOOL)alwaysTreatsHostAsPathComponent
+- (instancetype)initWithURL:(NSURL *)URL options:(JLRRouteRequestOptions)options additionalParameters:(nullable NSDictionary *)additionalParameters
 {
     if ((self = [super init])) {
         self.URL = URL;
+        self.options = options;
+        self.additionalParameters = additionalParameters;
+        
+        BOOL treatsHostAsPathComponent = ((options & JLRRouteRequestOptionTreatHostAsPathComponent) == JLRRouteRequestOptionTreatHostAsPathComponent);
         
         NSURLComponents *components = [NSURLComponents componentsWithString:[self.URL absoluteString]];
         
-        if (components.host.length > 0 && (alwaysTreatsHostAsPathComponent || (![components.host isEqualToString:@"localhost"] && [components.host rangeOfString:@"."].location == NSNotFound))) {
+        if (components.host.length > 0 && (treatsHostAsPathComponent || (![components.host isEqualToString:@"localhost"] && [components.host rangeOfString:@"."].location == NSNotFound))) {
             // convert the host to "/" so that the host is considered a path component
             NSString *host = [components.percentEncodedHost copy];
             components.host = @"/";

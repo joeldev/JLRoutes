@@ -75,7 +75,7 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// Add a route by directly inserted the route definition. This may be a subclass of JLRRouteDefinition to provide customized routing logic.
 - (void)addRoute:(JLRRouteDefinition *)routeDefinition;
 
-/// Registers a routePattern with default priority (0) in the receiving scheme namespace.
+/// Registers a routePattern with default priority (0) in the receiving scheme.
 - (void)addRoute:(NSString *)routePattern handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock;
 
 /// Registers a routePattern in the global scheme namespace with a handlerBlock to call when the route pattern is matched by a URL.
@@ -83,23 +83,26 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// a block returns NO, JLRoutes will continue trying to find a matching route.
 - (void)addRoute:(NSString *)routePattern priority:(NSUInteger)priority handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock;
 
-/// Registers multiple routePatterns for one handler with default priority (0) in the receiving scheme namespace.
+/// Registers multiple routePatterns for one handler with default priority (0) in the receiving scheme.
 - (void)addRoutes:(NSArray<NSString *> *)routePatterns handler:(BOOL (^__nullable)(NSDictionary<NSString *, id> *parameters))handlerBlock;
 
-/// Removes a routePattern from the receiving scheme namespace.
-- (void)removeRoute:(NSString *)routePattern;
+/// Removes the route from the receiving scheme.
+- (void)removeRoute:(JLRRouteDefinition *)routeDefinition;
 
-/// Removes all routes from the receiving scheme namespace.
+/// Removes the first route matching routePattern from the receiving scheme.
+- (void)removeRouteWithPattern:(NSString *)routePattern;
+
+/// Removes all routes from the receiving scheme.
 - (void)removeAllRoutes;
 
 /// Registers a routePattern with default priority (0) using dictionary-style subscripting.
 - (void)setObject:(nullable id)handlerBlock forKeyedSubscript:(NSString *)routePatten;
 
-/// Return all registered routes in the receiving scheme namespace.
+/// Return all registered routes in the receiving scheme.
 /// @see allRoutes
 - (NSArray <JLRRouteDefinition *> *)routes;
 
-/// All registered routes, keyed by scheme
+/// Return all registered routes across all schemes, keyed by scheme
 /// @see routes
 + (NSDictionary <NSString *, NSArray <JLRRouteDefinition *> *> *)allRoutes;
 
@@ -160,31 +163,24 @@ extern NSString *const JLRoutesGlobalRoutesScheme;
 /// Returns if URL host is always considered to be a path component. Defaults to NO.
 + (BOOL)alwaysTreatsHostAsPathComponent;
 
+/// Configures the default class to use when creating route definitions. Defaults to JLRRouteDefinition.
++ (void)setDefaultRouteDefinitionClass:(Class)routeDefinitionClass;
+
+/// Returns the default class to use when creating route definitions. Defaults to JLRRouteDefinition.
++ (Class)defaultRouteDefinitionClass;
+
 @end
 
 
 
 #pragma mark - Deprecated
 
-/// Deprecated, use JLRoutePatternKey instead.
 extern NSString *const kJLRoutePatternKey               DEPRECATED_MSG_ATTRIBUTE("Use JLRoutePatternKey instead.");
-
-/// Deprecated, use JLRouteURLKey instead.
 extern NSString *const kJLRouteURLKey                   DEPRECATED_MSG_ATTRIBUTE("Use JLRouteURLKey instead.");
-
-/// Deprecated, use JLRouteSchemeKey instead.
 extern NSString *const kJLRouteSchemeKey                DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
-
-/// Deprecated, use JLRouteWildcardComponentsKey instead.
 extern NSString *const kJLRouteWildcardComponentsKey    DEPRECATED_MSG_ATTRIBUTE("Use JLRouteWildcardComponentsKey instead.");
-
-/// Deprecated, use JLRoutesGlobalRoutesScheme instead.
 extern NSString *const kJLRoutesGlobalRoutesScheme      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
-
-/// Deprecated, use JLRouteSchemeKey instead.
 extern NSString *const kJLRouteNamespaceKey             DEPRECATED_MSG_ATTRIBUTE("Use JLRouteSchemeKey instead.");
-
-/// Deprecated, use JLRoutesGlobalRoutesScheme instead.
 extern NSString *const kJLRoutesGlobalNamespaceKey      DEPRECATED_MSG_ATTRIBUTE("Use JLRoutesGlobalRoutesScheme instead.");
 
 

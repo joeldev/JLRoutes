@@ -17,18 +17,22 @@
 		5DA69C5D1DAB4C3A007C8E9C /* JLRParsingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C541DAB4C3A007C8E9C /* JLRParsingUtilities.h */; };
 		5DA69C5E1DAB4C3A007C8E9C /* JLRParsingUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C551DAB4C3A007C8E9C /* JLRParsingUtilities.m */; };
 		5DA69C5F1DAB4C3A007C8E9C /* JLRParsingUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C551DAB4C3A007C8E9C /* JLRParsingUtilities.m */; };
-		5DA69C601DAB4C3A007C8E9C /* JLRRouteDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C561DAB4C3A007C8E9C /* JLRRouteDefinition.h */; };
-		5DA69C611DAB4C3A007C8E9C /* JLRRouteDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C561DAB4C3A007C8E9C /* JLRRouteDefinition.h */; };
+		5DA69C601DAB4C3A007C8E9C /* JLRRouteDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C561DAB4C3A007C8E9C /* JLRRouteDefinition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5DA69C611DAB4C3A007C8E9C /* JLRRouteDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C561DAB4C3A007C8E9C /* JLRRouteDefinition.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5DA69C621DAB4C3A007C8E9C /* JLRRouteDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C571DAB4C3A007C8E9C /* JLRRouteDefinition.m */; };
 		5DA69C631DAB4C3A007C8E9C /* JLRRouteDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C571DAB4C3A007C8E9C /* JLRRouteDefinition.m */; };
-		5DA69C641DAB4C3A007C8E9C /* JLRRouteRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C581DAB4C3A007C8E9C /* JLRRouteRequest.h */; };
-		5DA69C651DAB4C3A007C8E9C /* JLRRouteRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C581DAB4C3A007C8E9C /* JLRRouteRequest.h */; };
+		5DA69C641DAB4C3A007C8E9C /* JLRRouteRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C581DAB4C3A007C8E9C /* JLRRouteRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5DA69C651DAB4C3A007C8E9C /* JLRRouteRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C581DAB4C3A007C8E9C /* JLRRouteRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5DA69C661DAB4C3A007C8E9C /* JLRRouteRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C591DAB4C3A007C8E9C /* JLRRouteRequest.m */; };
 		5DA69C671DAB4C3A007C8E9C /* JLRRouteRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C591DAB4C3A007C8E9C /* JLRRouteRequest.m */; };
-		5DA69C681DAB4C3A007C8E9C /* JLRRouteResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C5A1DAB4C3A007C8E9C /* JLRRouteResponse.h */; };
-		5DA69C691DAB4C3A007C8E9C /* JLRRouteResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C5A1DAB4C3A007C8E9C /* JLRRouteResponse.h */; };
+		5DA69C681DAB4C3A007C8E9C /* JLRRouteResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C5A1DAB4C3A007C8E9C /* JLRRouteResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5DA69C691DAB4C3A007C8E9C /* JLRRouteResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DA69C5A1DAB4C3A007C8E9C /* JLRRouteResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5DA69C6A1DAB4C3A007C8E9C /* JLRRouteResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C5B1DAB4C3A007C8E9C /* JLRRouteResponse.m */; };
 		5DA69C6B1DAB4C3A007C8E9C /* JLRRouteResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DA69C5B1DAB4C3A007C8E9C /* JLRRouteResponse.m */; };
+		5DE775661EA1B15200375C1D /* JLRRouteHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DE775641EA1B15200375C1D /* JLRRouteHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5DE775671EA1B15200375C1D /* JLRRouteHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DE775641EA1B15200375C1D /* JLRRouteHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5DE775681EA1B15200375C1D /* JLRRouteHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DE775651EA1B15200375C1D /* JLRRouteHandler.m */; };
+		5DE775691EA1B15200375C1D /* JLRRouteHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DE775651EA1B15200375C1D /* JLRRouteHandler.m */; };
 		D0C20A3017061066007746A6 /* JLRoutes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D33681A16C6DC9300F983AA /* JLRoutes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -61,6 +65,8 @@
 		5DA69C591DAB4C3A007C8E9C /* JLRRouteRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRRouteRequest.m; sourceTree = "<group>"; };
 		5DA69C5A1DAB4C3A007C8E9C /* JLRRouteResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLRRouteResponse.h; sourceTree = "<group>"; };
 		5DA69C5B1DAB4C3A007C8E9C /* JLRRouteResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRRouteResponse.m; sourceTree = "<group>"; };
+		5DE775641EA1B15200375C1D /* JLRRouteHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLRRouteHandler.h; sourceTree = "<group>"; };
+		5DE775651EA1B15200375C1D /* JLRRouteHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRRouteHandler.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -144,6 +150,8 @@
 			children = (
 				5DA69C561DAB4C3A007C8E9C /* JLRRouteDefinition.h */,
 				5DA69C571DAB4C3A007C8E9C /* JLRRouteDefinition.m */,
+				5DE775641EA1B15200375C1D /* JLRRouteHandler.h */,
+				5DE775651EA1B15200375C1D /* JLRRouteHandler.m */,
 				5DA69C581DAB4C3A007C8E9C /* JLRRouteRequest.h */,
 				5DA69C591DAB4C3A007C8E9C /* JLRRouteRequest.m */,
 				5DA69C5A1DAB4C3A007C8E9C /* JLRRouteResponse.h */,
@@ -163,6 +171,7 @@
 			files = (
 				5DA69C691DAB4C3A007C8E9C /* JLRRouteResponse.h in Headers */,
 				5DA69C5D1DAB4C3A007C8E9C /* JLRParsingUtilities.h in Headers */,
+				5DE775671EA1B15200375C1D /* JLRRouteHandler.h in Headers */,
 				5DA69C611DAB4C3A007C8E9C /* JLRRouteDefinition.h in Headers */,
 				5C5AD9B51B45C07300ED25A3 /* JLRoutes.h in Headers */,
 				5DA69C651DAB4C3A007C8E9C /* JLRRouteRequest.h in Headers */,
@@ -175,6 +184,7 @@
 			files = (
 				5DA69C681DAB4C3A007C8E9C /* JLRRouteResponse.h in Headers */,
 				5DA69C5C1DAB4C3A007C8E9C /* JLRParsingUtilities.h in Headers */,
+				5DE775661EA1B15200375C1D /* JLRRouteHandler.h in Headers */,
 				5DA69C601DAB4C3A007C8E9C /* JLRRouteDefinition.h in Headers */,
 				D0C20A3017061066007746A6 /* JLRoutes.h in Headers */,
 				5DA69C641DAB4C3A007C8E9C /* JLRRouteRequest.h in Headers */,
@@ -301,6 +311,7 @@
 				5C5AD9B61B45C07800ED25A3 /* JLRoutes.m in Sources */,
 				5DA69C5F1DAB4C3A007C8E9C /* JLRParsingUtilities.m in Sources */,
 				5DA69C631DAB4C3A007C8E9C /* JLRRouteDefinition.m in Sources */,
+				5DE775691EA1B15200375C1D /* JLRRouteHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -313,6 +324,7 @@
 				5D33681D16C6DC9300F983AA /* JLRoutes.m in Sources */,
 				5DA69C5E1DAB4C3A007C8E9C /* JLRParsingUtilities.m in Sources */,
 				5DA69C621DAB4C3A007C8E9C /* JLRRouteDefinition.m in Sources */,
+				5DE775681EA1B15200375C1D /* JLRRouteHandler.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

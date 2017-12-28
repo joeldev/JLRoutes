@@ -13,6 +13,7 @@
 #import <XCTest/XCTest.h>
 #import "JLRoutes.h"
 #import "JLRRouteDefinition.h"
+#import "JLRRouteHandler.h"
 
 
 #define JLValidateParameterCount(expectedCount)\
@@ -42,6 +43,17 @@ XCTAssertEqualObjects(self.lastMatch[JLRouteSchemeKey], scheme, @"Scheme did not
 
 
 #pragma mark -
+
+
+@interface JLRMockTargetObject : NSObject <JLRRouteHandlerTarget>
+
+@property (nonatomic, copy) NSDictionary *routeParams;
+
+@end
+
+
+@interface JLRMockRouteDefinition : JLRRouteDefinition
+@end
 
 
 @interface JLRoutesTests : XCTestCase
@@ -76,6 +88,7 @@ static JLRoutesTests *testsInstance = nil;
     // reset settings
     [JLRoutes setShouldDecodePlusSymbols:YES];
     [JLRoutes setAlwaysTreatsHostAsPathComponent:NO];
+    [JLRoutes setDefaultRouteDefinitionClass:[JLRRouteDefinition class]];
 }
 
 - (void)tearDown
@@ -138,7 +151,7 @@ static JLRoutesTests *testsInstance = nil;
     XCTAssertEqualObjects(schemeRoutes[1].pattern, @"/scheme2");
 }
 
-- (void)testBasicRouting
+- (void)testRouting
 {
     id defaultHandler = [[self class] defaultRouteHandler];
     
@@ -218,12 +231,6 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID": @"joeldev"});
     
-    [self route:@"tests://user/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil#userID=otherEvilPerson" withParameters:@{@"evilThing": @"notEvil"}];
-    JLValidateAnyRouteMatched();
-    JLValidateParameterCount(3);
-    JLValidateParameter(@{@"userID": @"joeldev"});
-    JLValidateParameter(@{@"evilThing": @"notEvil"});
-    
     [self route:@"tests://post/edit/123"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(3);
@@ -281,7 +288,21 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameter(@{@"moreOptionalParam": @"mightExistToo"});
 }
 
-- (void)testBasicFragmentRouting
+- (void)testRoutingWithParameters
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/foo/:routeParam" handler:defaultHandler];
+    
+    [self route:@"/foo/bar" withParameters:@{@"stringParam": @"stringValue", @"nonStringParam": @(123)}];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(3);
+    JLValidateParameter(@{@"routeParam": @"bar"});
+    JLValidateParameter(@{@"stringParam": @"stringValue"});
+    JLValidateParameter(@{@"nonStringParam": @(123)});
+}
+
+- (void)testFragmentRouting
 {
     id defaultHandler = [[self class] defaultRouteHandler];
     
@@ -322,19 +343,17 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameterCount(1);
     JLValidateParameter(@{@"userID": @"joeldev"});
     
-    [self route:@"tests://user#/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil" withParameters:@{@"evilThing": @"notEvil"}];
+    [self route:@"tests://user#/view/joeldev?userID=evilPerson&search=evilSearch&evilThing=evil"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(3);
     JLValidateParameter(@{@"userID": @"joeldev"});
     JLValidateParameter(@{@"search": @"evilSearch"});
-    JLValidateParameter(@{@"evilThing": @"notEvil"});
     
-    [self route:@"tests://user?search=niceSearch&go=home#/view/joeldev?userID=evilPerson&&evilThing=evil" withParameters:@{@"evilThing": @"notEvil"}];
+    [self route:@"tests://user?search=niceSearch&go=home#/view/joeldev?userID=evilPerson&&evilThing=evil"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(4);
     JLValidateParameter(@{@"userID": @"joeldev"});
     JLValidateParameter(@{@"go": @"home"});
-    JLValidateParameter(@{@"evilThing": @"notEvil"});
     
     [self route:@"tests://post#/edit/123"];
     JLValidateAnyRouteMatched();
@@ -388,7 +407,7 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameter(@{@"moreOptionalParam": @"mightExistToo"});
 }
 
-- (void)testMultiple
+- (void)testMultipleRoutePatterns
 {
     [[JLRoutes globalRoutes] addRoutes:@[@"/multiple1", @"/multiple2"] handler:[[self class] defaultRouteHandler]];
     
@@ -445,7 +464,7 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateAnyRouteMatched();
 }
 
-- (void)testNamespaces
+- (void)testSchemes
 {
     id defaultHandler = [[self class] defaultRouteHandler];
     
@@ -503,10 +522,7 @@ static JLRoutesTests *testsInstance = nil;
 
 - (void)testSubscripting
 {
-    JLRoutes.globalRoutes[@"/subscripting"] = ^BOOL(NSDictionary *parameters) {
-        testsInstance.lastMatch = parameters;
-        return YES;
-    };
+    JLRoutes.globalRoutes[@"/subscripting"] = [[self class] defaultRouteHandler];
     
     NSURL *shouldHaveRouteURL = [NSURL URLWithString:@"subscripting"];
     
@@ -532,7 +548,7 @@ static JLRoutesTests *testsInstance = nil;
     [self route:@"namespaceTest3://test1"];
     JLValidateAnyRouteMatched();
     
-    [[JLRoutes routesForScheme:@"namespaceTest3"] removeRoute:@"test1"];
+    [[JLRoutes routesForScheme:@"namespaceTest3"] removeRouteWithPattern:@"/test1"];
     [self route:@"namespaceTest3://test1"];
     JLValidateNoLastMatch();
     
@@ -819,13 +835,30 @@ static JLRoutesTests *testsInstance = nil;
 {
     id defaultHandler = [[self class] defaultRouteHandler];
     
-    JLRRouteDefinition *customRoute = [[JLRRouteDefinition alloc] initWithScheme:JLRoutesGlobalRoutesScheme pattern:@"/test" priority:0 handlerBlock:defaultHandler];
+    JLRMockRouteDefinition *customRoute = [[JLRMockRouteDefinition alloc] initWithPattern:@"/test" priority:0 handlerBlock:defaultHandler];
     [[JLRoutes globalRoutes] addRoute:customRoute];
     
     [self route:@"tests://test"];
     
     JLValidateAnyRouteMatched();
     JLValidateScheme(JLRoutesGlobalRoutesScheme);
+    
+    [[JLRoutes globalRoutes] removeRoute:customRoute];
+    
+    [self route:@"tests://test"];
+    
+    JLValidateNoLastMatch();
+}
+
+- (void)testChangeDefaultRouteDefinitionClass
+{
+    [JLRoutes setDefaultRouteDefinitionClass:[JLRMockRouteDefinition class]];
+    
+    id defaultHandler = [[self class] defaultRouteHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/foo" handler:defaultHandler];
+    
+    JLRRouteDefinition *route = [JLRoutes globalRoutes].routes.firstObject;
+    XCTAssert([route isKindOfClass:[JLRMockRouteDefinition class]]);
 }
 
 - (void)testTreatsHostAsPathComponent
@@ -867,6 +900,58 @@ static JLRoutesTests *testsInstance = nil;
     JLValidateParameter((@{@"pathid": @"3"}));
 }
 
+- (void)testRouteDefinitionEquality
+{
+    id defaultHandler = [[self class] defaultRouteHandler];
+    
+    JLRRouteDefinition *routeA = [[JLRRouteDefinition alloc] initWithPattern:@"/foo" priority:0 handlerBlock:defaultHandler];
+    JLRRouteDefinition *routeB = [routeA copy];
+    
+    XCTAssertTrue([routeA isEqual:routeB]);
+    
+    [routeB didBecomeRegisteredForScheme:@"scheme"];
+    
+    XCTAssertFalse([routeA isEqual:routeB]);
+    
+    JLRRouteDefinition *routeC = [[JLRRouteDefinition alloc] initWithPattern:@"/foo/bar" priority:0 handlerBlock:defaultHandler];
+    
+    XCTAssertFalse([routeA isEqual:routeC]);
+}
+
+- (void)testHandlerBlockForWeakTarget
+{
+    JLRMockTargetObject *object = [[JLRMockTargetObject alloc] init];
+    id handlerBlock = [JLRRouteHandler handlerBlockForWeakTarget:object];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/test" handler:handlerBlock];
+    
+    [self route:@"/test"];
+    JLValidateAnyRouteMatched();
+    XCTAssertEqualObjects(testsInstance.lastMatch, object.routeParams);
+    
+    object = nil; // ensure that the object is not retained by handler block
+    
+    [self route:@"/test"];
+    JLValidateNoLastMatch();
+}
+
+- (void)testHandlerBlockForTargetClass
+{
+    __block JLRMockTargetObject *createdObject = nil;
+    id handlerBlock = [JLRRouteHandler handlerBlockForTargetClass:[JLRMockTargetObject class] completion:^BOOL (id<JLRRouteHandlerTarget> object) {
+        createdObject = (JLRMockTargetObject *)object;
+        return YES;
+    }];
+    
+    [[JLRoutes globalRoutes] addRoute:@"/test" handler:handlerBlock];
+    
+    [self route:@"/test"];
+    JLValidateAnyRouteMatched();
+    XCTAssertEqualObjects(testsInstance.lastMatch, createdObject.routeParams);
+    
+    XCTAssertNotNil(createdObject);
+}
+
 #pragma mark - Convenience Methods
 
 + (BOOL (^)(NSDictionary *))defaultRouteHandler
@@ -895,3 +980,29 @@ static JLRoutesTests *testsInstance = nil;
 }
 
 @end
+
+
+@implementation JLRMockTargetObject
+
+- (instancetype)initWithRouteParameters:(NSDictionary<NSString *,id> *)parameters
+{
+    self = [super init];
+    self.routeParams = parameters;
+    testsInstance.lastMatch = parameters;
+    return self;
+}
+
+- (BOOL)handleRouteWithParameters:(NSDictionary<NSString *, id> *)parameters
+{
+    self.routeParams = parameters;
+    testsInstance.lastMatch = parameters;
+    return YES;
+}
+
+@end
+
+
+@implementation JLRMockRouteDefinition
+
+@end
+

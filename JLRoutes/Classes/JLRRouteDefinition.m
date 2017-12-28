@@ -20,19 +20,19 @@
 @property (nonatomic, copy) NSString *pattern;
 @property (nonatomic, copy) NSString *scheme;
 @property (nonatomic, assign) NSUInteger priority;
+@property (nonatomic, copy) NSArray *patternPathComponents;
 @property (nonatomic, copy) BOOL (^handlerBlock)(NSDictionary *parameters);
-
-@property (nonatomic, strong) NSArray *patternComponents;
 
 @end
 
 
 @implementation JLRRouteDefinition
 
-- (instancetype)initWithScheme:(NSString *)scheme pattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock
+- (instancetype)initWithPattern:(NSString *)pattern priority:(NSUInteger)priority handlerBlock:(BOOL (^)(NSDictionary *parameters))handlerBlock
 {
+    NSParameterAssert(pattern != nil);
+    
     if ((self = [super init])) {
-        self.scheme = scheme;
         self.pattern = pattern;
         self.priority = priority;
         self.handlerBlock = handlerBlock;
@@ -41,7 +41,7 @@
             pattern = [pattern substringFromIndex:1];
         }
         
-        self.patternComponents = [pattern componentsSeparatedByString:@"/"];
+        self.patternPathComponents = [pattern componentsSeparatedByString:@"/"];
     }
     return self;
 }
@@ -51,21 +51,93 @@
     return [NSString stringWithFormat:@"<%@ %p> - %@ (priority: %@)", NSStringFromClass([self class]), self, self.pattern, @(self.priority)];
 }
 
-- (JLRRouteResponse *)routeResponseForRequest:(JLRRouteRequest *)request decodePlusSymbols:(BOOL)decodePlusSymbols
+- (BOOL)isEqual:(id)object
 {
-    BOOL patternContainsWildcard = [self.patternComponents containsObject:@"*"];
+    if (object == self) {
+        return YES;
+    }
     
-    if (request.pathComponents.count != self.patternComponents.count && !patternContainsWildcard) {
+    if ([object isKindOfClass:[JLRRouteDefinition class]]) {
+        return [self isEqualToRouteDefinition:(JLRRouteDefinition *)object];
+    } else {
+        return [super isEqual:object];
+    }
+}
+
+- (BOOL)isEqualToRouteDefinition:(JLRRouteDefinition *)routeDefinition
+{
+    if (!((self.pattern == nil && routeDefinition.pattern == nil) || [self.pattern isEqualToString:routeDefinition.pattern])) {
+        return NO;
+    }
+    
+    if (!((self.scheme == nil && routeDefinition.scheme == nil) || [self.scheme isEqualToString:routeDefinition.scheme])) {
+        return NO;
+    }
+    
+    if (!((self.patternPathComponents == nil && routeDefinition.patternPathComponents == nil) || [self.patternPathComponents isEqualToArray:routeDefinition.patternPathComponents])) {
+        return NO;
+    }
+    
+    if (self.priority != routeDefinition.priority) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (NSUInteger)hash
+{
+    return self.pattern.hash ^ @(self.priority).hash ^ self.scheme.hash ^ self.patternPathComponents.hash;
+}
+
+#pragma mark - Main API
+
+- (JLRRouteResponse *)routeResponseForRequest:(JLRRouteRequest *)request
+{
+    BOOL patternContainsWildcard = [self.patternPathComponents containsObject:@"*"];
+    
+    if (request.pathComponents.count != self.patternPathComponents.count && !patternContainsWildcard) {
         // definitely not a match, nothing left to do
         return [JLRRouteResponse invalidMatchResponse];
     }
     
-    JLRRouteResponse *response = [JLRRouteResponse invalidMatchResponse];
-    NSMutableDictionary *routeParams = [NSMutableDictionary dictionary];
+    NSDictionary *routeVariables = [self routeVariablesForRequest:request];
+    
+    if (routeVariables != nil) {
+        // It's a match, set up the param dictionary and create a valid match response
+        NSDictionary *matchParams = [self matchParametersForRequest:request routeVariables:routeVariables];
+        return [JLRRouteResponse validMatchResponseWithParameters:matchParams];
+    } else {
+        // nil variables indicates no match, so return an invalid match response
+        return [JLRRouteResponse invalidMatchResponse];
+    }
+}
+
+- (BOOL)callHandlerBlockWithParameters:(NSDictionary *)parameters
+{
+    if (self.handlerBlock == nil) {
+        return YES;
+    }
+    
+    return self.handlerBlock(parameters);
+}
+
+- (void)didBecomeRegisteredForScheme:(NSString *)scheme
+{
+    NSAssert(self.scheme == nil, @"Route definitions should not be added to multiple schemes.");
+    self.scheme = scheme;
+}
+
+#pragma mark - Parsing Route Variables
+
+- (NSDictionary <NSString *, NSString *> *)routeVariablesForRequest:(JLRRouteRequest *)request
+{
+    NSMutableDictionary *routeVariables = [NSMutableDictionary dictionary];
+    
     BOOL isMatch = YES;
     NSUInteger index = 0;
     
-    for (NSString *patternComponent in self.patternComponents) {
+    for (NSString *patternComponent in self.patternPathComponents) {
         NSString *URLComponent = nil;
         BOOL isPatternComponentWildcard = [patternComponent isEqualToString:@"*"];
         
@@ -80,15 +152,20 @@
         if ([patternComponent hasPrefix:@":"]) {
             // this is a variable, set it in the params
             NSAssert(URLComponent != nil, @"URLComponent cannot be nil");
-            NSString *variableName = [self variableNameForValue:patternComponent];
-            NSString *variableValue = [self variableValueForValue:(NSString *)URLComponent decodePlusSymbols:decodePlusSymbols];
-            routeParams[variableName] = variableValue;
+            NSString *variableName = [self routeVariableNameForValue:patternComponent];
+            NSString *variableValue = [self routeVariableValueForValue:URLComponent];
+            
+            // Consult the parsing utilities as well to do any other standard variable transformations
+            BOOL decodePlusSymbols = ((request.options & JLRRouteRequestOptionDecodePlusSymbols) == JLRRouteRequestOptionDecodePlusSymbols);
+            variableValue = [JLRParsingUtilities variableValueFrom:variableValue decodePlusSymbols:decodePlusSymbols];
+            
+            routeVariables[variableName] = variableValue;
         } else if (isPatternComponentWildcard) {
             // match wildcards
             NSUInteger minRequiredParams = index;
             if (request.pathComponents.count >= minRequiredParams) {
                 // match: /a/b/c/* has to be matched by at least /a/b/c
-                routeParams[JLRouteWildcardComponentsKey] = [request.pathComponents subarrayWithRange:NSMakeRange(index, request.pathComponents.count - index)];
+                routeVariables[JLRouteWildcardComponentsKey] = [request.pathComponents subarrayWithRange:NSMakeRange(index, request.pathComponents.count - index)];
                 isMatch = YES;
             } else {
                 // not a match: /a/b/c/* cannot be matched by URL /a/b/
@@ -103,21 +180,17 @@
         index++;
     }
     
-    if (isMatch) {
-        // if it's a match, set up the param dictionary and create a valid match response
-        NSMutableDictionary *params = [NSMutableDictionary dictionary];
-        [params addEntriesFromDictionary:[JLRParsingUtilities queryParams:request.queryParams decodePlusSymbols:decodePlusSymbols]];
-        [params addEntriesFromDictionary:routeParams];
-        [params addEntriesFromDictionary:[self baseMatchParametersForRequest:request]];
-        response = [JLRRouteResponse validMatchResponseWithParameters:[params copy]];
+    if (!isMatch) {
+        // Return nil to indicate that there was not a match
+        routeVariables = nil;
     }
     
-    return response;
+    return [routeVariables copy];
 }
 
-- (NSString *)variableNameForValue:(NSString *)value
+- (NSString *)routeVariableNameForValue:(NSString *)value
 {
-    NSString *name = [value substringFromIndex:1];
+    NSString *name = value;
     
     if (name.length > 1 && [name characterAtIndex:0] == ':') {
         // Strip off the ':' in front of param names
@@ -132,8 +205,9 @@
     return name;
 }
 
-- (NSString *)variableValueForValue:(NSString *)value decodePlusSymbols:(BOOL)decodePlusSymbols
+- (NSString *)routeVariableValueForValue:(NSString *)value
 {
+    // Remove percent encoding
     NSString *var = [value stringByRemovingPercentEncoding];
     
     if (var.length > 1 && [var characterAtIndex:var.length - 1] == '#') {
@@ -141,23 +215,45 @@
         var = [var substringToIndex:var.length - 1];
     }
     
-    var = [JLRParsingUtilities variableValueFrom:var decodePlusSymbols:decodePlusSymbols];
-    
     return var;
 }
 
-- (NSDictionary *)baseMatchParametersForRequest:(JLRRouteRequest *)request
+#pragma mark - Creating Match Parameters
+
+- (NSDictionary *)matchParametersForRequest:(JLRRouteRequest *)request routeVariables:(NSDictionary <NSString *, NSString *> *)routeVariables
+{
+    NSMutableDictionary *matchParams = [NSMutableDictionary dictionary];
+    
+    // Add the parsed query parameters ('?a=b&c=d'). Also includes fragment.
+    BOOL decodePlusSymbols = ((request.options & JLRRouteRequestOptionDecodePlusSymbols) == JLRRouteRequestOptionDecodePlusSymbols);
+    [matchParams addEntriesFromDictionary:[JLRParsingUtilities queryParams:request.queryParams decodePlusSymbols:decodePlusSymbols]];
+    
+    // Add the actual parsed route variables (the items in the route prefixed with ':').
+    [matchParams addEntriesFromDictionary:routeVariables];
+    
+    // Add the additional parameters, if any were specified in the request.
+    if (request.additionalParameters != nil) {
+        [matchParams addEntriesFromDictionary:request.additionalParameters];
+    }
+    
+    // Finally, add the base parameters. This is done last so that these cannot be overriden by using the same key in your route or query.
+    [matchParams addEntriesFromDictionary:[self defaultMatchParametersForRequest:request]];
+    
+    return [matchParams copy];
+}
+
+- (NSDictionary *)defaultMatchParametersForRequest:(JLRRouteRequest *)request
 {
     return @{JLRoutePatternKey: self.pattern ?: [NSNull null], JLRouteURLKey: request.URL ?: [NSNull null], JLRouteSchemeKey: self.scheme ?: [NSNull null]};
 }
 
-- (BOOL)callHandlerBlockWithParameters:(NSDictionary *)parameters
+#pragma mark - NSCopying
+
+- (id)copyWithZone:(NSZone *)zone
 {
-    if (self.handlerBlock == nil) {
-        return YES;
-    }
-    
-    return self.handlerBlock(parameters);
+    JLRRouteDefinition *copy = [[[self class] alloc] initWithPattern:self.pattern priority:self.priority handlerBlock:self.handlerBlock];
+    copy.scheme = self.scheme;
+    return copy;
 }
 
 @end

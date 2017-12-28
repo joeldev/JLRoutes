@@ -15,6 +15,19 @@
 NS_ASSUME_NONNULL_BEGIN
 
 
+/// Options bitmask generated from JLRoutes global options methods.
+typedef NS_OPTIONS(NSUInteger, JLRRouteRequestOptions) {
+    /// No options specified.
+    JLRRouteRequestOptionsNone = 0,
+    
+    /// If present, decoding plus symbols is enabled.
+    JLRRouteRequestOptionDecodePlusSymbols = 1 << 0,
+    
+    /// If present, treating URL hosts as path components is enabled.
+    JLRRouteRequestOptionTreatHostAsPathComponent = 1 << 1
+};
+
+
 /**
  JLRRouteRequest is a model representing a request to route a URL.
  It gets parsed into path components and query parameters, which are then used by JLRRouteDefinition to attempt a match.
@@ -23,13 +36,19 @@ NS_ASSUME_NONNULL_BEGIN
 @interface JLRRouteRequest : NSObject
 
 /// The URL being routed.
-@property (nonatomic, strong, readonly) NSURL *URL;
+@property (nonatomic, copy, readonly) NSURL *URL;
 
 /// The URL's path components.
 @property (nonatomic, strong, readonly) NSArray *pathComponents;
 
 /// The URL's query parameters.
 @property (nonatomic, strong, readonly) NSDictionary *queryParams;
+
+/// Route request options, generally configured from the framework global options.
+@property (nonatomic, assign, readonly) JLRRouteRequestOptions options;
+
+/// Additional parameters to pass through as part of the match parameters dictionary.
+@property (nonatomic, copy, nullable, readonly) NSDictionary *additionalParameters;
 
 
 ///-------------------------------
@@ -41,16 +60,17 @@ NS_ASSUME_NONNULL_BEGIN
  Creates a new route request.
  
  @param URL The URL to route.
- @param alwaysTreatsHostAsPathComponent The global option for if to treat the URL host as a path component or not.
+ @param options Options bitmask specifying parsing behavior.
+ @param additionalParameters Additional parameters to include in any match dictionary created against this request.
  
  @returns The newly initialized route request.
  */
-- (instancetype)initWithURL:(NSURL *)URL alwaysTreatsHostAsPathComponent:(BOOL)alwaysTreatsHostAsPathComponent NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithURL:(NSURL *)URL options:(JLRRouteRequestOptions)options additionalParameters:(nullable NSDictionary *)additionalParameters NS_DESIGNATED_INITIALIZER;
 
-/// Unavailable, use initWithURL:alwaysTreatsHostAsPathComponent: instead.
+/// Unavailable, use initWithURL:options:additionalParameters: instead.
 - (instancetype)init NS_UNAVAILABLE;
 
-/// Unavailable, use initWithURL:alwaysTreatsHostAsPathComponent: instead.
+/// Unavailable, use initWithURL:options:additionalParameters: instead.
 + (instancetype)new NS_UNAVAILABLE;
 
 @end
