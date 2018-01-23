@@ -12,11 +12,12 @@
 
 #import <Foundation/Foundation.h>
 
+#import "JLRRouteDefinition.h"
+#import "JLRRouteHandler.h"
+#import "JLRRouteRequest.h"
+#import "JLRRouteResponse.h"
+
 NS_ASSUME_NONNULL_BEGIN
-
-
-@class JLRRouteDefinition;
-
 
 /// The matching route pattern, passed in the handler parameters.
 extern NSString *const JLRoutePatternKey;
