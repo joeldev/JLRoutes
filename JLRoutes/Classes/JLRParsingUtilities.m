@@ -123,7 +123,7 @@
      /path/:thing/a/b/c
      /path/:thing/a/b
      /path/:thing/a/c
-     /path/:thing/b/a
+     /path/:thing/b/c
      /path/:thing/a
      /path/:thing/b
      /path/:thing/c
