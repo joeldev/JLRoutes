@@ -33,6 +33,18 @@
 		5DE775671EA1B15200375C1D /* JLRRouteHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = 5DE775641EA1B15200375C1D /* JLRRouteHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5DE775681EA1B15200375C1D /* JLRRouteHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DE775651EA1B15200375C1D /* JLRRouteHandler.m */; };
 		5DE775691EA1B15200375C1D /* JLRRouteHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = 5DE775651EA1B15200375C1D /* JLRRouteHandler.m */; };
+		CD4A9D9F21072CDC0071D6EE /* JLRRouteDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4A9D9521072CDC0071D6EE /* JLRRouteDefinition.m */; };
+		CD4A9DA021072CDC0071D6EE /* JLRRouteRequest.h in Headers */ = {isa = PBXBuildFile; fileRef = CD4A9D9621072CDC0071D6EE /* JLRRouteRequest.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD4A9DA121072CDC0071D6EE /* JLRRouteResponse.h in Headers */ = {isa = PBXBuildFile; fileRef = CD4A9D9721072CDC0071D6EE /* JLRRouteResponse.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD4A9DA221072CDC0071D6EE /* JLRRouteHandler.h in Headers */ = {isa = PBXBuildFile; fileRef = CD4A9D9821072CDC0071D6EE /* JLRRouteHandler.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD4A9DA321072CDC0071D6EE /* JLRParsingUtilities.h in Headers */ = {isa = PBXBuildFile; fileRef = CD4A9D9921072CDC0071D6EE /* JLRParsingUtilities.h */; };
+		CD4A9DA421072CDC0071D6EE /* JLRRouteDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = CD4A9D9A21072CDC0071D6EE /* JLRRouteDefinition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		CD4A9DA521072CDC0071D6EE /* JLRRouteRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4A9D9B21072CDC0071D6EE /* JLRRouteRequest.m */; };
+		CD4A9DA621072CDC0071D6EE /* JLRRouteHandler.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4A9D9C21072CDC0071D6EE /* JLRRouteHandler.m */; };
+		CD4A9DA721072CDC0071D6EE /* JLRRouteResponse.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4A9D9D21072CDC0071D6EE /* JLRRouteResponse.m */; };
+		CD4A9DA821072CDC0071D6EE /* JLRParsingUtilities.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4A9D9E21072CDC0071D6EE /* JLRParsingUtilities.m */; };
+		CD4A9DAB21072CE40071D6EE /* JLRoutes.m in Sources */ = {isa = PBXBuildFile; fileRef = CD4A9DA921072CE30071D6EE /* JLRoutes.m */; };
+		CD4A9DAC21072CE40071D6EE /* JLRoutes.h in Headers */ = {isa = PBXBuildFile; fileRef = CD4A9DAA21072CE40071D6EE /* JLRoutes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		D0C20A3017061066007746A6 /* JLRoutes.h in Headers */ = {isa = PBXBuildFile; fileRef = 5D33681A16C6DC9300F983AA /* JLRoutes.h */; settings = {ATTRIBUTES = (Public, ); }; };
 /* End PBXBuildFile section */
 
@@ -67,6 +79,20 @@
 		5DA69C5B1DAB4C3A007C8E9C /* JLRRouteResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRRouteResponse.m; sourceTree = "<group>"; };
 		5DE775641EA1B15200375C1D /* JLRRouteHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLRRouteHandler.h; sourceTree = "<group>"; };
 		5DE775651EA1B15200375C1D /* JLRRouteHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRRouteHandler.m; sourceTree = "<group>"; };
+		CD4A9D8C21072CA50071D6EE /* JLRoutes.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = JLRoutes.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		CD4A9D8F21072CA50071D6EE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CD4A9D9521072CDC0071D6EE /* JLRRouteDefinition.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRRouteDefinition.m; sourceTree = "<group>"; };
+		CD4A9D9621072CDC0071D6EE /* JLRRouteRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLRRouteRequest.h; sourceTree = "<group>"; };
+		CD4A9D9721072CDC0071D6EE /* JLRRouteResponse.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLRRouteResponse.h; sourceTree = "<group>"; };
+		CD4A9D9821072CDC0071D6EE /* JLRRouteHandler.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLRRouteHandler.h; sourceTree = "<group>"; };
+		CD4A9D9921072CDC0071D6EE /* JLRParsingUtilities.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLRParsingUtilities.h; sourceTree = "<group>"; };
+		CD4A9D9A21072CDC0071D6EE /* JLRRouteDefinition.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JLRRouteDefinition.h; sourceTree = "<group>"; };
+		CD4A9D9B21072CDC0071D6EE /* JLRRouteRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRRouteRequest.m; sourceTree = "<group>"; };
+		CD4A9D9C21072CDC0071D6EE /* JLRRouteHandler.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRRouteHandler.m; sourceTree = "<group>"; };
+		CD4A9D9D21072CDC0071D6EE /* JLRRouteResponse.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRRouteResponse.m; sourceTree = "<group>"; };
+		CD4A9D9E21072CDC0071D6EE /* JLRParsingUtilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JLRParsingUtilities.m; sourceTree = "<group>"; };
+		CD4A9DA921072CE30071D6EE /* JLRoutes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = JLRoutes.m; path = JLRoutes/JLRoutes.m; sourceTree = SOURCE_ROOT; };
+		CD4A9DAA21072CE40071D6EE /* JLRoutes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = JLRoutes.h; path = JLRoutes/JLRoutes.h; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -93,6 +119,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		CD4A9D8821072CA50071D6EE /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -101,6 +134,7 @@
 			children = (
 				5D33681716C6DC9300F983AA /* JLRoutes */,
 				5D3CB0701C73DA2700870B55 /* JLRoutesTests */,
+				CD4A9D8D21072CA50071D6EE /* JLRoutes-macOS */,
 				5D33681416C6DC9300F983AA /* Frameworks */,
 				5D33681316C6DC9300F983AA /* Products */,
 			);
@@ -112,6 +146,7 @@
 				5D33681216C6DC9300F983AA /* libJLRoutes.a */,
 				5CB4EB491B45BF5B0058E91A /* JLRoutes.framework */,
 				5D3CB06F1C73DA2700870B55 /* JLRoutesTests.xctest */,
+				CD4A9D8C21072CA50071D6EE /* JLRoutes.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -162,6 +197,35 @@
 			path = Classes;
 			sourceTree = "<group>";
 		};
+		CD4A9D8D21072CA50071D6EE /* JLRoutes-macOS */ = {
+			isa = PBXGroup;
+			children = (
+				CD4A9DAA21072CE40071D6EE /* JLRoutes.h */,
+				CD4A9DA921072CE30071D6EE /* JLRoutes.m */,
+				CD4A9D9421072CDC0071D6EE /* Classes */,
+				CD4A9D8F21072CA50071D6EE /* Info.plist */,
+			);
+			path = "JLRoutes-macOS";
+			sourceTree = "<group>";
+		};
+		CD4A9D9421072CDC0071D6EE /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				CD4A9D9521072CDC0071D6EE /* JLRRouteDefinition.m */,
+				CD4A9D9621072CDC0071D6EE /* JLRRouteRequest.h */,
+				CD4A9D9721072CDC0071D6EE /* JLRRouteResponse.h */,
+				CD4A9D9821072CDC0071D6EE /* JLRRouteHandler.h */,
+				CD4A9D9921072CDC0071D6EE /* JLRParsingUtilities.h */,
+				CD4A9D9A21072CDC0071D6EE /* JLRRouteDefinition.h */,
+				CD4A9D9B21072CDC0071D6EE /* JLRRouteRequest.m */,
+				CD4A9D9C21072CDC0071D6EE /* JLRRouteHandler.m */,
+				CD4A9D9D21072CDC0071D6EE /* JLRRouteResponse.m */,
+				CD4A9D9E21072CDC0071D6EE /* JLRParsingUtilities.m */,
+			);
+			name = Classes;
+			path = JLRoutes/Classes;
+			sourceTree = SOURCE_ROOT;
+		};
 /* End PBXGroup section */
 
 /* Begin PBXHeadersBuildPhase section */
@@ -175,6 +239,19 @@
 				5DA69C611DAB4C3A007C8E9C /* JLRRouteDefinition.h in Headers */,
 				5C5AD9B51B45C07300ED25A3 /* JLRoutes.h in Headers */,
 				5DA69C651DAB4C3A007C8E9C /* JLRRouteRequest.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD4A9D8921072CA50071D6EE /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD4A9DA221072CDC0071D6EE /* JLRRouteHandler.h in Headers */,
+				CD4A9DA121072CDC0071D6EE /* JLRRouteResponse.h in Headers */,
+				CD4A9DAC21072CE40071D6EE /* JLRoutes.h in Headers */,
+				CD4A9DA021072CDC0071D6EE /* JLRRouteRequest.h in Headers */,
+				CD4A9DA421072CDC0071D6EE /* JLRRouteDefinition.h in Headers */,
+				CD4A9DA321072CDC0071D6EE /* JLRParsingUtilities.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -247,6 +324,24 @@
 			productReference = 5D3CB06F1C73DA2700870B55 /* JLRoutesTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
+		CD4A9D8B21072CA50071D6EE /* JLRoutes-macOS */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = CD4A9D9321072CA50071D6EE /* Build configuration list for PBXNativeTarget "JLRoutes-macOS" */;
+			buildPhases = (
+				CD4A9D8721072CA50071D6EE /* Sources */,
+				CD4A9D8821072CA50071D6EE /* Frameworks */,
+				CD4A9D8921072CA50071D6EE /* Headers */,
+				CD4A9D8A21072CA50071D6EE /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "JLRoutes-macOS";
+			productName = "JLRoutes-macOS";
+			productReference = CD4A9D8C21072CA50071D6EE /* JLRoutes.framework */;
+			productType = "com.apple.product-type.framework";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -262,6 +357,10 @@
 					};
 					5D3CB06E1C73DA2700870B55 = {
 						CreatedOnToolsVersion = 7.3;
+					};
+					CD4A9D8B21072CA50071D6EE = {
+						CreatedOnToolsVersion = 9.4.1;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -280,6 +379,7 @@
 				5D33681116C6DC9300F983AA /* JLRoutes */,
 				5CB4EB481B45BF5B0058E91A /* JLRoutes-iOS */,
 				5D3CB06E1C73DA2700870B55 /* JLRoutesTests */,
+				CD4A9D8B21072CA50071D6EE /* JLRoutes-macOS */,
 			);
 		};
 /* End PBXProject section */
@@ -293,6 +393,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		5D3CB06D1C73DA2700870B55 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD4A9D8A21072CA50071D6EE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -333,6 +440,19 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D3CB0721C73DA2700870B55 /* JLRoutesTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CD4A9D8721072CA50071D6EE /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				CD4A9DA521072CDC0071D6EE /* JLRRouteRequest.m in Sources */,
+				CD4A9D9F21072CDC0071D6EE /* JLRRouteDefinition.m in Sources */,
+				CD4A9DA621072CDC0071D6EE /* JLRRouteHandler.m in Sources */,
+				CD4A9DAB21072CE40071D6EE /* JLRoutes.m in Sources */,
+				CD4A9DA721072CDC0071D6EE /* JLRRouteResponse.m in Sources */,
+				CD4A9DA821072CDC0071D6EE /* JLRParsingUtilities.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -611,6 +731,88 @@
 			};
 			name = Release;
 		};
+		CD4A9D9121072CA50071D6EE /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "JLRoutes-macOS/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.something.JLRoutes-macOS";
+				PRODUCT_NAME = JLRoutes;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		CD4A9D9221072CA50071D6EE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CODE_SIGN_IDENTITY = "-";
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_NS_ASSERTIONS = NO;
+				FRAMEWORK_VERSION = A;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				INFOPLIST_FILE = "JLRoutes-macOS/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.13;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.something.JLRoutes-macOS";
+				PRODUCT_NAME = JLRoutes;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -646,6 +848,15 @@
 			buildConfigurations = (
 				5D3CB0781C73DA2700870B55 /* Debug */,
 				5D3CB0791C73DA2700870B55 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		CD4A9D9321072CA50071D6EE /* Build configuration list for PBXNativeTarget "JLRoutes-macOS" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				CD4A9D9121072CA50071D6EE /* Debug */,
+				CD4A9D9221072CA50071D6EE /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
