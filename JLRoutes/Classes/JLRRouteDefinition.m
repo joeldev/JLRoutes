@@ -37,7 +37,7 @@
         self.priority = priority;
         self.handlerBlock = handlerBlock;
         
-        if ([pattern characterAtIndex:0] == '/') {
+        if ([pattern length] > 0 && [pattern characterAtIndex:0] == '/') {
             pattern = [pattern substringFromIndex:1];
         }
         
