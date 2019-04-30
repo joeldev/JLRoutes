@@ -40,6 +40,10 @@
         if ([pattern characterAtIndex:0] == '/') {
             pattern = [pattern substringFromIndex:1];
         }
+     
+        if (pattern.length > 0 && [pattern characterAtIndex:pattern.length - 1] == '/') {
+            pattern = [pattern substringToIndex:pattern.length - 1];
+        }
         
         self.patternPathComponents = [pattern componentsSeparatedByString:@"/"];
     }
