@@ -156,6 +156,7 @@ static JLRoutesTests *testsInstance = nil;
     id defaultHandler = [[self class] defaultRouteHandler];
     
     [[JLRoutes globalRoutes] addRoute:@"/test" handler:defaultHandler];
+    [[JLRoutes globalRoutes] addRoute:@"/test/slash/" handler:defaultHandler];
     [[JLRoutes globalRoutes] addRoute:@"/user/view/:userID" handler:defaultHandler];
     [[JLRoutes globalRoutes] addRoute:@"/:object/:action/:primaryKey" handler:defaultHandler];
     [[JLRoutes globalRoutes] addRoute:@"/" handler:defaultHandler];
@@ -191,7 +192,11 @@ static JLRoutesTests *testsInstance = nil;
     [self route:@"tests://test"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(0);
-    
+
+    [self route:@"tests://test/slash/"];
+    JLValidateAnyRouteMatched();
+    JLValidateParameterCount(0);
+
     [self route:@"tests://?key=value"];
     JLValidateAnyRouteMatched();
     JLValidateParameterCount(1);
