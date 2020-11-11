@@ -9,7 +9,7 @@ Pod::Spec.new do |s|
   s.framework    = 'Foundation'
   s.requires_arc = true
 
-  s.source_files = 'JLRoutes', 'JLRoutes/*.{h,m}', 'JLRoutes/Classes/*.{h,m}'
+  s.source_files = 'JLRoutes', 'JLRoutes/*.{h,m}'
 
   s.ios.deployment_target = '8.0'
   s.osx.deployment_target = '10.10'
