@@ -159,7 +159,7 @@
 				5DA69C541DAB4C3A007C8E9C /* JLRParsingUtilities.h */,
 				5DA69C551DAB4C3A007C8E9C /* JLRParsingUtilities.m */,
 			);
-			path = Classes;
+			name = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
